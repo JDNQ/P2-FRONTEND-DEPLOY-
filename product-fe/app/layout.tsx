@@ -15,6 +15,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "product-fe",
   description: "Product management",
+  metadataBase: new URL("https://p2-frontend-git-main-jdnqs-projects.vercel.app"),
 };
 
 export default function RootLayout({

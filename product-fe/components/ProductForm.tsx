@@ -3,7 +3,6 @@
 import React from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { Resolver } from "react-hook-form";
 import type { ProductFormData } from "@/lib/schema";
 import { productSchema } from "@/lib/schema";
 import { VariantRow } from "@/components/VariantRow";
