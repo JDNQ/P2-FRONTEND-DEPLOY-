@@ -83,6 +83,7 @@ export async function login(data: { username: string; password: string }) {
 export async function register(data: {
   username: string;
   password: string;
+  confirmPassword: string;
   email?: string;
 }) {
   return extractData(await api.post("/auth/register", data));

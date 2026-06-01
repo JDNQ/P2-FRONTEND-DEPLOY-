@@ -64,6 +64,7 @@ export default function RegisterPage() {
             await registerUser({
                 username: data.username,
                 password: data.password,
+                confirmPassword: data.confirmPassword,
                 email: data.email ?? undefined,
             });
             router.push("/login");
