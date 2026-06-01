@@ -1,10 +1,47 @@
-import axios, { AxiosError } from "axios";
+import axios, { AxiosError, AxiosHeaders } from "axios";
 
 function getCookie(name: string) {
   if (typeof document === "undefined") return undefined;
   const cookies = document.cookie.split(";").map((cookie) => cookie.trim());
   const matched = cookies.find((cookie) => cookie.startsWith(`${name}=`));
   return matched ? decodeURIComponent(matched.split("=")[1]) : undefined;
+}
+
+export function setCookie(
+  name: string,
+  value: string,
+  options?: {
+    path?: string;
+    maxAge?: number;
+    expires?: Date;
+    domain?: string;
+    sameSite?: "Lax" | "Strict" | "None";
+    secure?: boolean;
+  },
+) {
+  if (typeof document === "undefined") return;
+
+  const parts = [`${encodeURIComponent(name)}=${encodeURIComponent(value)}`];
+
+  if (options?.path) parts.push(`path=${options.path}`);
+  if (options?.maxAge !== undefined) parts.push(`max-age=${options.maxAge}`);
+  if (options?.expires) parts.push(`expires=${options.expires.toUTCString()}`);
+  if (options?.domain) parts.push(`domain=${options.domain}`);
+  if (options?.sameSite) parts.push(`SameSite=${options.sameSite}`);
+  if (options?.secure) parts.push("secure");
+
+  document.cookie = parts.join("; ");
+}
+
+export function deleteCookie(
+  name: string,
+  options?: { path?: string; domain?: string },
+) {
+  setCookie(name, "", {
+    path: options?.path ?? "/",
+    maxAge: 0,
+    domain: options?.domain,
+  });
 }
 
 export const api = axios.create({
@@ -15,13 +52,11 @@ export const api = axios.create({
 api.interceptors.request.use((config) => {
   const token = getCookie("token");
   if (token) {
-    if (config.headers && typeof (config.headers as any).set === "function") {
-      (config.headers as any).set("Authorization", `Bearer ${token}`);
+    if (config.headers instanceof AxiosHeaders) {
+      config.headers.set("Authorization", `Bearer ${token}`);
     } else {
-      config.headers = {
-        ...(config.headers as any),
-        Authorization: `Bearer ${token}`,
-      };
+      config.headers = AxiosHeaders.from(config.headers ?? {});
+      config.headers.set("Authorization", `Bearer ${token}`);
     }
   }
   return config;

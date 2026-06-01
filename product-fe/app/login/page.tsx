@@ -5,14 +5,35 @@ import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { login } from "@/lib/api";
+import { login, setCookie } from "@/lib/api";
 
+// Mở rộng type để bao phủ tất cả cấu trúc backend có thể trả về
 type LoginResponse = {
-    token?: string;
+    // Token fields - NestJS thường trả access_token (snake_case)
+    access_token?: string;
     accessToken?: string;
+    token?: string;
+    // User fields
     user?: { username: string; role: string; email?: string };
+    // Nested data wrapper
+    data?: {
+        access_token?: string;
+        accessToken?: string;
+        token?: string;
+        user?: { username: string; role: string; email?: string };
+        data?: {
+            access_token?: string;
+            accessToken?: string;
+            token?: string;
+            user?: { username: string; role: string; email?: string };
+        };
+    };
     requireCaptcha?: boolean;
     message?: string;
+    // Trường hợp backend trả thông tin user trực tiếp ở root
+    username?: string;
+    role?: string;
+    email?: string;
 };
 
 const loginSchema = z.object({
@@ -143,56 +164,76 @@ export default function LoginPage() {
         setSubmitting(true);
 
         try {
-            const response = (await login(data)) as LoginResponse & {
-                data?: {
-                    token?: string;
-                    accessToken?: string;
-                    user?: { username: string; role: string; email?: string };
-                    data?: { token?: string; accessToken?: string; user?: { username: string; role: string; email?: string } };
-                };
-            };
+            const response = (await login(data)) as LoginResponse;
 
+            // DEBUG: log để kiểm tra cấu trúc response từ backend
+            console.log("LOGIN RESPONSE:", JSON.stringify(response, null, 2));
+
+            // Lấy token - hỗ trợ tất cả cấu trúc NestJS có thể trả về:
+            // access_token (snake_case - phổ biến nhất với NestJS)
+            // accessToken (camelCase)
+            // token
+            // hoặc bọc trong .data
             const token =
-                response.token ??
+                response.access_token ??
                 response.accessToken ??
-                response.data?.token ??
+                response.token ??
+                response.data?.access_token ??
                 response.data?.accessToken ??
-                response.data?.data?.token ??
-                response.data?.data?.accessToken;
-            const user =
-                response.user ??
-                response.data?.user ??
-                response.data?.data?.user;
-            if (!token || !user) {
+                response.data?.token ??
+                response.data?.data?.access_token ??
+                response.data?.data?.accessToken ??
+                response.data?.data?.token;
+
+            if (!token) {
                 throw new Error(response.message ?? "Đăng nhập thất bại");
             }
 
-            document.cookie = `token=${encodeURIComponent(token)}; path=/; max-age=${60 * 60 * 24 * 7}`;
+            // Lấy user - có thể nằm ở nhiều chỗ khác nhau, hoặc backend không trả user
+            // thì dùng fallback từ dữ liệu form + thông tin có sẵn
+            const user =
+                response.user ??
+                response.data?.user ??
+                response.data?.data?.user ??
+                // Trường hợp backend trả thông tin user trực tiếp ở root level
+                (response.username
+                    ? { username: response.username, role: response.role ?? "USER", email: response.email }
+                    : null) ??
+                // Fallback: dùng username từ form, role mặc định USER
+                { username: data.username, role: "USER" };
+
+            // Lưu token vào cookie (7 ngày)
+            setCookie("token", token, { path: "/", maxAge: 60 * 60 * 24 * 7 });
+
+            // Lưu thông tin user vào localStorage
             localStorage.setItem("user", JSON.stringify(user));
 
+            // Redirect theo role
+            const role = (user.role ?? "USER").toUpperCase();
             const route =
-                user.role === "ADMIN"
+                role === "ADMIN"
                     ? "/dashboard/admin"
-                    : user.role === "MANAGER"
+                    : role === "MANAGER"
                         ? "/dashboard/manager"
                         : "/dashboard/user";
+
             router.push(route);
         } catch (error: unknown) {
-            const message =
-                error instanceof Error
-                    ? error.message
-                    : "Đã xảy ra lỗi khi đăng nhập. Vui lòng thử lại.";
-            setServerError(message);
-
-            const response =
+            // Lấy message lỗi từ axios response hoặc Error object
+            const axiosResponse =
                 error && typeof error === "object" && "response" in error
                     ? (error as { response?: { data?: { message?: string; requireCaptcha?: boolean } } }).response?.data
                     : undefined;
-            if (response?.requireCaptcha) {
+
+            const message =
+                axiosResponse?.message ??
+                (error instanceof Error ? error.message : null) ??
+                "Đã xảy ra lỗi khi đăng nhập. Vui lòng thử lại.";
+
+            setServerError(message);
+
+            if (axiosResponse?.requireCaptcha) {
                 setRequireCaptcha(true);
-            }
-            if (response?.message) {
-                setServerError(response.message);
             }
         } finally {
             setSubmitting(false);
@@ -344,7 +385,7 @@ export default function LoginPage() {
                                 )}
                             </button>
                             <div className="mt-4 text-center text-sm text-slate-500">
-                                <span>{lang === "en" ? "Don’t have an account?" : "Chưa có tài khoản?"} </span>
+                                <span>{lang === "en" ? "Don't have an account?" : "Chưa có tài khoản?"} </span>
                                 <button
                                     type="button"
                                     onClick={() => router.push("/register")}
@@ -360,4 +401,3 @@ export default function LoginPage() {
         </div>
     );
 }
-

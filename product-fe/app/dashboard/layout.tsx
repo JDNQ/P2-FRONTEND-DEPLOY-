@@ -4,35 +4,36 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Header, { UserInfo } from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
+import { deleteCookie } from "@/lib/api";
 
 export default function DashboardLayout({ children }: Readonly<{ children: React.ReactNode }>) {
     const [sidebarOpen, setSidebarOpen] = useState(true);
-    const [user, setUser] = useState<UserInfo | null>(null);
-    const [loading, setLoading] = useState(true);
-    const router = useRouter();
+    const [user] = useState<UserInfo | null>(() => {
+        if (typeof window === "undefined") return null;
 
-    useEffect(() => {
         const raw = localStorage.getItem("user");
-        if (!raw) {
-            router.replace("/login");
-            return;
-        }
+        if (!raw) return null;
 
         try {
             const parsed = JSON.parse(raw) as { username?: string; role?: string };
-            if (!parsed?.username || !parsed?.role) {
-                throw new Error("Invalid user");
-            }
-            setUser({ username: parsed.username, role: parsed.role });
-            setLoading(false);
+            if (!parsed?.username || !parsed?.role) return null;
+            return { username: parsed.username, role: parsed.role };
         } catch {
+            return null;
+        }
+    });
+    const [loading] = useState(user === null);
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!user) {
             localStorage.removeItem("user");
             router.replace("/login");
         }
-    }, [router]);
+    }, [router, user]);
 
     const handleLogout = () => {
-        document.cookie = "token=; path=/; max-age=0";
+        deleteCookie("token", { path: "/" });
         localStorage.removeItem("user");
         router.push("/login");
     };
