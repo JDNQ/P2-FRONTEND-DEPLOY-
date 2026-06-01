@@ -2,7 +2,8 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { api } from "@/lib/api";
+import { createProduct } from "@/lib/api";
+
 import { ProductForm } from "@/components/ProductForm";
 import type { ProductFormData } from "@/lib/schema";
 
@@ -13,7 +14,8 @@ export default function NewProductPage() {
     const handleCreate = async (data: ProductFormData) => {
         setLoading(true);
         try {
-            await api.post("/products", data);
+            await createProduct(data);
+
             router.push("/");
         } finally {
             setLoading(false);

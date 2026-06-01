@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { api } from "@/lib/api";
+import { getProductById, updateProduct } from "@/lib/api";
+
 import { ProductForm } from "@/components/ProductForm";
 import type { ProductFormData } from "@/lib/schema";
 
@@ -32,8 +33,8 @@ export default function EditProductPage() {
         (async () => {
             try {
                 if (!id) return;
-                const res = await api.get(`/products/${id}`);
-                const p = res.data as ProductResponse;
+                const p = (await getProductById(id)) as ProductResponse;
+
                 if (!mounted) return;
 
                 setData({
@@ -70,8 +71,9 @@ export default function EditProductPage() {
 
     const handleUpdate = async (payload: ProductFormData) => {
         if (!id) return;
-        await api.patch(`/products/${id}`, payload);
+        await updateProduct(id, payload);
         router.push(`/products/${id}`);
+
     };
 
     if (loading) {

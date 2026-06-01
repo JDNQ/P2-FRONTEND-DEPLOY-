@@ -8,6 +8,13 @@ import type { ProductFormData } from "@/lib/schema";
 import { productSchema } from "@/lib/schema";
 import { VariantRow } from "@/components/VariantRow";
 
+const COLORS = {
+    primary: "#1e3a6e",
+    accent: "#60b4ff",
+    error: "#ef4444",
+} as const;
+
+
 export type ProductFormProps = {
     defaultValues?: ProductFormData;
     onSubmit: (data: ProductFormData) => Promise<void> | void;
@@ -75,20 +82,25 @@ export function ProductForm({ defaultValues, onSubmit }: ProductFormProps) {
                             <span className="text-xs text-gray-500">
                                 {String(productNameValue).length}/100
                             </span>
+
+
                         </div>
                         <input
                             {...register("productName")}
                             className={
                                 errors.productName
-                                    ? "w-full rounded-md border border-red-500 px-3 py-2 outline-none focus:border-red-500"
-                                    : "w-full rounded-md border border-gray-200 px-3 py-2 outline-none focus:border-[#533AB7]"
+                                    ? "w-full rounded-md border border-[#ef4444] px-3 py-2 outline-none focus:border-[#ef4444]"
+                                    : "w-full rounded-md border border-gray-200 px-3 py-2 outline-none focus:border-[#1e3a6e]"
                             }
                             placeholder="Nhập tên sản phẩm"
                             type="text"
                         />
                         {errors.productName && (
-                            <p className="text-xs text-red-600">{errors.productName.message}</p>
+                            <p className="text-xs text-[#ef4444]">{errors.productName.message}</p>
                         )}
+
+
+
                     </div>
 
                     <div className="mb-6">
@@ -97,8 +109,8 @@ export function ProductForm({ defaultValues, onSubmit }: ProductFormProps) {
                             {...register("description")}
                             className={
                                 errors.description
-                                    ? "mt-2 w-full rounded-md border border-red-500 px-3 py-2 outline-none focus:border-red-500"
-                                    : "mt-2 w-full rounded-md border border-gray-200 px-3 py-2 outline-none focus:border-[#533AB7]"
+                                    ? "mt-2 w-full rounded-md border border-[#ef4444] px-3 py-2 outline-none focus:border-[#ef4444]"
+                                    : "mt-2 w-full rounded-md border border-gray-200 px-3 py-2 outline-none focus:border-[#1e3a6e]"
                             }
                             placeholder="Mô tả (tuỳ chọn)"
                             rows={4}
@@ -108,19 +120,22 @@ export function ProductForm({ defaultValues, onSubmit }: ProductFormProps) {
                     <div className="mb-6">
                         <label className="text-sm font-medium text-gray-800">Base price</label>
                         <input
-                            {...register("basePrice")}
+                            {...register("basePrice", { valueAsNumber: true })}
                             type="number"
                             inputMode="decimal"
                             className={
                                 errors.basePrice
-                                    ? "mt-2 w-full rounded-md border border-red-500 px-3 py-2 outline-none focus:border-red-500"
-                                    : "mt-2 w-full rounded-md border border-gray-200 px-3 py-2 outline-none focus:border-[#533AB7]"
+                                    ? "mt-2 w-full rounded-md border border-[#ef4444] px-3 py-2 outline-none focus:border-[#ef4444]"
+                                    : "mt-2 w-full rounded-md border border-gray-200 px-3 py-2 outline-none focus:border-[#1e3a6e]"
                             }
                             placeholder="0"
                         />
                         {errors.basePrice && (
-                            <p className="mt-2 text-xs text-red-600">{errors.basePrice.message}</p>
+                            <p className="mt-2 text-xs text-[#ef4444]">{errors.basePrice.message}</p>
                         )}
+
+
+
                     </div>
 
                     <div className="overflow-hidden rounded-lg border border-gray-200">
@@ -140,7 +155,8 @@ export function ProductForm({ defaultValues, onSubmit }: ProductFormProps) {
                                         stock: 0,
                                     })
                                 }
-                                className="inline-flex items-center justify-center rounded-md bg-[#533AB7] px-3 py-2 text-sm font-medium text-white hover:opacity-95"
+
+                                className="inline-flex items-center justify-center rounded-md bg-[#1e3a6e] px-3 py-2 text-sm font-medium text-white hover:opacity-95"
                             >
                                 + Thêm variant
                             </button>
@@ -171,15 +187,16 @@ export function ProductForm({ defaultValues, onSubmit }: ProductFormProps) {
                         <button
                             disabled={isSubmitting}
                             type="submit"
-                            className="inline-flex items-center justify-center rounded-md bg-[#533AB7] px-5 py-2.5 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
+                            className="inline-flex items-center justify-center rounded-md bg-[#1e3a6e] px-5 py-2.5 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
                         >
                             {isSubmitting ? "Đang lưu..." : "Lưu sản phẩm"}
                         </button>
                     </div>
 
                     {errors.variants?.root && (
-                        <p className="mt-2 text-xs text-red-600">{errors.variants.root.message}</p>
+                        <p className="mt-2 text-xs text-[#ef4444]">{errors.variants.root.message}</p>
                     )}
+
                 </div>
             </form>
         </FormProvider>

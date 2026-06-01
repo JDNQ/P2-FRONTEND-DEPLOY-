@@ -45,8 +45,9 @@ export function VariantRow({ index, onRemove, canRemove }: VariantRowProps) {
 
             <div>
                 <input
-                    {...register(`variants.${index}.extraPrice` as const)}
+                    {...register(`variants.${index}.extraPrice` as const, { valueAsNumber: true })}
                     type="number"
+
                     inputMode="decimal"
                     className={
                         variantErrors?.extraPrice
@@ -64,8 +65,9 @@ export function VariantRow({ index, onRemove, canRemove }: VariantRowProps) {
 
             <div>
                 <input
-                    {...register(`variants.${index}.stock` as const)}
+                    {...register(`variants.${index}.stock` as const, { valueAsNumber: true })}
                     type="number"
+
                     inputMode="numeric"
                     className={
                         variantErrors?.stock
