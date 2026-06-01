@@ -328,6 +328,16 @@ export default function LoginPage() {
                                     copy.submit
                                 )}
                             </button>
+                            <div className="mt-4 text-center text-sm text-slate-500">
+                                <span>{lang === "en" ? "Don’t have an account?" : "Chưa có tài khoản?"} </span>
+                                <button
+                                    type="button"
+                                    onClick={() => router.push("/register")}
+                                    className="font-semibold text-[#1e3a6e] hover:text-[#173359]"
+                                >
+                                    {lang === "en" ? "Register" : "Đăng ký"}
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </div>
