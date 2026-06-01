@@ -65,7 +65,14 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
-    if (error.response?.status === 401 && typeof window !== "undefined") {
+    const currentPath =
+      typeof window !== "undefined" ? window.location.pathname : "";
+    if (
+      error.response?.status === 401 &&
+      typeof window !== "undefined" &&
+      currentPath !== "/login" &&
+      currentPath !== "/register"
+    ) {
       window.location.href = "/login";
     }
     return Promise.reject(error);

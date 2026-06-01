@@ -69,15 +69,10 @@ export default function RegisterPage() {
             });
             router.push("/login");
         } catch (error: unknown) {
-            const message =
-                error instanceof Error
-                    ? error.message
-                    : "Đã xảy ra lỗi khi đăng ký. Vui lòng thử lại.";
-            const response =
-                error && typeof error === "object" && "response" in error
-                    ? (error as { response?: { data?: { message?: string } } }).response?.data
-                    : undefined;
-            setServerError(response?.message ?? message);
+            const response = error && typeof error === "object" && "response" in error
+                ? (error as { response?: { data?: { message?: string } } }).response?.data
+                : undefined;
+            setServerError(response?.message ?? "Đã xảy ra lỗi. Vui lòng thử lại.");
         } finally {
             setSubmitting(false);
         }

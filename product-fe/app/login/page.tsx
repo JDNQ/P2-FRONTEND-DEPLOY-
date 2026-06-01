@@ -216,17 +216,10 @@ export default function LoginPage() {
             router.push(route);
         } catch (error: unknown) {
             // Lấy message lỗi từ axios response hoặc Error object
-            const axiosResponse =
-                error && typeof error === "object" && "response" in error
-                    ? (error as { response?: { data?: { message?: string } } }).response?.data
-                    : undefined;
-
-            const message =
-                axiosResponse?.message ??
-                (error instanceof Error ? error.message : null) ??
-                "Đã xảy ra lỗi khi đăng nhập. Vui lòng thử lại.";
-
-            setServerError(message);
+            const response = error && typeof error === "object" && "response" in error
+                ? (error as { response?: { data?: { message?: string } } }).response?.data
+                : undefined;
+            setServerError(response?.message ?? "Đã xảy ra lỗi. Vui lòng thử lại.");
         } finally {
             setSubmitting(false);
         }
