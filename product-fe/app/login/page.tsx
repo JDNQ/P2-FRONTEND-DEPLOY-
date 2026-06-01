@@ -152,6 +152,9 @@ export default function LoginPage() {
         try {
             // TODO: Call backend login endpoint here when available
             // await api.post('/login', data)
+            // TODO: Replace this with real token from backend
+            const token = "demo-token";
+            document.cookie = `token=${token}; path=/; max-age=3600`;
             router.push("/products");
         } finally {
             setSubmitting(false);
