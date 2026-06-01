@@ -28,7 +28,6 @@ type LoginResponse = {
             user?: { username: string; role: string; email?: string };
         };
     };
-    requireCaptcha?: boolean;
     message?: string;
     // Trường hợp backend trả thông tin user trực tiếp ở root
     username?: string;
@@ -39,7 +38,6 @@ type LoginResponse = {
 const loginSchema = z.object({
     username: z.string().min(6, "Username phải có ít nhất 6 ký tự"),
     password: z.string().min(6, "Password phải có ít nhất 6 ký tự"),
-    captchaToken: z.string().optional(),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
@@ -117,7 +115,6 @@ export default function LoginPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [serverError, setServerError] = useState<string | null>(null);
-    const [requireCaptcha, setRequireCaptcha] = useState(false);
 
     const copy = useMemo(() => {
         if (lang === "en") {
@@ -154,7 +151,6 @@ export default function LoginPage() {
         defaultValues: {
             username: "",
             password: "",
-            captchaToken: "",
         },
         mode: "onSubmit",
     });
@@ -222,7 +218,7 @@ export default function LoginPage() {
             // Lấy message lỗi từ axios response hoặc Error object
             const axiosResponse =
                 error && typeof error === "object" && "response" in error
-                    ? (error as { response?: { data?: { message?: string; requireCaptcha?: boolean } } }).response?.data
+                    ? (error as { response?: { data?: { message?: string } } }).response?.data
                     : undefined;
 
             const message =
@@ -231,10 +227,6 @@ export default function LoginPage() {
                 "Đã xảy ra lỗi khi đăng nhập. Vui lòng thử lại.";
 
             setServerError(message);
-
-            if (axiosResponse?.requireCaptcha) {
-                setRequireCaptcha(true);
-            }
         } finally {
             setSubmitting(false);
         }
@@ -358,17 +350,6 @@ export default function LoginPage() {
                                 {errors.password && <p className="mt-2 text-[12px] text-[#ef4444]">{errors.password.message}</p>}
                             </div>
 
-                            {requireCaptcha ? (
-                                <div className="mb-4">
-                                    <label className="mb-2 block text-sm font-semibold text-gray-800">Mã Captcha</label>
-                                    <input
-                                        {...register("captchaToken")}
-                                        className={`${inputBase} ${inputFocus} ${errors.captchaToken ? inputError : ""}`}
-                                        placeholder="Nhập mã captcha"
-                                    />
-                                    {errors.captchaToken && <p className="mt-2 text-[12px] text-[#ef4444]">{errors.captchaToken.message}</p>}
-                                </div>
-                            ) : null}
 
                             <button
                                 disabled={submitting}

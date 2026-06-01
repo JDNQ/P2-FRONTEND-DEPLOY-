@@ -76,11 +76,7 @@ function extractData<T>(res: { data: T }): T {
   return res.data;
 }
 
-export async function login(data: {
-  username: string;
-  password: string;
-  captchaToken?: string;
-}) {
+export async function login(data: { username: string; password: string }) {
   return extractData(await api.post("/auth/login", data));
 }
 
