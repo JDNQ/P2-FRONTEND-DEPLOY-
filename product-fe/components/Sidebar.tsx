@@ -41,11 +41,11 @@ export default function Sidebar({ open }: SidebarProps) {
                     <div className="px-4 py-5">
                         <div className="flex items-center gap-3">
                             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-white">
-                                <span className="text-sm font-bold">DX</span>
+                                <span className="text-sm font-bold">TL</span>
                             </div>
                             <div>
                                 <div className="text-xs font-semibold uppercase tracking-wide text-white/70">
-                                    DX FutureTech
+                                    TL Market
                                 </div>
                                 <div className="text-base font-bold">Product Manager</div>
                             </div>
