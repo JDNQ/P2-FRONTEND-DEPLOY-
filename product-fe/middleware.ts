@@ -7,6 +7,12 @@ export function middleware(request: NextRequest) {
 
   const isProtected = pathname.startsWith("/products");
   const isLoginPage = pathname === "/login";
+  const isRoot = pathname === "/";
+
+  if (isRoot) {
+    if (token) return NextResponse.redirect(new URL("/products", request.url));
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
 
   if (isProtected && !token) {
     return NextResponse.redirect(new URL("/login", request.url));
@@ -20,5 +26,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/products/:path*", "/login"],
+  matcher: ["/", "/products/:path*", "/login"],
 };
