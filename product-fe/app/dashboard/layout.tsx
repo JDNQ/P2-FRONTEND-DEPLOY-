@@ -52,7 +52,7 @@ export default function DashboardLayout({ children }: Readonly<{ children: React
                 <div
                     className={
                         sidebarOpen
-                            ? "w-[220px] shrink-0 transition-[width] duration-300"
+                            ? "w-64 shrink-0 transition-[width] duration-300"
                             : "w-0 shrink-0 overflow-hidden transition-[width] duration-300"
                     }
                 >
