@@ -53,31 +53,30 @@ export default function Sidebar({ open, user, onLogout }: SidebarProps) {
     const navItems = user
         ? user.role === "ADMIN"
             ? [
-                { href: "/dashboard/admin", label: "Tá»•ng quan" },
-                { href: "/dashboard/admin#users", label: "Quáº£n lÃ½ Users" },
-                { href: "/dashboard/admin#shops", label: "Quáº£n lÃ½ Shops" },
-                { href: "/products", label: "Sáº£n pháº©m" },
+                { href: "/dashboard/admin", label: "Tổng quan" },
+                { href: "/dashboard/admin#users", label: "Quản lý Users" },
+                { href: "/dashboard/admin#shops", label: "Quản lý Shops" },
+                { href: "/products", label: "Sản phẩm " },
             ]
             : user.role === "MANAGER"
                 ? [
-                    { href: "/dashboard/manager", label: "Tá»•ng quan" },
-                    { href: "/dashboard/manager#shops", label: "Shop cá»§a tÃ´i" },
-                    { href: "/products", label: "Sáº£n pháº©m" },
+                    { href: "/dashboard/manager", label: "Tổng quan" },
+                    { href: "/dashboard/manager#shops", label: "Shop của Tài" },
+                    { href: "/products", label: "Sản phẩm " },
                 ]
                 : [
-                    { href: "/dashboard/user", label: "Tá»•ng quan" },
-                    { href: "/products", label: "Sáº£n pháº©m" },
+                    { href: "/dashboard/user", label: "Tổng quan" },
+                    { href: "/products", label: "Sản phẩm " },
                 ]
         : [
-            { href: "/", label: "Tá»•ng quan" },
-            { href: "/products", label: "Sáº£n pháº©m" },
+            { href: "/", label: "Tổng quan" },
+            { href: "/products", label: "Sản phẩm " },
         ];
 
     return (
         <aside
-            className={`h-screen overflow-hidden border-r border-white/5 bg-gradient-to-b from-slate-900 to-[#0a0f1e] text-white shadow-2xl transition-all duration-300 ${
-                open ? "w-64" : "w-0"
-            }`}
+            className={`h-screen overflow-hidden border-r border-white/5 bg-gradient-to-b from-slate-900 to-[#0a0f1e] text-white shadow-2xl transition-all duration-300 ${open ? "w-64" : "w-0"
+                }`}
             aria-hidden="true"
         >
             <div className={open ? "flex h-full w-64 flex-col" : "hidden"}>
