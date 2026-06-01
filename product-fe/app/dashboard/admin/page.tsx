@@ -50,6 +50,7 @@ export default function AdminDashboardPage() {
     const [toast, setToast] = useState<{ type: "success" | "error"; message: string } | null>(null);
     const [showModal, setShowModal] = useState(false);
     const [createLoading, setCreateLoading] = useState(false);
+    const [mounted, setMounted] = useState(false);
 
     const {
         register,
