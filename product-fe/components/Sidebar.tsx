@@ -125,7 +125,7 @@ export default function Sidebar({ open, user, onLogout }: SidebarProps) {
                                 className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 px-3 py-2.5 text-sm font-semibold text-slate-300 transition-all hover:border-red-500/30 hover:bg-red-500/20 hover:text-red-400"
                             >
                                 <LogOut className="h-4 w-4" />
-                                ÄÄƒng xuáº¥t
+                                Đăng Xuất
                             </button>
                         ) : null}
                     </div>
