@@ -144,10 +144,25 @@ export default function LoginPage() {
 
         try {
             const response = (await login(data)) as LoginResponse & {
-                data?: { token?: string; user?: { username: string; role: string; email?: string } };
+                data?: {
+                    token?: string;
+                    accessToken?: string;
+                    user?: { username: string; role: string; email?: string };
+                    data?: { token?: string; accessToken?: string; user?: { username: string; role: string; email?: string } };
+                };
             };
-            const token = response.token ?? response.accessToken ?? response.data?.token;
-            const user = response.user ?? response.data?.user;
+
+            const token =
+                response.token ??
+                response.accessToken ??
+                response.data?.token ??
+                response.data?.accessToken ??
+                response.data?.data?.token ??
+                response.data?.data?.accessToken;
+            const user =
+                response.user ??
+                response.data?.user ??
+                response.data?.data?.user;
             if (!token || !user) {
                 throw new Error(response.message ?? "Đăng nhập thất bại");
             }
