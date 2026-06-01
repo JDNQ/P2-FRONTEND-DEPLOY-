@@ -17,21 +17,21 @@ export default function UserDashboardPage() {
     const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [username, setUsername] = useState<string>("Người dùng");
-
-    useEffect(() => {
+    const [username] = useState<string>(() => {
+        if (typeof window === "undefined") return "Người dùng";
         const raw = localStorage.getItem("user");
         if (raw) {
             try {
                 const parsed = JSON.parse(raw) as { username?: string };
                 if (parsed?.username) {
-                    setUsername(parsed.username);
+                    return parsed.username;
                 }
             } catch {
                 // ignore
             }
         }
-    }, []);
+        return "Người dùng";
+    });
 
     useEffect(() => {
         let mounted = true;

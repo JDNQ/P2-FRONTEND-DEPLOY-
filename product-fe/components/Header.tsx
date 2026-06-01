@@ -17,9 +17,6 @@ export type HeaderProps = {
 };
 
 export default function Header({ onToggleSidebar, user, onLogout }: HeaderProps) {
-    const roleAccent =
-        user?.role === "ADMIN" ? "bg-red-500" : user?.role === "MANAGER" ? "bg-orange-500" : "bg-emerald-500";
-
     return (
         <header className="sticky top-0 z-20 w-full border-b border-gray-200 bg-white">
             <div className="flex flex-wrap items-center gap-3 px-4 py-3">

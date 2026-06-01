@@ -8,13 +8,6 @@ import type { ProductFormData } from "@/lib/schema";
 import { productSchema } from "@/lib/schema";
 import { VariantRow } from "@/components/VariantRow";
 
-const COLORS = {
-    primary: "#1e3a6e",
-    accent: "#60b4ff",
-    error: "#ef4444",
-} as const;
-
-
 export type ProductFormProps = {
     defaultValues?: ProductFormData;
     onSubmit: (data: ProductFormData) => Promise<void> | void;

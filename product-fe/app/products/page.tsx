@@ -14,7 +14,11 @@ type ProductItem = {
 
 export default function ProductsPage() {
     const router = useRouter();
-    const [shopId, setShopId] = useState<string | undefined>(undefined);
+    const [shopId] = useState<string | undefined>(() => {
+        if (typeof window === "undefined") return undefined;
+        const params = new URLSearchParams(window.location.search);
+        return params.get("shopId") ?? undefined;
+    });
     const [products, setProducts] = useState<ProductItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -41,12 +45,6 @@ export default function ProductsPage() {
         return () => {
             mounted = false;
         };
-    }, []);
-
-    useEffect(() => {
-        if (typeof window === "undefined") return;
-        const params = new URLSearchParams(window.location.search);
-        setShopId(params.get("shopId") ?? undefined);
     }, []);
 
     const filteredProducts = useMemo(() => {
