@@ -19,9 +19,9 @@ function NavItem(props: { href: string; label: string; active?: boolean }) {
     const Icon =
         props.href === "/products"
             ? Package
-            : props.href.includes("#users") || props.href.includes("/manager#shops")
+            : props.href.includes("/users") || props.href.includes("/manager#shops")
                 ? Users
-                : props.href.includes("#shops")
+                : props.href.includes("/shops")
                     ? Store
                     : LayoutDashboard;
 
@@ -54,8 +54,8 @@ export default function Sidebar({ open, user, onLogout }: SidebarProps) {
         ? user.role === "ADMIN"
             ? [
                 { href: "/dashboard/admin", label: "Tổng quan" },
-                { href: "/dashboard/admin#users", label: "Quản lý Users" },
-                { href: "/dashboard/admin#shops", label: "Quản lý Shops" },
+                { href: "/dashboard/admin/users", label: "Quản lý Users" },
+                { href: "/dashboard/admin/shops", label: "Quản lý Shops" },
                 { href: "/products", label: "Sản phẩm " },
             ]
             : user.role === "MANAGER"
