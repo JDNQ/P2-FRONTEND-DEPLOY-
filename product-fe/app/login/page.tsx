@@ -174,7 +174,7 @@ export default function LoginPage() {
                                 <span className="text-2xl font-extrabold text-[#60b4ff]">DX</span>
                             </div>
                             <div>
-                                <div className="mt-2 text-3xl font-extrabold">Product Manager</div>
+                                <div className="mt-2 text-3xl font-extrabold">DX Market</div>
                                 <div className="mt-2 text-[14px] font-medium text-white/60">Hệ thống quản lý sản phẩm & biến thể</div>
                             </div>
                         </div>
