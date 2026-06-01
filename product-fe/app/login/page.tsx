@@ -5,11 +5,20 @@ import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { login } from "@/lib/api";
+
+type LoginResponse = {
+    token?: string;
+    accessToken?: string;
+    user?: { username: string; role: string; email?: string };
+    requireCaptcha?: boolean;
+    message?: string;
+};
 
 const loginSchema = z.object({
-    account: z.string().min(1, "Tài khoản là bắt buộc"),
-    password: z.string().min(1, "Mật khẩu là bắt buộc"),
-    remember: z.boolean().optional(),
+    username: z.string().min(6, "Username phải có ít nhất 6 ký tự"),
+    password: z.string().min(6, "Password phải có ít nhất 6 ký tự"),
+    captchaToken: z.string().optional(),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
@@ -86,14 +95,15 @@ export default function LoginPage() {
     const [lang, setLang] = useState<"vi" | "en">("vi");
     const [showPassword, setShowPassword] = useState(false);
     const [submitting, setSubmitting] = useState(false);
+    const [serverError, setServerError] = useState<string | null>(null);
+    const [requireCaptcha, setRequireCaptcha] = useState(false);
 
     const copy = useMemo(() => {
         if (lang === "en") {
             return {
                 title: "Sign in",
-                accountLabel: "Account",
+                usernameLabel: "Username",
                 passwordLabel: "Password",
-                remember: "Remember me",
                 subtitle: "Sign in to your account to continue",
                 submit: "SIGN IN",
                 loading: "Signing in...",
@@ -104,9 +114,8 @@ export default function LoginPage() {
 
         return {
             title: "Đăng nhập",
-            accountLabel: "Tài khoản",
+            usernameLabel: "Tên đăng nhập",
             passwordLabel: "Mật khẩu",
-            remember: "Ghi nhớ đăng nhập",
             subtitle: "Đăng nhập vào tài khoản của bạn để tiếp tục",
             submit: "ĐĂNG NHẬP",
             loading: "Đang đăng nhập...",
@@ -122,20 +131,54 @@ export default function LoginPage() {
     } = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
-            account: "",
+            username: "",
             password: "",
-            remember: true,
+            captchaToken: "",
         },
         mode: "onSubmit",
     });
 
     const onSubmit = async (data: LoginFormData) => {
-        console.log(data);
+        setServerError(null);
         setSubmitting(true);
+
         try {
-            const token = "demo-token";
-            document.cookie = `token=${token}; path=/; max-age=3600`;
-            router.push("/products");
+            const response = (await login(data)) as LoginResponse & {
+                data?: { token?: string; user?: { username: string; role: string; email?: string } };
+            };
+            const token = response.token ?? response.accessToken ?? response.data?.token;
+            const user = response.user ?? response.data?.user;
+            if (!token || !user) {
+                throw new Error(response.message ?? "Đăng nhập thất bại");
+            }
+
+            document.cookie = `token=${encodeURIComponent(token)}; path=/; max-age=${60 * 60 * 24 * 7}`;
+            localStorage.setItem("user", JSON.stringify(user));
+
+            const route =
+                user.role === "ADMIN"
+                    ? "/dashboard/admin"
+                    : user.role === "MANAGER"
+                        ? "/dashboard/manager"
+                        : "/dashboard/user";
+            router.push(route);
+        } catch (error: unknown) {
+            const message =
+                error instanceof Error
+                    ? error.message
+                    : "Đã xảy ra lỗi khi đăng nhập. Vui lòng thử lại.";
+            setServerError(message);
+
+            const response =
+                error && typeof error === "object" && "response" in error
+                    ? (error as { response?: { data?: { message?: string; requireCaptcha?: boolean } } }).response?.data
+                    : undefined;
+            if (response?.requireCaptcha) {
+                setRequireCaptcha(true);
+            }
+            if (response?.message) {
+                setServerError(response.message);
+            }
         } finally {
             setSubmitting(false);
         }
@@ -149,7 +192,6 @@ export default function LoginPage() {
     return (
         <div className="min-h-screen">
             <div className="grid min-h-screen grid-cols-1 lg:grid-cols-2">
-                {/* left panel */}
                 <div className="relative hidden overflow-hidden p-10 text-white lg:block">
                     <div
                         className="absolute inset-0"
@@ -157,8 +199,6 @@ export default function LoginPage() {
                             background: "linear-gradient(160deg, #0f2044 0%, #1a3a6e 50%, #1565c0 100%)",
                         }}
                     />
-
-                    {/* subtle decorations */}
                     <div
                         className="absolute -top-10 -left-10 h-44 w-44 rounded-full bg-white/10 blur-[0px]"
                         aria-hidden="true"
@@ -167,7 +207,6 @@ export default function LoginPage() {
                         className="absolute -bottom-14 -right-14 h-56 w-56 rounded-full bg-white/5"
                         aria-hidden="true"
                     />
-
                     <div className="relative mx-auto max-w-md">
                         <div className="flex items-start gap-4">
                             <div className="mt-1 flex h-18 w-18 items-center justify-center rounded-2xl bg-white/15">
@@ -178,7 +217,6 @@ export default function LoginPage() {
                                 <div className="mt-2 text-[14px] font-medium text-white/60">Hệ thống quản lý sản phẩm & biến thể</div>
                             </div>
                         </div>
-
                         <div className="mt-10 rounded-2xl bg-white/10 p-5">
                             <p className="text-sm font-semibold">&nbsp;</p>
                             <p className="mt-1 text-sm text-white/70">
@@ -187,14 +225,11 @@ export default function LoginPage() {
                                     : "Truy cập an toàn. Luồng thao tác nhanh."}
                             </p>
                         </div>
-
                         <div className="mt-14 text-[12px] text-white/30">© 2026 DX FutureTech</div>
                     </div>
                 </div>
 
-                {/* right panel */}
                 <div className="flex items-center justify-center bg-[#f8fafc] p-6 lg:p-10">
-                    {/* Language switcher */}
                     <div className="fixed right-4 top-4 z-20 rounded-lg border border-gray-200 bg-white p-1 shadow-sm">
                         <button
                             type="button"
@@ -225,23 +260,27 @@ export default function LoginPage() {
                         <div className="mb-8 text-[14px] font-medium text-[#6b7280]">{copy.subtitle}</div>
 
                         <form onSubmit={handleSubmit(onSubmit)} noValidate className="rounded-xl bg-white p-6 shadow-sm">
-                            {/* account */}
+                            {serverError ? (
+                                <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                                    {serverError}
+                                </div>
+                            ) : null}
+
                             <div className="mb-4">
-                                <label className="mb-2 block text-sm font-semibold text-gray-800">{copy.accountLabel}</label>
+                                <label className="mb-2 block text-sm font-semibold text-gray-800">{copy.usernameLabel}</label>
                                 <div className="relative">
                                     <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#9ca3af]">
                                         <IconUser className="h-5 w-5" />
                                     </span>
                                     <input
-                                        {...register("account")}
-                                        className={`${inputBase} ${inputFocus} ${errors.account ? inputError : ""} pl-10`}
-                                        placeholder={lang === "en" ? "Your account" : "Nhập tài khoản"}
+                                        {...register("username")}
+                                        className={`${inputBase} ${inputFocus} ${errors.username ? inputError : ""} pl-10`}
+                                        placeholder={lang === "en" ? "Your username" : "Nhập username"}
                                     />
                                 </div>
-                                {errors.account && <p className="mt-2 text-[12px] text-[#ef4444]">{errors.account.message}</p>}
+                                {errors.username && <p className="mt-2 text-[12px] text-[#ef4444]">{errors.username.message}</p>}
                             </div>
 
-                            {/* password */}
                             <div className="mb-4">
                                 <label className="mb-2 block text-sm font-semibold text-gray-800">{copy.passwordLabel}</label>
                                 <div className="relative">
@@ -263,17 +302,17 @@ export default function LoginPage() {
                                 {errors.password && <p className="mt-2 text-[12px] text-[#ef4444]">{errors.password.message}</p>}
                             </div>
 
-                            <div className="mb-6 flex items-center justify-between">
-                                <label className="flex items-center gap-2 text-sm text-gray-700">
+                            {requireCaptcha ? (
+                                <div className="mb-4">
+                                    <label className="mb-2 block text-sm font-semibold text-gray-800">Mã Captcha</label>
                                     <input
-                                        type="checkbox"
-                                        className="h-4 w-4 rounded border-gray-300 text-[#1e3a6e] focus:ring-0"
-                                        {...register("remember")}
-                                        defaultChecked
+                                        {...register("captchaToken")}
+                                        className={`${inputBase} ${inputFocus} ${errors.captchaToken ? inputError : ""}`}
+                                        placeholder="Nhập mã captcha"
                                     />
-                                    <span>{copy.remember}</span>
-                                </label>
-                            </div>
+                                    {errors.captchaToken && <p className="mt-2 text-[12px] text-[#ef4444]">{errors.captchaToken.message}</p>}
+                                </div>
+                            ) : null}
 
                             <button
                                 disabled={submitting}
