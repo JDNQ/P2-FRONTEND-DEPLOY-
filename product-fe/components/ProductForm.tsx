@@ -7,14 +7,12 @@ import type { ProductFormData } from "@/lib/schema";
 import { productSchema } from "@/lib/schema";
 import { VariantRow } from "@/components/VariantRow";
 
-// Định nghĩa type cho payload gửi lên backend
 export type ProductSubmitPayload = {
-    productName: string;           // ← Đổi lại theo backend
-    description: string;
+    productName: string;
+    description?: string;
     basePrice: number;
-    shopId?: number;
     variants: Array<{
-        variantName: string;       // ← Đổi lại theo backend
+        variantName: string;
         extraPrice: number;
         stock: number;
     }>;
@@ -72,7 +70,6 @@ export function ProductForm({
             productName: data.productName?.trim() || "",
             description: data.description?.trim() || "",
             basePrice: Number(data.basePrice) || 0,
-            ...(!isEdit && { shopId: Number(data.shopId) || 1 }),   // Chỉ gửi shopId khi tạo mới
             variants: data.variants.map((v) => ({
                 variantName: v.variantName?.trim() || "",
                 extraPrice: Number(v.extraPrice) || 0,
@@ -80,8 +77,7 @@ export function ProductForm({
             })),
         };
 
-        console.log("📤 Payload sau transform (sẽ gửi lên backend):", payload);
-
+        console.log("📤 Payload sau transform:", payload);
         await onSubmit(payload);
     };
 
@@ -90,7 +86,7 @@ export function ProductForm({
             <form onSubmit={handleSubmit(onValid)} className="w-full" noValidate>
                 <div className="rounded-xl border border-gray-200 bg-white p-6 space-y-6">
 
-                    {/* Chọn Shop - Chỉ hiển thị khi tạo mới */}
+                    {/* Chọn Shop - Chỉ hiển thị khi tạo mới (nhưng không gửi shopId) */}
                     {!isEdit && shops.length > 0 && (
                         <div>
                             <label className="text-sm font-medium text-gray-800">Chọn Shop <span className="text-red-500">*</span></label>
@@ -105,7 +101,6 @@ export function ProductForm({
                                     </option>
                                 ))}
                             </select>
-                            {errors.shopId && <p className="mt-1 text-xs text-red-500">{errors.shopId.message}</p>}
                         </div>
                     )}
 
