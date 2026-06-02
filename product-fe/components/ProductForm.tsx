@@ -7,9 +7,22 @@ import type { ProductFormData } from "@/lib/schema";
 import { productSchema } from "@/lib/schema";
 import { VariantRow } from "@/components/VariantRow";
 
+// Định nghĩa type cho payload gửi lên backend
+export type ProductSubmitPayload = {
+    name: string;
+    description: string;
+    basePrice: number;
+    shopId: number;
+    variants: Array<{
+        name: string;
+        extraPrice: number;
+        stock: number;
+    }>;
+};
+
 export type ProductFormProps = {
     defaultValues?: Partial<ProductFormData>;
-    onSubmit: (data: ProductFormData) => Promise<void> | void;
+    onSubmit: (data: ProductSubmitPayload) => Promise<void> | void;
     shops?: Array<{ id: number; shopName: string }>;
 };
 
@@ -46,8 +59,23 @@ export function ProductForm({ defaultValues, onSubmit, shops = [] }: ProductForm
     const productNameValue = (useWatch({ control, name: "productName" }) as string) ?? "";
 
     const onValid = async (data: ProductFormData) => {
-        console.log("📤 Dữ liệu gửi:", data);
-        await onSubmit(data);
+        console.log("📤 Dữ liệu gốc từ form:", data);
+
+        const payload: ProductSubmitPayload = {
+            name: data.productName?.trim() || "",
+            description: data.description?.trim() || "",
+            basePrice: Number(data.basePrice) || 0,
+            shopId: Number(data.shopId) || 1,
+            variants: data.variants.map((v) => ({
+                name: v.variantName?.trim() || "",
+                extraPrice: Number(v.extraPrice) || 0,
+                stock: Number(v.stock) || 0,
+            })),
+        };
+
+        console.log("📤 Payload sau transform (sẽ gửi lên backend):", payload);
+
+        await onSubmit(payload);
     };
 
     return (
@@ -77,7 +105,7 @@ export function ProductForm({ defaultValues, onSubmit, shops = [] }: ProductForm
                     {/* Product Name */}
                     <div>
                         <div className="flex items-center justify-between">
-                            <label className="text-sm font-medium text-gray-800">Product name</label>
+                            <label className="text-sm font-medium text-gray-800">Tên sản phẩm</label>
                             <span className="text-xs text-gray-500">{String(productNameValue).length}/100</span>
                         </div>
                         <input
@@ -90,18 +118,18 @@ export function ProductForm({ defaultValues, onSubmit, shops = [] }: ProductForm
 
                     {/* Description */}
                     <div>
-                        <label className="text-sm font-medium text-gray-800">Description</label>
+                        <label className="text-sm font-medium text-gray-800">Mô tả</label>
                         <textarea
                             {...register("description")}
                             className="mt-2 w-full rounded-md border border-gray-200 px-3 py-2 focus:border-[#1e3a6e]"
-                            placeholder="Mô tả (tuỳ chọn)"
+                            placeholder="Mô tả sản phẩm (tuỳ chọn)"
                             rows={4}
                         />
                     </div>
 
                     {/* Base Price */}
                     <div>
-                        <label className="text-sm font-medium text-gray-800">Base price</label>
+                        <label className="text-sm font-medium text-gray-800">Giá gốc (Base price)</label>
                         <input
                             {...register("basePrice", { valueAsNumber: true })}
                             type="number"
@@ -115,7 +143,7 @@ export function ProductForm({ defaultValues, onSubmit, shops = [] }: ProductForm
                     <div className="overflow-hidden rounded-lg border border-gray-200">
                         <div className="flex flex-col gap-2 border-b border-gray-200 bg-gray-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
                             <div>
-                                <p className="text-sm font-semibold text-gray-900">Variants</p>
+                                <p className="text-sm font-semibold text-gray-900">Biến thể (Variants)</p>
                                 <p className="text-xs text-gray-600">
                                     Tổng variants: {totalVariants} • Tổng stock: {totalStock}
                                 </p>
@@ -131,9 +159,9 @@ export function ProductForm({ defaultValues, onSubmit, shops = [] }: ProductForm
 
                         <div className="divide-y divide-gray-200 px-4">
                             <div className="grid grid-cols-1 gap-3 py-3 text-xs font-semibold text-gray-600 sm:grid-cols-[1.2fr_0.7fr_0.7fr_auto]">
-                                <div>Variant name</div>
-                                <div className="sm:text-right">Extra price</div>
-                                <div className="sm:text-right">Stock</div>
+                                <div>Tên biến thể</div>
+                                <div className="sm:text-right">Giá tăng thêm</div>
+                                <div className="sm:text-right">Tồn kho</div>
                                 <div className="sm:text-right">Actions</div>
                             </div>
 

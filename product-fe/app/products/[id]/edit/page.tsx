@@ -5,6 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import { getProductById, updateProduct } from "@/lib/api";
 import { ProductForm } from "@/components/ProductForm";
 import type { ProductFormData } from "@/lib/schema";
+import type { ProductSubmitPayload } from "@/components/ProductForm";
 
 type ProductResponse = {
     id: string;
@@ -62,16 +63,22 @@ export default function EditProductPage() {
         return () => { mounted = false; };
     }, [id]);
 
-    const handleUpdate = async (payload: ProductFormData) => {
+    const handleUpdate = async (payload: ProductSubmitPayload) => {
         if (!id) return;
         try {
+            console.log("📤 Gửi update payload:", payload);
             await updateProduct(id, payload);
+
             alert("✅ Cập nhật sản phẩm thành công!");
             router.push(`/products/${id}`);
-        } catch (error: unknown) {
-            const message = error instanceof Error ? error.message : "Cập nhật thất bại";
+        } catch (err: unknown) {
+            const errorObj = err as Error & { response?: { data?: { message?: string } } };
+            const message = errorObj?.response?.data?.message ||
+                errorObj?.message ||
+                "Cập nhật thất bại";
+
             alert(message);
-            console.error(error);
+            console.error("❌ Lỗi cập nhật:", errorObj?.response?.data || err);
         }
     };
 

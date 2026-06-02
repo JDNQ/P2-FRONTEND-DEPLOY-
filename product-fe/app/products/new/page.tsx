@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createProduct, getShops } from "@/lib/api";
 import { ProductForm } from "@/components/ProductForm";
-import type { ProductFormData } from "@/lib/schema";
+import type { ProductSubmitPayload } from "@/components/ProductForm";
 
 export default function NewProductPage() {
     const router = useRouter();
@@ -24,27 +24,24 @@ export default function NewProductPage() {
         fetchShops();
     }, []);
 
-    const handleCreate = async (data: ProductFormData) => {
+    const handleCreate = async (payload: ProductSubmitPayload) => {
         setLoading(true);
         setError(null);
 
         try {
-            const payload = {
-                ...data,
-                shopId: data.shopId || 1,
-            };
-
-            console.log("📤 Gửi dữ liệu:", payload);
+            console.log("📤 Gửi create payload:", payload);
             await createProduct(payload);
 
             alert("✅ Tạo sản phẩm thành công!");
             router.push("/products");
         } catch (err: unknown) {
-            const message = err instanceof Error
-                ? err.message
-                : "Tạo sản phẩm thất bại";
+            const errorObj = err as Error & { response?: { data?: { message?: string } } };
+            const message = errorObj?.response?.data?.message ||
+                errorObj?.message ||
+                "Tạo sản phẩm thất bại";
+
             setError(message);
-            console.error("❌ Lỗi tạo sản phẩm:", err);
+            console.error("❌ Lỗi tạo sản phẩm:", errorObj?.response?.data || err);
             alert(message);
         } finally {
             setLoading(false);
