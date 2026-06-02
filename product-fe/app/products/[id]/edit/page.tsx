@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { getProductById, updateProduct } from "@/lib/api";
-
 import { ProductForm } from "@/components/ProductForm";
 import type { ProductFormData } from "@/lib/schema";
 
@@ -12,6 +11,7 @@ type ProductResponse = {
     productName: string;
     description?: string;
     basePrice: number;
+    shopId?: number;
     variants: Array<{
         variantName: string;
         extraPrice: number;
@@ -30,6 +30,7 @@ export default function EditProductPage() {
 
     useEffect(() => {
         let mounted = true;
+
         (async () => {
             try {
                 if (!id) return;
@@ -41,18 +42,12 @@ export default function EditProductPage() {
                     productName: p.productName ?? "",
                     description: p.description ?? "",
                     basePrice: p.basePrice ?? 0,
-                    variants:
-                        p.variants?.map((v) => ({
-                            variantName: v.variantName ?? "",
-                            extraPrice: v.extraPrice ?? 0,
-                            stock: v.stock ?? 0,
-                        })) ?? [
-                            {
-                                variantName: "",
-                                extraPrice: 0,
-                                stock: 0,
-                            },
-                        ],
+                    shopId: p.shopId ?? 1,
+                    variants: p.variants?.map((v) => ({
+                        variantName: v.variantName ?? "",
+                        extraPrice: v.extraPrice ?? 0,
+                        stock: v.stock ?? 0,
+                    })) ?? [{ variantName: "", extraPrice: 0, stock: 0 }],
                 });
             } catch (e: unknown) {
                 const message = e instanceof Error ? e.message : "Không thể tải dữ liệu";
@@ -64,16 +59,20 @@ export default function EditProductPage() {
             }
         })();
 
-        return () => {
-            mounted = false;
-        };
+        return () => { mounted = false; };
     }, [id]);
 
     const handleUpdate = async (payload: ProductFormData) => {
         if (!id) return;
-        await updateProduct(id, payload);
-        router.push(`/products/${id}`);
-
+        try {
+            await updateProduct(id, payload);
+            alert("✅ Cập nhật sản phẩm thành công!");
+            router.push(`/products/${id}`);
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : "Cập nhật thất bại";
+            alert(message);
+            console.error(error);
+        }
     };
 
     if (loading) {
@@ -105,22 +104,17 @@ export default function EditProductPage() {
 
     return (
         <div className="mx-auto w-full max-w-4xl px-4 py-8">
-            <div className="mb-4">
-                <h1 className="text-xl font-bold text-gray-900">Chỉnh sửa sản phẩm</h1>
-            </div>
-
-            <ProductForm defaultValues={data} onSubmit={handleUpdate} />
-
-            <div className="mt-4">
+            <div className="mb-6 flex items-center justify-between">
+                <h1 className="text-2xl font-bold text-gray-900">Chỉnh sửa sản phẩm</h1>
                 <button
-                    type="button"
                     onClick={() => router.push(`/products/${id}`)}
-                    className="text-sm font-semibold text-gray-700 hover:text-gray-900"
+                    className="text-sm font-semibold text-gray-600 hover:text-gray-900"
                 >
                     ← Quay lại
                 </button>
             </div>
+
+            <ProductForm defaultValues={data} onSubmit={handleUpdate} />
         </div>
     );
 }
-

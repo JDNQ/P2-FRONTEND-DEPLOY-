@@ -1,25 +1,51 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Plus } from "lucide-react";
-import { createProduct } from "@/lib/api";
+import { createProduct, getShops } from "@/lib/api";
 import { ProductForm } from "@/components/ProductForm";
 import type { ProductFormData } from "@/lib/schema";
 
 export default function NewProductPage() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [shops, setShops] = useState<Array<{ id: number; shopName: string }>>([]);
+
+    useEffect(() => {
+        const fetchShops = async () => {
+            try {
+                const shopList = await getShops();
+                setShops(Array.isArray(shopList) ? shopList : []);
+            } catch (err) {
+                console.error("Không lấy được danh sách shop", err);
+            }
+        };
+        fetchShops();
+    }, []);
 
     const handleCreate = async (data: ProductFormData) => {
         setLoading(true);
+        setError(null);
+
         try {
-            await createProduct(data);
-            alert("Tạo sản phẩm thành công!");
-            router.push("/products");   // Quay về danh sách sản phẩm
-        } catch (error) {
-            alert("Tạo sản phẩm thất bại. Vui lòng thử lại.");
-            console.error(error);
+            const payload = {
+                ...data,
+                shopId: data.shopId || 1,
+            };
+
+            console.log("📤 Gửi dữ liệu:", payload);
+            await createProduct(payload);
+
+            alert("✅ Tạo sản phẩm thành công!");
+            router.push("/products");
+        } catch (err: unknown) {
+            const message = err instanceof Error
+                ? err.message
+                : "Tạo sản phẩm thất bại";
+            setError(message);
+            console.error("❌ Lỗi tạo sản phẩm:", err);
+            alert(message);
         } finally {
             setLoading(false);
         }
@@ -34,11 +60,17 @@ export default function NewProductPage() {
                 </div>
                 <button
                     onClick={() => router.push("/products")}
-                    className="text-sm font-semibold text-gray-600 hover:text-gray-900 flex items-center gap-1"
+                    className="text-sm font-semibold text-gray-600 hover:text-gray-900"
                 >
                     ← Quay lại danh sách
                 </button>
             </div>
+
+            {error && (
+                <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 p-4 text-red-700">
+                    {error}
+                </div>
+            )}
 
             {loading ? (
                 <div className="flex h-96 items-center justify-center rounded-2xl border border-slate-200 bg-white">
@@ -48,7 +80,7 @@ export default function NewProductPage() {
                     </div>
                 </div>
             ) : (
-                <ProductForm onSubmit={handleCreate} />
+                <ProductForm onSubmit={handleCreate} shops={shops} />
             )}
         </div>
     );
