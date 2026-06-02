@@ -118,112 +118,116 @@ export default function LoginPage() {
         }
     };
 
-    const inputBase = "w-full rounded-md border border-[#e5e7eb] bg-white px-4 py-[11px] text-sm outline-none";
-    const inputFocus = "focus:border-[#1e3a6e] focus:shadow-[0_0_0_3px_rgba(30,58,110,0.1)]";
-    const inputError = "border-[#ef4444] focus:border-[#ef4444] focus:shadow-[0_0_0_3px_rgba(239,68,68,0.1)]";
+    const inputBase = "w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm outline-none transition-all";
+    const inputFocus = "focus:border-[#f97316] focus:bg-white focus:shadow-[0_0_0_3px_rgba(249,115,22,0.1)]";
+    const inputError = "border-red-400 focus:border-red-400 focus:shadow-[0_0_0_3px_rgba(239,68,68,0.1)]";
 
     return (
-        <div className="min-h-screen">
-            <div className="grid min-h-screen grid-cols-1 lg:grid-cols-2">
-                <div className="relative hidden overflow-hidden p-10 text-white lg:block">
-                    <div className="mt-10 rounded-2xl bg-white/10 p-5">
-                        <p className="mt-1 text-sm text-white/70">
-                            {t("secureAccess")}
-                        </p>
-                    </div>
+        <div className="flex min-h-screen flex-col lg:flex-row">
+            {/* Left Panel: Branding */}
+            <div className="relative flex min-h-[300px] w-full flex-col items-center justify-center bg-gradient-to-br from-[#0f2460] to-[#1a3d8f] px-8 py-12 text-center lg:min-h-screen lg:w-[40%]">
+                <div className="flex flex-1 flex-col items-center justify-center">
+                    <img src="/logo.png" alt="TL Market" className="w-48 h-auto" />
+                    <h1 className="mt-6 text-3xl font-extrabold tracking-tight text-white">TL Market</h1>
+                    <p className="mt-3 text-sm font-medium text-blue-200/80">Hệ thống quản lý sản phẩm</p>
                 </div>
+                <p className="mt-8 text-xs text-blue-300/50">© 2026 TL Market. All rights reserved.</p>
+            </div>
 
-                <div className="flex items-center justify-center bg-[#f8fafc] p-6 lg:p-10">
-                    <div className="fixed right-4 top-4 z-20 rounded-lg border border-gray-200 bg-white p-1 shadow-sm">
-                        <button
-                            type="button"
-                            onClick={() => setLocale("vi")}
-                            className={locale === "vi" ? "rounded-md bg-[#0f2044] px-3 py-1 text-xs font-semibold text-white" : "rounded-md px-3 py-1 text-xs font-semibold text-[#9ca3af] hover:bg-gray-50"}
-                        >
-                            VI
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => setLocale("en")}
-                            className={locale === "en" ? "ml-1 rounded-md bg-[#0f2044] px-3 py-1 text-xs font-semibold text-white" : "ml-1 rounded-md px-3 py-1 text-xs font-semibold text-[#9ca3af] hover:bg-gray-50"}
-                        >
-                            EN
-                        </button>
+            {/* Right Panel: Form */}
+            <div className="flex w-full items-center justify-center bg-white px-6 py-12 lg:w-[60%] lg:px-16">
+                <div className="w-full max-w-[400px]">
+                    {/* Language Toggle */}
+                    <div className="mb-8 flex justify-end">
+                        <div className="inline-flex rounded-lg border border-gray-200 bg-gray-50 p-0.5 shadow-sm">
+                            <button
+                                type="button"
+                                onClick={() => setLocale("vi")}
+                                className={locale === "vi" ? "rounded-md bg-[#1a3d8f] px-3 py-1.5 text-xs font-semibold text-white" : "rounded-md px-3 py-1.5 text-xs font-semibold text-gray-400 hover:text-gray-600"}
+                            >
+                                VI
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setLocale("en")}
+                                className={locale === "en" ? "rounded-md bg-[#1a3d8f] px-3 py-1.5 text-xs font-semibold text-white" : "rounded-md px-3 py-1.5 text-xs font-semibold text-gray-400 hover:text-gray-600"}
+                            >
+                                EN
+                            </button>
+                        </div>
                     </div>
 
-                    <div className="w-full max-w-[380px]">
-                        <h1 className="mb-3 text-[28px] font-[700] text-[#111827]">{t("title")}</h1>
-                        <div className="mb-8 text-[14px] font-medium text-[#6b7280]">{t("subtitle")}</div>
+                    <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
+                    <p className="mt-2 text-sm text-gray-500">{t("subtitle")}</p>
 
-                        <form onSubmit={handleSubmit(onSubmit)} noValidate className="rounded-xl bg-white p-6 shadow-sm">
-                            {serverError && (
-                                <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                                    {serverError}
-                                </div>
-                            )}
-
-                            <div className="mb-4">
-                                <label className="mb-2 block text-sm font-semibold text-gray-800">{t("username")}</label>
-                                <div className="relative">
-                                    <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#9ca3af]">
-                                        <IconUser className="h-5 w-5" />
-                                    </span>
-                                    <input
-                                        {...register("username")}
-                                        className={`${inputBase} ${inputFocus} ${errors.username ? inputError : ""} pl-10`}
-                                        placeholder={t("usernamePlaceholder")}
-                                    />
-                                </div>
-                                {errors.username && <p className="mt-2 text-[12px] text-[#ef4444]">{errors.username.message}</p>}
+                    <form onSubmit={handleSubmit(onSubmit)} noValidate className="mt-8">
+                        {serverError && (
+                            <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                                {serverError}
                             </div>
+                        )}
 
-                            <div className="mb-4">
-                                <label className="mb-2 block text-sm font-semibold text-gray-800">{t("password")}</label>
-                                <div className="relative">
-                                    <input
-                                        {...register("password")}
-                                        className={`${inputBase} ${inputFocus} ${errors.password ? inputError : ""} pr-12`}
-                                        placeholder={t("passwordPlaceholder")}
-                                        type={showPassword ? "text" : "password"}
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowPassword((s) => !s)}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-2 text-[#1e3a6e] hover:bg-gray-50"
-                                    >
-                                        {showPassword ? <IconEyeOff className="h-5 w-5" /> : <IconEye className="h-5 w-5" />}
-                                    </button>
-                                </div>
-                                {errors.password && <p className="mt-2 text-[12px] text-[#ef4444]">{errors.password.message}</p>}
+                        <div className="mb-5">
+                            <label className="mb-1.5 block text-sm font-semibold text-gray-700">{t("username")}</label>
+                            <div className="relative">
+                                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                                    <IconUser className="h-5 w-5" />
+                                </span>
+                                <input
+                                    {...register("username")}
+                                    className={`${inputBase} ${inputFocus} ${errors.username ? inputError : ""} pl-10`}
+                                    placeholder={t("usernamePlaceholder")}
+                                />
                             </div>
+                            {errors.username && <p className="mt-1.5 text-xs text-red-500">{errors.username.message}</p>}
+                        </div>
 
-                            <button
-                                disabled={submitting}
-                                type="submit"
-                                className="inline-flex w-full items-center justify-center rounded-md bg-[#1e3a6e] px-4 py-2.5 text-sm font-bold text-white hover:bg-[#1a3060] disabled:cursor-not-allowed disabled:opacity-60"
-                            >
-                                {submitting ? (
-                                    <span className="inline-flex items-center gap-2">
-                                        <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                                        {t("loading")}
-                                    </span>
-                                ) : (
-                                    t("submit")
-                                )}
-                            </button>
-
-                            <div className="mt-4 text-center text-sm text-slate-500">
-                                <span>{t("noAccount")}</span>
+                        <div className="mb-6">
+                            <label className="mb-1.5 block text-sm font-semibold text-gray-700">{t("password")}</label>
+                            <div className="relative">
+                                <input
+                                    {...register("password")}
+                                    className={`${inputBase} ${inputFocus} ${errors.password ? inputError : ""} pr-12`}
+                                    placeholder={t("passwordPlaceholder")}
+                                    type={showPassword ? "text" : "password"}
+                                />
                                 <button
                                     type="button"
-                                    onClick={() => router.push("/register")}
-                                    className="font-semibold text-[#1e3a6e] hover:text-[#173359]"
+                                    onClick={() => setShowPassword((s) => !s)}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-2 text-gray-400 hover:text-gray-600"
                                 >
-                                    {t("register")}
+                                    {showPassword ? <IconEyeOff className="h-5 w-5" /> : <IconEye className="h-5 w-5" />}
                                 </button>
                             </div>
-                        </form>
-                    </div>
+                            {errors.password && <p className="mt-1.5 text-xs text-red-500">{errors.password.message}</p>}
+                        </div>
+
+                        <button
+                            disabled={submitting}
+                            type="submit"
+                            className="inline-flex w-full items-center justify-center rounded-lg bg-[#f97316] px-4 py-3 text-sm font-bold text-white shadow-lg shadow-orange-500/25 transition-all hover:bg-[#ea580c] hover:shadow-xl hover:shadow-orange-500/30 disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                            {submitting ? (
+                                <span className="inline-flex items-center gap-2">
+                                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                                    {t("loading")}
+                                </span>
+                            ) : (
+                                t("submit")
+                            )}
+                        </button>
+
+                        <div className="mt-6 text-center text-sm text-gray-500">
+                            <span>{t("noAccount")}</span>
+                            <button
+                                type="button"
+                                onClick={() => router.push("/register")}
+                                className="ml-1 font-semibold text-[#1a3d8f] hover:text-[#0f2460]"
+                            >
+                                {t("register")}
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

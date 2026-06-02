@@ -85,15 +85,7 @@ export default function Sidebar({ open, user, onLogout }: SidebarProps) {
             <div className={open ? "flex h-full w-64 flex-col" : "hidden"}>
                 <div className="flex h-full flex-col">
                     <div className="px-5 py-6">
-                        <div className="flex items-center gap-3">
-                            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-950/40">
-                                <span className="text-sm font-bold">TL</span>
-                            </div>
-                            <div>
-                                <div className="text-xs font-semibold uppercase tracking-widest text-slate-400">TL MARKET</div>
-                                <div className="text-base font-bold text-white">Product Manager</div>
-                            </div>
-                        </div>
+                        <img src="/logo.png" alt="TL Market" className="h-12 w-auto" />
                     </div>
 
                     <nav className="mt-2 flex-1 space-y-1 px-3">
