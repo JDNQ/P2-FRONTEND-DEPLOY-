@@ -100,7 +100,7 @@ export default function Sidebar({ open, user, onLogout }: SidebarProps) {
                                 key={item.href}
                                 href={item.href}
                                 label={item.label}
-                                active={pathname === item.href || pathname.startsWith(item.href)}
+                                active={pathname === item.href}
                             />
                         ))}
                     </nav>
