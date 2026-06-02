@@ -1,3 +1,5 @@
+// === SIDEBAR.TSX - CẢI TIẾN SCROLL ===
+
 "use client";
 
 import React from "react";
@@ -78,17 +80,18 @@ export default function Sidebar({ open, user, onLogout }: SidebarProps) {
 
     return (
         <aside
-            className={`h-screen overflow-hidden border-r border-white/5 bg-gradient-to-b from-slate-900 to-[#0a0f1e] text-white shadow-2xl transition-all duration-300 ${open ? "w-64" : "w-0"
+            className={`h-screen border-r border-white/5 bg-gradient-to-b from-slate-900 to-[#0a0f1e] text-white shadow-2xl transition-all duration-300 overflow-hidden ${open ? "w-64" : "w-0"
                 }`}
-            aria-hidden="true"
         >
             <div className={open ? "flex h-full w-64 flex-col" : "hidden"}>
-                <div className="flex h-full flex-col">
-                    <div className="px-5 py-6">
+                <div className="flex h-full flex-col overflow-hidden">
+                    {/* Logo */}
+                    <div className="px-5 py-6 shrink-0">
                         <img src="/logo.png" alt="TL Market" className="h-12 w-auto" />
                     </div>
 
-                    <nav className="mt-2 flex-1 space-y-1 px-3">
+                    {/* Navigation - Có scroll nếu quá dài */}
+                    <nav className="mt-2 flex-1 space-y-1 px-3 overflow-y-auto">
                         <div className="mb-2 px-3 text-xs font-semibold uppercase tracking-widest text-slate-500">MENU</div>
                         {navItems.map((item) => (
                             <NavItem
@@ -100,7 +103,8 @@ export default function Sidebar({ open, user, onLogout }: SidebarProps) {
                         ))}
                     </nav>
 
-                    <div className="border-t border-white/10 px-4 py-4">
+                    {/* User info + Logout */}
+                    <div className="border-t border-white/10 px-4 py-4 shrink-0">
                         <div className="flex items-center gap-3">
                             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-sm font-bold text-white shadow-lg shadow-blue-950/30">
                                 {initials}
@@ -113,7 +117,7 @@ export default function Sidebar({ open, user, onLogout }: SidebarProps) {
                             </div>
                         </div>
 
-                        {onLogout ? (
+                        {onLogout && (
                             <button
                                 type="button"
                                 onClick={onLogout}
@@ -122,7 +126,7 @@ export default function Sidebar({ open, user, onLogout }: SidebarProps) {
                                 <LogOut className="h-4 w-4" />
                                 {t("logout")}
                             </button>
-                        ) : null}
+                        )}
                     </div>
                 </div>
             </div>

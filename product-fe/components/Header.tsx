@@ -1,10 +1,11 @@
+// === HEADER.TSX - XÓA NÚT LOGOUT Ở ĐÂY ===
+
 "use client";
 
 import React from "react";
 import Link from "next/link";
 import { useLocale } from "@/lib/useTranslations";
-
-import { Bell, ChevronDown, LogOut, Menu, Search, User } from "lucide-react";
+import { Bell, ChevronDown, Menu, Search, User } from "lucide-react";
 
 export type UserInfo = {
     username: string;
@@ -14,10 +15,10 @@ export type UserInfo = {
 export type HeaderProps = {
     onToggleSidebar: () => void;
     user?: UserInfo;
-    onLogout?: () => void;
+    onLogout?: () => void;   // vẫn giữ prop này để sau này dùng nếu cần
 };
 
-export default function Header({ onToggleSidebar, user, onLogout }: HeaderProps) {
+export default function Header({ onToggleSidebar, user }: HeaderProps) {
     const { locale, setLocale } = useLocale();
 
     return (
@@ -87,16 +88,7 @@ export default function Header({ onToggleSidebar, user, onLogout }: HeaderProps)
                     <ChevronDown className="h-4 w-4 text-gray-500" />
                 </div>
 
-                {onLogout ? (
-                    <button
-                        type="button"
-                        onClick={onLogout}
-                        className="inline-flex h-10 items-center gap-2 rounded-md bg-[#1e3a6e] px-3 py-2 text-sm font-semibold text-white hover:bg-[#173359]"
-                    >
-                        <LogOut className="h-4 w-4" />
-                        Logout
-                    </button>
-                ) : null}
+                {/* === ĐÃ XÓA NÚT LOGOUT === */}
 
                 <div className="sm:hidden">
                     <Link href="/" className="h-10 w-10" aria-label="Home" />
