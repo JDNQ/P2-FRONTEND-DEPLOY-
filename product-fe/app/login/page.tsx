@@ -162,57 +162,24 @@ export default function LoginPage() {
         try {
             const response = (await login(data)) as LoginResponse;
 
-            // DEBUG: log để kiểm tra cấu trúc response từ backend
-            console.log("LOGIN RESPONSE:", JSON.stringify(response, null, 2));
-
-            // Lấy token - hỗ trợ tất cả cấu trúc NestJS có thể trả về:
-            // access_token (snake_case - phổ biến nhất với NestJS)
-            // accessToken (camelCase)
-            // token
-            // hoặc bọc trong .data
-            const token =
-                response.access_token ??
-                response.accessToken ??
-                response.token ??
-                response.data?.access_token ??
-                response.data?.accessToken ??
-                response.data?.token ??
-                response.data?.data?.access_token ??
-                response.data?.data?.accessToken ??
-                response.data?.data?.token;
+            const token = response.data?.access_token;
+            const user = response.data?.user;
 
             if (!token) {
-                throw new Error(response.message ?? "Đăng nhập thất bại");
+                setServerError("Không nhận được token từ server.");
+                return;
             }
 
-            // Lấy user - có thể nằm ở nhiều chỗ khác nhau, hoặc backend không trả user
-            // thì dùng fallback từ dữ liệu form + thông tin có sẵn
-            const user =
-                response.user ??
-                response.data?.user ??
-                response.data?.data?.user ??
-                // Trường hợp backend trả thông tin user trực tiếp ở root level
-                (response.username
-                    ? { username: response.username, role: response.role ?? "USER", email: response.email }
-                    : null) ??
-                // Fallback: dùng username từ form, role mặc định USER
-                { username: data.username, role: "USER" };
+            if (!user?.username || !user?.role) {
+                setServerError("Không nhận được thông tin user từ server.");
+                return;
+            }
 
-            // Lưu token vào cookie (7 ngày)
-            setCookie("token", token, { path: "/", maxAge: 60 * 60 * 24 * 7 });
+            setCookie("token", token, { path: "/", maxAge: 60 * 60 * 24 });
+            localStorage.setItem("user", JSON.stringify({ username: user.username, role: user.role }));
 
-            // Lưu thông tin user vào localStorage
-            localStorage.setItem("user", JSON.stringify(user));
-
-            // Redirect theo role
-            const role = (user.role ?? "USER").toUpperCase();
-            const route =
-                role === "ADMIN"
-                    ? "/dashboard/admin"
-                    : role === "MANAGER"
-                        ? "/dashboard/manager"
-                        : "/dashboard/user";
-
+            const role = user.role.toUpperCase();
+            const route = role === "ADMIN" ? "/dashboard/admin" : role === "MANAGER" ? "/dashboard/manager" : "/dashboard/user";
             router.push(route);
         } catch (error: unknown) {
             // Lấy message lỗi từ axios response hoặc Error object
