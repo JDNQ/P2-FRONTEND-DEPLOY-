@@ -70,14 +70,16 @@ export function ProductForm({
             productName: data.productName?.trim() || "",
             description: data.description?.trim() || "",
             basePrice: Number(data.basePrice) || 0,
-            variants: data.variants.map((v) => ({
-                variantName: v.variantName?.trim() || "",
-                extraPrice: Number(v.extraPrice) || 0,
-                stock: Number(v.stock) || 0,
-            })),
+            variants: data.variants
+                .filter(v => v.variantName?.trim()) // Lọc variant rỗng
+                .map((v) => ({
+                    variantName: v.variantName?.trim() || "",
+                    extraPrice: Number(v.extraPrice) || 0,
+                    stock: Number(v.stock) || 0,
+                })),
         };
 
-        console.log("📤 Payload sau transform:", payload);
+        console.log("📤 Payload sau transform (TẠO MỚI):", payload);
         await onSubmit(payload);
     };
 
@@ -86,7 +88,7 @@ export function ProductForm({
             <form onSubmit={handleSubmit(onValid)} className="w-full" noValidate>
                 <div className="rounded-xl border border-gray-200 bg-white p-6 space-y-6">
 
-                    {/* Chọn Shop - Chỉ hiển thị khi tạo mới (nhưng không gửi shopId) */}
+                    {/* Chọn Shop - Chỉ hiển thị khi tạo mới */}
                     {!isEdit && shops.length > 0 && (
                         <div>
                             <label className="text-sm font-medium text-gray-800">Chọn Shop <span className="text-red-500">*</span></label>
