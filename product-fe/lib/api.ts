@@ -79,8 +79,12 @@ api.interceptors.response.use(
   },
 );
 
-function extractData<T>(res: { data: T }): T {
-  return res.data;
+function extractData<T>(res: { data: unknown }): T {
+  const body = res.data as { success?: boolean; data?: T } | T;
+  if (body && typeof body === "object" && "data" in body && (body as { success?: boolean }).success !== undefined) {
+    return (body as { data: T }).data;
+  }
+  return body as T;
 }
 
 export async function login(data: { username: string; password: string }) {
