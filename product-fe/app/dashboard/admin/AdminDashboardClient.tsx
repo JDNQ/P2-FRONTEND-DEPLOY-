@@ -60,6 +60,36 @@ const createManagerSchema = z.object({
 
 type CreateManagerForm = z.infer<typeof createManagerSchema>;
 
+const getRoleStyles = (role: string) => {
+    const normalizedRole = role.toUpperCase();
+    if (normalizedRole === "ADMIN") {
+        return {
+            avatar: "from-red-500 to-rose-600",
+            badge: "border-red-200 bg-red-50 text-red-700",
+        };
+    }
+    if (normalizedRole === "MANAGER") {
+        return {
+            avatar: "from-blue-500 to-indigo-600",
+            badge: "border-blue-200 bg-blue-50 text-blue-700",
+        };
+    }
+    return {
+        avatar: "from-slate-500 to-slate-700",
+        badge: "border-slate-200 bg-slate-100 text-slate-700",
+    };
+};
+
+const getInitials = (name: string) => {
+    if (!name || name === "-") return "U";
+    return name
+        .split(" ")
+        .map((part) => part.charAt(0))
+        .join("")
+        .slice(0, 2)
+        .toUpperCase();
+};
+
 export default function AdminDashboardClient() {
     const t = useTranslations("admin");
 
@@ -71,6 +101,7 @@ export default function AdminDashboardClient() {
     const [toast, setToast] = useState<{ type: "success" | "error"; message: string } | null>(null);
     const [showModal, setShowModal] = useState(false);
     const [createLoading, setCreateLoading] = useState(false);
+    const [search, setSearch] = useState("");
 
     const {
         register,
@@ -79,11 +110,7 @@ export default function AdminDashboardClient() {
         reset,
     } = useForm<CreateManagerForm>({
         resolver: zodResolver(createManagerSchema),
-        defaultValues: {
-            username: "",
-            password: "",
-            email: "",
-        },
+        defaultValues: { username: "", password: "", email: "" },
     });
 
     const inputBase =
@@ -91,30 +118,30 @@ export default function AdminDashboardClient() {
     const inputFocus = "focus:border-rose-400 focus:shadow-[0_0_0_4px_rgba(244,63,94,0.12)]";
     const inputError = "border-red-300 focus:border-red-400 focus:shadow-[0_0_0_4px_rgba(239,68,68,0.12)]";
 
+    // FIX: remove `t` from dependency array to prevent infinite loop
     useEffect(() => {
-        let mounted = true;
         const load = async () => {
             try {
                 setLoading(true);
-                const [usersRes, productsRes, shopsRes] = await Promise.all([getUsers(), getProducts(), getShops()]);
-                if (!mounted) return;
+                const [usersRes, productsRes, shopsRes] = await Promise.all([
+                    getUsers(),
+                    getProducts(),
+                    getShops(),
+                ]);
+                console.log("API results:", usersRes, productsRes, shopsRes);
                 setUsers(Array.isArray(usersRes) ? usersRes : []);
                 setProducts(Array.isArray(productsRes) ? productsRes : []);
                 setShops(Array.isArray(shopsRes) ? shopsRes : []);
-            } catch {
-                if (!mounted) return;
-                setError(t("loadDataError"));
+            } catch (err) {
+                console.error("Load error:", err);
+                setError("Không thể tải dữ liệu từ server.");
             } finally {
-                if (!mounted) return;
                 setLoading(false);
             }
         };
 
         load();
-        return () => {
-            mounted = false;
-        };
-    }, [t]);
+    }, []); // empty deps - only run once on mount
 
     useEffect(() => {
         if (!toast) return;
@@ -127,96 +154,43 @@ export default function AdminDashboardClient() {
     const totalShops = shops.length;
     const totalProducts = products.length;
 
-    const userRecords = users.map((row) => ({
-        id: row.id ?? row._id ?? "",
-        username: row.username ?? "-",
-        email: row.email ?? "-",
-        role: row.role ?? "-",
-    }));
+    const userRecords = users
+        .map((row) => ({
+            id: row.id ?? row._id ?? "",
+            username: row.username ?? "-",
+            email: row.email ?? "-",
+            role: row.role ?? "-",
+        }))
+        .filter((row) => {
+            if (!search.trim()) return true;
+            const term = search.toLowerCase();
+            return row.username.toLowerCase().includes(term) || row.email.toLowerCase().includes(term);
+        });
 
     const now = new Date();
     const currentHour = now.getHours();
-    const greetingTime = currentHour < 12 ? t("morning") : currentHour < 18 ? t("afternoon") : t("evening");
+    const greetingTime = currentHour < 12 ? t("greeting") : currentHour < 18 ? t("greetingAfternoon") : t("greetingEvening");
     const currentTime = now.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
 
     const stats = [
-        {
-            label: t("totalUsers"),
-            value: totalUsers,
-            icon: Users,
-            gradient: "from-blue-500 to-cyan-500",
-            ring: "bg-blue-50 text-blue-600",
-        },
-        {
-            label: t("totalShops"),
-            value: totalShops,
-            icon: Store,
-            gradient: "from-emerald-500 to-teal-500",
-            ring: "bg-emerald-50 text-emerald-600",
-        },
-        {
-            label: t("totalProducts"),
-            value: totalProducts,
-            icon: Package,
-            gradient: "from-violet-500 to-fuchsia-500",
-            ring: "bg-violet-50 text-violet-600",
-        },
-        {
-            label: t("totalVariants"),
-            value: totalVariants,
-            icon: Layers,
-            gradient: "from-amber-500 to-orange-500",
-            ring: "bg-amber-50 text-amber-600",
-        },
+        { label: t("totalUsers"), value: totalUsers, icon: Users, gradient: "from-blue-500 to-cyan-500", ring: "bg-blue-50 text-blue-600" },
+        { label: t("totalShops"), value: totalShops, icon: Store, gradient: "from-emerald-500 to-teal-500", ring: "bg-emerald-50 text-emerald-600" },
+        { label: t("totalProducts"), value: totalProducts, icon: Package, gradient: "from-violet-500 to-fuchsia-500", ring: "bg-violet-50 text-violet-600" },
+        { label: t("totalVariants"), value: totalVariants, icon: Layers, gradient: "from-amber-500 to-orange-500", ring: "bg-amber-50 text-amber-600" },
     ];
-
-    const getRoleStyles = (role: string) => {
-        const normalizedRole = role.toUpperCase();
-        if (normalizedRole === "ADMIN") {
-            return {
-                avatar: "from-red-500 to-rose-600",
-                badge: "border-red-200 bg-red-50 text-red-700",
-            };
-        }
-        if (normalizedRole === "MANAGER") {
-            return {
-                avatar: "from-blue-500 to-indigo-600",
-                badge: "border-blue-200 bg-blue-50 text-blue-700",
-            };
-        }
-        return {
-            avatar: "from-slate-500 to-slate-700",
-            badge: "border-slate-200 bg-slate-100 text-slate-700",
-        };
-    };
-
-    const getInitials = (name: string) => {
-        if (!name || name === "-") return "U";
-        return name
-            .split(" ")
-            .map((part) => part.charAt(0))
-            .join("")
-            .slice(0, 2)
-            .toUpperCase();
-    };
 
     const handleCreateManager = async (data: CreateManagerForm) => {
         setCreateLoading(true);
         setToast(null);
-
         try {
-            await createManager({
-                username: data.username,
-                password: data.password,
-                email: data.email ?? undefined,
-            });
-            setToast({ type: "success", message: t("createManagerSuccess") });
+            await createManager({ username: data.username, password: data.password, email: data.email ?? undefined });
+            setToast({ type: "success", message: "Manager mới đã được tạo." });
             reset();
             setShowModal(false);
             const usersRes = await getUsers();
             setUsers(Array.isArray(usersRes) ? usersRes : []);
-        } catch (error: unknown) {
-            const message = error instanceof Error ? error.message : t("createManagerError");
+        } catch (err: unknown) {
+            const message = err instanceof Error ? err.message : "Tạo manager thất bại.";
             setToast({ type: "error", message });
         } finally {
             setCreateLoading(false);
@@ -224,21 +198,21 @@ export default function AdminDashboardClient() {
     };
 
     const handleDeleteUser = async (userId: string) => {
-        const confirmed = window.confirm(t("confirmDeleteUser"));
+        const confirmed = window.confirm("Bạn có chắc chắn muốn xoá user này không?");
         if (!confirmed) return;
-
         try {
             await deleteUser(userId);
-            setToast({ type: "success", message: t("deleteUserSuccess") });
-            setUsers((prev) => prev.filter((item) => item.id !== userId));
+            setToast({ type: "success", message: "User đã được xoá." });
+            setUsers((prev) => prev.filter((item) => (item.id ?? item._id) !== userId));
         } catch {
-            setToast({ type: "error", message: t("deleteUserError") });
+            setToast({ type: "error", message: "Không thể xoá user." });
         }
     };
 
     return (
         <div className="min-h-screen bg-slate-50 px-4 py-6 text-slate-900 sm:px-6 lg:px-8">
             <div className="mx-auto flex max-w-7xl flex-col gap-6">
+                {/* Header */}
                 <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 p-6 shadow-lg">
                     <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
                     <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
@@ -248,16 +222,16 @@ export default function AdminDashboardClient() {
                                 Admin Control Center
                             </div>
                             <h1 className="mt-4 text-2xl font-semibold text-white sm:text-3xl">
-                                {t("greeting", { time: greetingTime })}
+                                {greetingTime}, Admin!
                             </h1>
                             <p className="mt-2 max-w-2xl text-sm font-medium text-slate-300">
-                                {t("currentTimeMessage", { time: currentTime })}
+                                Bây giờ là {currentTime}. {t("currentTimeMessage")}
                             </p>
                         </div>
                         <button
                             type="button"
                             onClick={() => setShowModal(true)}
-                            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-red-500 to-rose-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-rose-950/30 transition hover:-translate-y-0.5 hover:from-red-400 hover:to-rose-500 focus:outline-none focus:ring-4 focus:ring-rose-300/30"
+                            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-red-500 to-rose-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-rose-950/30 transition hover:-translate-y-0.5 hover:from-red-400 hover:to-rose-500"
                         >
                             <Plus className="h-4 w-4" />
                             {t("createManager")}
@@ -265,32 +239,22 @@ export default function AdminDashboardClient() {
                     </div>
                 </div>
 
+                {/* Toast */}
                 {toast ? (
-                    <div
-                        className={`fixed right-4 top-4 z-[60] flex w-[calc(100%-2rem)] max-w-sm items-start gap-3 rounded-2xl border bg-white/95 p-4 text-sm font-medium shadow-lg backdrop-blur transition sm:right-6 sm:top-6 ${toast.type === "success" ? "border-emerald-200 text-emerald-800" : "border-red-200 text-red-800"
-                            }`}
-                    >
-                        <div
-                            className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${toast.type === "success" ? "bg-emerald-100 text-emerald-600" : "bg-red-100 text-red-600"
-                                }`}
-                        >
+                    <div className={`fixed right-4 top-4 z-[60] flex w-[calc(100%-2rem)] max-w-sm items-start gap-3 rounded-2xl border bg-white/95 p-4 text-sm font-medium shadow-lg backdrop-blur sm:right-6 sm:top-6 ${toast.type === "success" ? "border-emerald-200 text-emerald-800" : "border-red-200 text-red-800"}`}>
+                        <div className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${toast.type === "success" ? "bg-emerald-100 text-emerald-600" : "bg-red-100 text-red-600"}`}>
                             {toast.type === "success" ? <CheckCircle2 className="h-5 w-5" /> : <AlertCircle className="h-5 w-5" />}
                         </div>
-                        <div className="min-w-0 flex-1">
-                            <p className="font-semibold">{toast.type === "success" ? t("success") : t("error")}</p>
-                            <p className="mt-0.5 text-slate-600">{toast.message}</p>
-                        </div>
+                        <p className="mt-0.5 text-slate-600">{toast.message}</p>
                     </div>
                 ) : null}
 
+                {/* Stats */}
                 <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
                     {stats.map((stat) => {
                         const StatIcon = stat.icon;
                         return (
-                            <div
-                                key={stat.label}
-                                className="group rounded-2xl border border-white/70 bg-white/80 p-5 shadow-lg shadow-slate-200/60 backdrop-blur transition hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-200"
-                            >
+                            <div key={stat.label} className="group rounded-2xl border border-white/70 bg-white/80 p-5 shadow-lg shadow-slate-200/60 backdrop-blur transition hover:-translate-y-1 hover:shadow-xl">
                                 <div className="flex items-start justify-between gap-4">
                                     <div className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${stat.gradient} text-white shadow-lg`}>
                                         <StatIcon className="h-6 w-6" />
@@ -306,7 +270,8 @@ export default function AdminDashboardClient() {
                         );
                     })}
                 </div>
-                {/* DANH SÁCH USERS */}
+
+                {/* User List */}
                 <div className="rounded-2xl border border-white/70 bg-white/85 p-6 shadow-sm backdrop-blur">
                     <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                         <div>
@@ -316,6 +281,8 @@ export default function AdminDashboardClient() {
                         <div className="relative w-full lg:max-w-sm">
                             <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                             <input
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
                                 className="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50/80 pl-11 pr-4 text-sm font-medium text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-blue-300 focus:bg-white focus:shadow-[0_0_0_4px_rgba(59,130,246,0.12)]"
                                 placeholder={t("searchUserPlaceholder")}
                             />
@@ -345,7 +312,7 @@ export default function AdminDashboardClient() {
                                 <Inbox className="h-7 w-7" />
                             </div>
                             <h3 className="mt-4 text-base font-semibold text-slate-900">{t("noUsers")}</h3>
-                            <p className="mt-1 text-sm font-medium text-slate-500">{t("noUsersDescription")}</p>
+                            <p className="mt-1 text-sm font-medium text-slate-500">{t("noUsersSubtitle")}</p>
                         </div>
                     ) : (
                         <div className="overflow-hidden rounded-2xl border border-slate-100">
@@ -384,7 +351,7 @@ export default function AdminDashboardClient() {
                                                     <td className="px-5 py-4 text-right">
                                                         <button
                                                             type="button"
-                                                            onClick={() => handleDeleteUser(row.id!)}
+                                                            onClick={() => handleDeleteUser(row.id)}
                                                             className="inline-flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-600 transition hover:border-red-300 hover:bg-red-100"
                                                         >
                                                             <Trash2 className="h-4 w-4" />
@@ -402,6 +369,7 @@ export default function AdminDashboardClient() {
                 </div>
             </div>
 
+            {/* Modal */}
             {showModal ? (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-md">
                     <div className="w-full max-w-xl rounded-2xl border border-white/70 bg-white/95 p-6 shadow-2xl shadow-slate-950/20 backdrop-blur">
@@ -411,29 +379,28 @@ export default function AdminDashboardClient() {
                                     <UserPlus className="h-6 w-6" />
                                 </div>
                                 <div>
-                                    <h3 className="text-xl font-semibold text-slate-950">{t("createNewManager")}</h3>
-                                    <p className="mt-1 text-sm font-medium text-slate-500">{t("createManagerDescription")}</p>
+                                    <h3 className="text-xl font-semibold text-slate-950">{t("createManagerTitle")}</h3>
+                                    <p className="mt-1 text-sm font-medium text-slate-500">{t("createManagerSubtitle")}</p>
                                 </div>
                             </div>
                             <button
                                 type="button"
                                 onClick={() => setShowModal(false)}
+                                aria-label="Đóng"
+                                title="Đóng"
                                 className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-600 transition hover:bg-slate-200 hover:text-slate-900"
-                                aria-label={t("close")}   // ← Đã fix
-                                title={t("close")}        // ← Hỗ trợ thêm
                             >
                                 <X className="h-5 w-5" />
                             </button>
                         </div>
                         <form onSubmit={handleSubmit(handleCreateManager)} className="space-y-4">
-                            {/* Form fields with translations */}
                             <div>
                                 <div className="relative">
                                     <UserPlus className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
                                     <input
                                         {...register("username")}
                                         className={`${inputBase} ${inputFocus} ${errors.username ? inputError : ""}`}
-                                        placeholder={t("usernamePlaceholder")}
+                                        placeholder="Username manager"
                                     />
                                     <label className="pointer-events-none absolute left-12 top-2 text-xs font-medium text-slate-500 transition peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-focus:top-2 peer-focus:text-xs peer-focus:text-rose-600">
                                         {t("username")}
@@ -441,9 +408,35 @@ export default function AdminDashboardClient() {
                                 </div>
                                 {errors.username && <p className="mt-2 text-sm font-medium text-red-600">{errors.username.message}</p>}
                             </div>
-
-                            {/* Similar for password and email fields... */}
-
+                            <div>
+                                <div className="relative">
+                                    <Lock className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
+                                    <input
+                                        type="password"
+                                        {...register("password")}
+                                        className={`${inputBase} ${inputFocus} ${errors.password ? inputError : ""}`}
+                                        placeholder="Password"
+                                    />
+                                    <label className="pointer-events-none absolute left-12 top-2 text-xs font-medium text-slate-500 transition peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-focus:top-2 peer-focus:text-xs peer-focus:text-rose-600">
+                                        Password
+                                    </label>
+                                </div>
+                                {errors.password && <p className="mt-2 text-sm font-medium text-red-600">{errors.password.message}</p>}
+                            </div>
+                            <div>
+                                <div className="relative">
+                                    <Mail className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
+                                    <input
+                                        {...register("email")}
+                                        className={`${inputBase} ${inputFocus} ${errors.email ? inputError : ""}`}
+                                        placeholder="Email (tùy chọn)"
+                                    />
+                                    <label className="pointer-events-none absolute left-12 top-2 text-xs font-medium text-slate-500 transition peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-focus:top-2 peer-focus:text-xs peer-focus:text-rose-600">
+                                        Email
+                                    </label>
+                                </div>
+                                {errors.email && <p className="mt-2 text-sm font-medium text-red-600">{errors.email.message}</p>}
+                            </div>
                             <div className="flex flex-col gap-3 pt-2 sm:flex-row-reverse">
                                 <button
                                     type="submit"
@@ -451,7 +444,7 @@ export default function AdminDashboardClient() {
                                     className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-red-500 to-rose-600 px-5 text-sm font-semibold text-white shadow-lg shadow-rose-200 transition hover:-translate-y-0.5 hover:from-red-400 hover:to-rose-500 disabled:cursor-not-allowed disabled:opacity-60"
                                 >
                                     <Plus className="h-4 w-4" />
-                                    {createLoading ? t("creating") : t("createManager")}
+                                    {createLoading ? t("creating") : t("create")}
                                 </button>
                                 <button
                                     type="button"
