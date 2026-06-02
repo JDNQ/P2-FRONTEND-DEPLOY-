@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "@/lib/useTranslations";
 import { LayoutDashboard, LogOut, Package, Store, Users } from "lucide-react";
 
 export type SidebarProps = {
@@ -41,7 +42,9 @@ function NavItem(props: { href: string; label: string; active?: boolean }) {
 }
 
 export default function Sidebar({ open, user, onLogout }: SidebarProps) {
+    const t = useTranslations("nav");
     const pathname = usePathname();
+
     const initials = user?.username?.charAt(0).toUpperCase() ?? "G";
     const roleBadge =
         user?.role === "ADMIN"
@@ -53,24 +56,24 @@ export default function Sidebar({ open, user, onLogout }: SidebarProps) {
     const navItems = user
         ? user.role === "ADMIN"
             ? [
-                { href: "/dashboard/admin", label: "Tổng quan" },
-                { href: "/dashboard/admin/users", label: "Quản lý Users" },
-                { href: "/dashboard/admin/shops", label: "Quản lý Shops" },
-                { href: "/products", label: "Sản phẩm " },
+                { href: "/dashboard/admin", label: t("overview") },
+                { href: "/dashboard/admin/users", label: t("manageUsers") },
+                { href: "/dashboard/admin/shops", label: t("manageShops") },
+                { href: "/products", label: t("products") },
             ]
             : user.role === "MANAGER"
                 ? [
-                    { href: "/dashboard/manager", label: "Tổng quan" },
-                    { href: "/dashboard/manager#shops", label: "Shop của Tài" },
-                    { href: "/products", label: "Sản phẩm " },
+                    { href: "/dashboard/manager", label: t("overview") },
+                    { href: "/dashboard/manager#shops", label: t("myShop") },
+                    { href: "/products", label: t("products") },
                 ]
                 : [
-                    { href: "/dashboard/user", label: "Tổng quan" },
-                    { href: "/products", label: "Sản phẩm " },
+                    { href: "/dashboard/user", label: t("overview") },
+                    { href: "/products", label: t("products") },
                 ]
         : [
-            { href: "/", label: "Tổng quan" },
-            { href: "/products", label: "Sản phẩm " },
+            { href: "/", label: t("overview") },
+            { href: "/products", label: t("products") },
         ];
 
     return (
@@ -113,7 +116,7 @@ export default function Sidebar({ open, user, onLogout }: SidebarProps) {
                             <div className="min-w-0">
                                 <div className="truncate text-sm font-semibold text-white">{user?.username ?? "Guest"}</div>
                                 <div className={`mt-1 inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ring-1 ${roleBadge}`}>
-                                    {user?.role ?? "KhÃ¡ch"}
+                                    {user?.role ?? t("guest")}
                                 </div>
                             </div>
                         </div>
@@ -125,7 +128,7 @@ export default function Sidebar({ open, user, onLogout }: SidebarProps) {
                                 className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 px-3 py-2.5 text-sm font-semibold text-slate-300 transition-all hover:border-red-500/30 hover:bg-red-500/20 hover:text-red-400"
                             >
                                 <LogOut className="h-4 w-4" />
-                                Đăng Xuất
+                                {t("logout")}
                             </button>
                         ) : null}
                     </div>

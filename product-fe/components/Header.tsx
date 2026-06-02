@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import { useLocale } from "@/lib/useTranslations";
 
 import { Bell, ChevronDown, LogOut, Menu, Search, User } from "lucide-react";
 
@@ -17,6 +18,8 @@ export type HeaderProps = {
 };
 
 export default function Header({ onToggleSidebar, user, onLogout }: HeaderProps) {
+    const { locale, setLocale } = useLocale();
+
     return (
         <header className="sticky top-0 z-20 w-full border-b border-gray-200 bg-white">
             <div className="flex flex-wrap items-center gap-3 px-4 py-3">
@@ -42,10 +45,24 @@ export default function Header({ onToggleSidebar, user, onLogout }: HeaderProps)
                 <div className="hidden items-center gap-2 sm:flex">
                     <div className="rounded-md border border-gray-200 bg-white p-1">
                         <span className="sr-only">Language</span>
-                        <button type="button" className="rounded-sm bg-[#1e3a6e] px-3 py-1 text-xs font-semibold text-white">
+                        <button
+                            type="button"
+                            onClick={() => setLocale("en")}
+                            className={`rounded-sm px-3 py-1 text-xs font-semibold ${locale === "en"
+                                ? "bg-[#1e3a6e] text-white"
+                                : "text-gray-700 hover:bg-gray-50"
+                                }`}
+                        >
                             EN
                         </button>
-                        <button type="button" className="ml-1 rounded-sm px-3 py-1 text-xs font-semibold text-gray-700 hover:bg-gray-50">
+                        <button
+                            type="button"
+                            onClick={() => setLocale("vi")}
+                            className={`ml-1 rounded-sm px-3 py-1 text-xs font-semibold ${locale === "vi"
+                                ? "bg-[#1e3a6e] text-white"
+                                : "text-gray-700 hover:bg-gray-50"
+                                }`}
+                        >
                             VI
                         </button>
                     </div>
@@ -88,4 +105,3 @@ export default function Header({ onToggleSidebar, user, onLogout }: HeaderProps)
         </header>
     );
 }
-
