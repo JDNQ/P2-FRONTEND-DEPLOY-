@@ -9,12 +9,12 @@ import { VariantRow } from "@/components/VariantRow";
 
 // Định nghĩa type cho payload gửi lên backend
 export type ProductSubmitPayload = {
-    name: string;
+    productName: string;           // ← Đổi lại theo backend
     description: string;
     basePrice: number;
-    shopId: number;
+    shopId?: number;
     variants: Array<{
-        name: string;
+        variantName: string;       // ← Đổi lại theo backend
         extraPrice: number;
         stock: number;
     }>;
@@ -24,6 +24,7 @@ export type ProductFormProps = {
     defaultValues?: Partial<ProductFormData>;
     onSubmit: (data: ProductSubmitPayload) => Promise<void> | void;
     shops?: Array<{ id: number; shopName: string }>;
+    isEdit?: boolean;
 };
 
 const DEFAULT_VALUES: Partial<ProductFormData> = {
@@ -34,7 +35,13 @@ const DEFAULT_VALUES: Partial<ProductFormData> = {
     variants: [{ variantName: "", extraPrice: 0, stock: 0 }],
 };
 
-export function ProductForm({ defaultValues, onSubmit, shops = [] }: ProductFormProps) {
+export function ProductForm({
+    defaultValues,
+    onSubmit,
+    shops = [],
+    isEdit = false
+}: ProductFormProps) {
+
     const form = useForm<ProductFormData>({
         resolver: zodResolver(productSchema),
         defaultValues: { ...DEFAULT_VALUES, ...defaultValues },
@@ -62,12 +69,12 @@ export function ProductForm({ defaultValues, onSubmit, shops = [] }: ProductForm
         console.log("📤 Dữ liệu gốc từ form:", data);
 
         const payload: ProductSubmitPayload = {
-            name: data.productName?.trim() || "",
+            productName: data.productName?.trim() || "",
             description: data.description?.trim() || "",
             basePrice: Number(data.basePrice) || 0,
-            shopId: Number(data.shopId) || 1,
+            ...(!isEdit && { shopId: Number(data.shopId) || 1 }),   // Chỉ gửi shopId khi tạo mới
             variants: data.variants.map((v) => ({
-                name: v.variantName?.trim() || "",
+                variantName: v.variantName?.trim() || "",
                 extraPrice: Number(v.extraPrice) || 0,
                 stock: Number(v.stock) || 0,
             })),
@@ -83,8 +90,8 @@ export function ProductForm({ defaultValues, onSubmit, shops = [] }: ProductForm
             <form onSubmit={handleSubmit(onValid)} className="w-full" noValidate>
                 <div className="rounded-xl border border-gray-200 bg-white p-6 space-y-6">
 
-                    {/* Chọn Shop */}
-                    {shops.length > 0 && (
+                    {/* Chọn Shop - Chỉ hiển thị khi tạo mới */}
+                    {!isEdit && shops.length > 0 && (
                         <div>
                             <label className="text-sm font-medium text-gray-800">Chọn Shop <span className="text-red-500">*</span></label>
                             <select
