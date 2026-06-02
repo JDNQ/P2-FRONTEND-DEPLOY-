@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { api } from "@/lib/api";
+import { api, getProductById } from "@/lib/api";
 
 type ProductDetail = {
     id: string;
@@ -31,9 +31,9 @@ export default function ProductDetailPage() {
         (async () => {
             try {
                 setLoading(true);
-                const res = await api.get(`/products/${id}`);
+                const product = (await getProductById(id)) as ProductDetail;
                 if (!mounted) return;
-                setData(res.data);
+                setData(product);
             } catch (e: unknown) {
                 if (!mounted) return;
                 const message = e instanceof Error ? e.message : "Không thể tải chi tiết";
