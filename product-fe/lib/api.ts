@@ -150,5 +150,5 @@ export async function createProduct(data: unknown) {
 }
 
 export async function updateProduct(id: string, data: unknown) {
-  return extractData(await api.put(`/products/${id}`, data));
+  return extractData(await api.patch(`/products/${id}`, data));
 }
