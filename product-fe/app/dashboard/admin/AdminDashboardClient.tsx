@@ -306,7 +306,7 @@ export default function AdminDashboardClient() {
                         );
                     })}
                 </div>
-
+                {/* DANH SÁCH USERS */}
                 <div className="rounded-2xl border border-white/70 bg-white/85 p-6 shadow-sm backdrop-blur">
                     <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                         <div>
@@ -322,15 +322,14 @@ export default function AdminDashboardClient() {
                         </div>
                     </div>
 
-                    {/* Loading, Error, Empty states and Table remain with translated texts */}
                     {loading ? (
                         <div className="space-y-3 rounded-2xl border border-slate-100 bg-slate-50/70 p-4">
-                            {[0, 1, 2, 3].map((item) => (
+                            {[1, 2, 3, 4].map((item) => (
                                 <div key={item} className="flex animate-pulse items-center gap-4 rounded-2xl bg-white p-4 shadow-sm">
                                     <div className="h-11 w-11 rounded-full bg-slate-200" />
                                     <div className="flex-1 space-y-2">
                                         <div className="h-3 w-36 rounded-full bg-slate-200" />
-                                        <div className="h-3 w-56 max-w-full rounded-full bg-slate-100" />
+                                        <div className="h-3 w-56 rounded-full bg-slate-100" />
                                     </div>
                                 </div>
                             ))}
@@ -357,7 +356,7 @@ export default function AdminDashboardClient() {
                                             <th className="px-5 py-4 font-semibold">{t("username")}</th>
                                             <th className="px-5 py-4 font-semibold">{t("email")}</th>
                                             <th className="px-5 py-4 font-semibold">{t("role")}</th>
-                                            <th className="px-5 py-4 font-semibold">{t("actions")}</th>
+                                            <th className="px-5 py-4 font-semibold text-right">{t("actions")}</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-100 bg-white">
@@ -382,11 +381,11 @@ export default function AdminDashboardClient() {
                                                             {row.role}
                                                         </span>
                                                     </td>
-                                                    <td className="px-5 py-4">
+                                                    <td className="px-5 py-4 text-right">
                                                         <button
                                                             type="button"
                                                             onClick={() => handleDeleteUser(row.id!)}
-                                                            className="inline-flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-600 transition hover:border-red-300 hover:bg-red-100 focus:outline-none focus:ring-4 focus:ring-red-100"
+                                                            className="inline-flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-600 transition hover:border-red-300 hover:bg-red-100"
                                                         >
                                                             <Trash2 className="h-4 w-4" />
                                                             {t("delete")}
