@@ -29,30 +29,38 @@ export function useLocale() {
   return { locale, setLocale };
 }
 
+// Synchronous-style translation with ESLint disable for require
 export function useTranslations(namespace: string) {
   const { locale } = useLocale();
-  const [messages, setMessages] = useState<Record<string, string | object>>({});
 
-  // Load messages khi locale thay đổi
-  useState(() => {
-    import(`@/messages/${locale}.json`)
-      .then((mod) => {
-        setMessages(mod.default?.[namespace] || mod.default || {});
-      })
-      .catch(() => setMessages({}));
-  });
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const getT = (loc: string) => {
+    try {
+      const messages =
+        loc === "en"
+          ? require("../../messages/en.json")
+          : require("../../messages/vi.json");
 
-  const t = (key: string, params?: Record<string, string | number>): string => {
-    let text = (messages[key] as string) ?? key;
+      const ns = messages[namespace] ?? {};
 
-    if (params) {
-      Object.entries(params).forEach(([k, v]) => {
-        text = text.replace(`{${k}}`, String(v));
-      });
+      return (
+        key: string,
+        params?: Record<string, string | number>,
+      ): string => {
+        let text = ns[key] ?? key;
+
+        if (params) {
+          Object.entries(params).forEach(([k, v]) => {
+            text = text.replace(`{${k}}`, String(v));
+          });
+        }
+
+        return text;
+      };
+    } catch {
+      return (key: string) => key;
     }
-
-    return text;
   };
 
-  return t;
+  return getT(locale);
 }
