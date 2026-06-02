@@ -22,13 +22,16 @@ export default function DashboardLayout({ children }: Readonly<{ children: React
             return null;
         }
     });
-    const [loading] = useState(user === null);
+    const [loading, setLoading] = useState(true);
     const router = useRouter();
 
     useEffect(() => {
         if (!user) {
             localStorage.removeItem("user");
             router.replace("/login");
+        } else {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setLoading(false);
         }
     }, [router, user]);
 
