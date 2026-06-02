@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 type Locale = "en" | "vi";
 
@@ -134,14 +134,12 @@ const messages = {
 };
 
 export function useLocale() {
-  const [locale, setLocaleState] = useState<Locale>("vi");
-
-  useEffect(() => {
+  const [locale, setLocaleState] = useState<Locale>(() => {
+    // Initialize from localStorage to avoid setState-in-effect lint error
+    if (typeof window === "undefined") return "vi";
     const stored = localStorage.getItem("locale") as Locale | null;
-    if (stored === "en" || stored === "vi") {
-      setLocaleState(stored);
-    }
-  }, []);
+    return stored === "en" || stored === "vi" ? stored : "vi";
+  });
 
   const setLocale = (newLocale: Locale) => {
     localStorage.setItem("locale", newLocale);
