@@ -8,32 +8,49 @@ import { deleteCookie } from "@/lib/api";
 
 export default function DashboardLayout({ children }: Readonly<{ children: React.ReactNode }>) {
     const [sidebarOpen, setSidebarOpen] = useState(true);
-    const [user] = useState<UserInfo | null>(() => {
-        if (typeof window === "undefined") return null;
-
-        const raw = localStorage.getItem("user");
-        if (!raw) return null;
-
-        try {
-            const parsed = JSON.parse(raw) as { username?: string; role?: string };
-            if (!parsed?.username || !parsed?.role) return null;
-            return { username: parsed.username, role: parsed.role };
-        } catch {
-            return null;
-        }
-    });
+    const [user, setUser] = useState<UserInfo | null>(null);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
 
+    // Load user từ localStorage (chỉ chạy 1 lần)
     useEffect(() => {
-        if (!user) {
+        const initializeUser = () => {
+            if (typeof window === "undefined") {
+                setLoading(false);
+                return;
+            }
+
+            const raw = localStorage.getItem("user");
+            if (!raw) {
+                setUser(null);
+                setLoading(false);
+                return;
+            }
+
+            try {
+                const parsed = JSON.parse(raw) as { username?: string; role?: string };
+                if (!parsed?.username || !parsed?.role) {
+                    setUser(null);
+                } else {
+                    setUser({ username: parsed.username, role: parsed.role });
+                }
+            } catch {
+                setUser(null);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        initializeUser();
+    }, []);
+
+    // Redirect nếu không có user sau khi load xong
+    useEffect(() => {
+        if (!loading && user === null) {
             localStorage.removeItem("user");
             router.replace("/login");
-        } else {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
-            setLoading(false);
         }
-    }, [router, user]);
+    }, [loading, user, router]);
 
     const handleLogout = () => {
         deleteCookie("token", { path: "/" });
@@ -49,23 +66,30 @@ export default function DashboardLayout({ children }: Readonly<{ children: React
         );
     }
 
-    return (
-        <div className="min-h-screen bg-[#f8fafc] text-gray-900">
-            <div className="flex">
-                <div
-                    className={
-                        sidebarOpen
-                            ? "w-64 shrink-0 transition-[width] duration-300"
-                            : "w-0 shrink-0 overflow-hidden transition-[width] duration-300"
-                    }
-                >
-                    <Sidebar open={sidebarOpen} user={user ?? undefined} onLogout={handleLogout} />
-                </div>
+    // Không render layout nếu chưa có user (đang redirect)
+    if (!user) {
+        return null;
+    }
 
-                <div className="flex min-w-0 flex-1 flex-col">
-                    <Header onToggleSidebar={() => setSidebarOpen((value) => !value)} user={user ?? undefined} onLogout={handleLogout} />
-                    <main className="flex-1 bg-[#f8fafc] p-6 sm:p-6">{children}</main>
-                </div>
+    return (
+        <div className="flex h-screen overflow-hidden bg-[#f8fafc]">
+            {/* Sidebar */}
+            <div
+                className={`shrink-0 border-r border-slate-200 transition-all duration-300 ${sidebarOpen ? "w-64" : "w-0 overflow-hidden"}`}
+            >
+                <Sidebar open={sidebarOpen} user={user} onLogout={handleLogout} />
+            </div>
+
+            {/* Main Content Area */}
+            <div className="flex flex-1 flex-col overflow-hidden">
+                <Header
+                    onToggleSidebar={() => setSidebarOpen((prev) => !prev)}
+                    user={user}
+                    onLogout={handleLogout}
+                />
+                <main className="flex-1 overflow-auto bg-[#f8fafc] p-6">
+                    {children}
+                </main>
             </div>
         </div>
     );

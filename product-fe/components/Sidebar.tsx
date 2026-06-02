@@ -80,10 +80,9 @@ export default function Sidebar({ open, user, onLogout }: SidebarProps) {
 
     return (
         <aside
-            className={`h-screen border-r border-white/5 bg-gradient-to-b from-slate-900 to-[#0a0f1e] text-white shadow-2xl transition-all duration-300 overflow-hidden ${open ? "w-64" : "w-0"
-                }`}
+            className={`h-full border-r border-white/5 bg-gradient-to-b from-slate-900 to-[#0a0f1e] text-white shadow-2xl transition-all duration-300 overflow-hidden ${open ? "w-64" : "w-0"}`}
         >
-            <div className={open ? "flex h-full w-64 flex-col" : "hidden"}>
+            <div className="flex h-full w-full flex-col">
                 <div className="flex h-full flex-col overflow-hidden">
                     {/* Logo */}
                     <div className="px-5 py-6 shrink-0">
