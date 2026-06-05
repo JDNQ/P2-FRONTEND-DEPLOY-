@@ -512,12 +512,19 @@ export default function HomePage() {
           <div className="max-w-6xl mx-auto px-4">
             <div className="h-16 flex items-center gap-4">
               <Link href="/" className="flex items-center gap-2">
-                <div className="h-10 w-10 rounded-xl bg-[#1e3a6e] flex items-center justify-center text-white font-black">
-                  TL
-                </div>
-                <div className="leading-tight">
-                  <p className="font-black text-lg text-[#1e3a6e]">TL Market</p>
-                  <p className="text-xs text-gray-500">Thương mại điện tử</p>
+                <div className="flex items-center gap-3">
+                  {/* Logo box nền xanh đậm, bo góc */}
+                  <div className="bg-[#1e3a6e] rounded-xl w-12 h-12 flex items-center justify-center flex-shrink-0">
+                    <span className="text-white font-black text-lg leading-none">TL</span>
+                  </div>
+                  {/* Text bên phải */}
+                  <div className="flex flex-col leading-tight">
+                    <span className="font-black text-xl">
+                      <span className="text-[#1e3a6e]">TL </span>
+                      <span className="text-[#f97316]">Market</span>
+                    </span>
+                    <span className="text-gray-500 text-xs font-normal">Thương mại điện tử</span>
+                  </div>
                 </div>
               </Link>
 
