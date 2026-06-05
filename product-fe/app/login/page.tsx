@@ -106,7 +106,7 @@ export default function LoginPage() {
             localStorage.setItem("user", JSON.stringify({ username: user.username, role: user.role }));
 
             const role = user.role.toUpperCase();
-            const route = role === "ADMIN" ? "/dashboard/admin" : role === "MANAGER" ? "/dashboard/manager" : "/dashboard/user";
+            const route = role === "ADMIN" ? "/dashboard/admin" : role === "MANAGER" ? "/dashboard/manager" : "/";
             router.push(route);
         } catch (error: unknown) {
             // Fix: Không dùng 'any'

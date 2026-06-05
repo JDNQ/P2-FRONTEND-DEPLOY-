@@ -48,14 +48,14 @@ export default function DashboardLayout({ children }: Readonly<{ children: React
     useEffect(() => {
         if (!loading && user === null) {
             localStorage.removeItem("user");
-            router.replace("/login");
+            router.replace("/");
         }
     }, [loading, user, router]);
 
     const handleLogout = () => {
         deleteCookie("token", { path: "/" });
         localStorage.removeItem("user");
-        router.push("/login");
+        router.push("/");
     };
 
     if (loading) {
