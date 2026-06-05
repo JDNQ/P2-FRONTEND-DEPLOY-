@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 
 type ProductCard = {
@@ -513,11 +514,13 @@ export default function HomePage() {
             <div className="h-16 flex items-center gap-4">
               <Link href="/" className="flex items-center gap-2">
                 <div className="flex items-center gap-3">
-                  {/* Logo box nền xanh đậm, bo góc */}
-                  <div className="bg-[#1e3a6e] rounded-xl w-12 h-12 flex items-center justify-center flex-shrink-0">
-                    <span className="text-white font-black text-lg leading-none">TL</span>
-                  </div>
-                  {/* Text bên phải */}
+                  <Image
+                    src="/logo.png"
+                    alt="TL Market Logo"
+                    width={56}
+                    height={56}
+                    className="object-contain"
+                  />
                   <div className="flex flex-col leading-tight">
                     <span className="font-black text-xl">
                       <span className="text-[#1e3a6e]">TL </span>
@@ -987,9 +990,13 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8">
             <div className="lg:col-span-4">
               <div className="flex items-center gap-3">
-                <div className="h-12 w-12 rounded-2xl bg-[#1e3a6e] flex items-center justify-center text-white font-black">
-                  TL
-                </div>
+                <Image
+                  src="/logo.png"
+                  alt="TL Market"
+                  width={56}
+                  height={56}
+                  className="object-contain"
+                />
                 <div>
                   <p className="text-xl font-black text-[#1e3a6e]">TL Market</p>
                   <p className="text-sm text-gray-500">Mua sắm uy tín - Giá tốt mỗi ngày</p>
