@@ -10,10 +10,12 @@ type ProductDetail = {
     description?: string;
     basePrice: number;
     createdAt?: string;
+    images?: Array<{ id: number; url: string; isPrimary: boolean }>;
     variants: Array<{
         variantName: string;
         extraPrice: number;
         stock: number;
+        image?: string;
     }>;
 };
 
@@ -26,6 +28,8 @@ export default function ProductDetailPage() {
     const [error, setError] = useState<string | null>(null);
     const [data, setData] = useState<ProductDetail | null>(null);
 
+    const [activeImg, setActiveImg] = useState(0);
+
     useEffect(() => {
         let mounted = true;
         (async () => {
@@ -34,6 +38,7 @@ export default function ProductDetailPage() {
                 const product = (await getProductById(id)) as ProductDetail;
                 if (!mounted) return;
                 setData(product);
+                setActiveImg(0);
             } catch (e: unknown) {
                 if (!mounted) return;
                 const message = e instanceof Error ? e.message : "Không thể tải chi tiết";
@@ -85,6 +90,8 @@ export default function ProductDetailPage() {
         );
     }
 
+    const apiBase = process.env.NEXT_PUBLIC_API_URL ?? "";
+
     return (
         <div className="mx-auto w-full max-w-4xl px-4 py-8">
             <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -94,7 +101,9 @@ export default function ProductDetailPage() {
                         Base price: <span className="font-semibold">{data.basePrice}</span>
                     </p>
                     {data.createdAt ? (
-                        <p className="mt-1 text-xs text-gray-500">Ngày tạo: {new Date(data.createdAt).toLocaleString()}</p>
+                        <p className="mt-1 text-xs text-gray-500">
+                            Ngày tạo: {new Date(data.createdAt).toLocaleString()}
+                        </p>
                     ) : null}
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -113,9 +122,50 @@ export default function ProductDetailPage() {
                 </div>
             </div>
 
+            {/* Slider */}
+            {data.images && data.images.length > 0 && (
+                <div className="mb-6">
+                    <div className="relative w-full h-80 rounded-2xl overflow-hidden bg-gray-100 border border-gray-200">
+                        <img
+                            src={`${apiBase}${data.images[activeImg]?.url}`}
+                            alt={data.productName}
+                            className="w-full h-full object-contain"
+                        />
+                        {data.images[activeImg]?.isPrimary && (
+                            <span className="absolute top-3 left-3 bg-[#f97316] text-white text-xs px-3 py-1 rounded-full font-bold">
+                                Ảnh chính
+                            </span>
+                        )}
+                    </div>
+
+                    {data.images.length > 1 && (
+                        <div className="mt-3 flex gap-2 overflow-x-auto">
+                            {data.images.map((img, idx) => (
+                                <button
+                                    key={img.id}
+                                    type="button"
+                                    title={`Chọn ảnh ${idx + 1}`}
+                                    onClick={() => setActiveImg(idx)}
+                                    className={`shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition ${idx === activeImg ? "border-[#1e3a6e]" : "border-gray-200"
+                                        }`}
+                                >
+                                    <img
+                                        src={`${apiBase}${img.url}`}
+                                        alt=""
+                                        className="w-full h-full object-cover"
+                                    />
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            )}
+
             {data.description ? (
                 <div className="mb-6 rounded-xl border border-gray-200 bg-white p-4 text-sm text-gray-700">
-                    <div className="text-xs font-semibold uppercase tracking-wide text-gray-500">Description</div>
+                    <div className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                        Description
+                    </div>
                     <p className="mt-2 whitespace-pre-wrap">{data.description}</p>
                 </div>
             ) : null}
@@ -128,6 +178,7 @@ export default function ProductDetailPage() {
                     <table className="min-w-full">
                         <thead className="bg-gray-50 text-left text-xs font-semibold text-gray-600">
                             <tr>
+                                <th className="px-4 py-3">Ảnh</th>
                                 <th className="px-4 py-3">Variant name</th>
                                 <th className="px-4 py-3">Extra price</th>
                                 <th className="px-4 py-3">Stock</th>
@@ -136,6 +187,19 @@ export default function ProductDetailPage() {
                         <tbody className="divide-y divide-gray-200">
                             {data.variants?.map((v, idx) => (
                                 <tr key={`${v.variantName}-${idx}`}>
+                                    <td className="px-4 py-3">
+                                        {v.image ? (
+                                            <img
+                                                src={`${apiBase}${v.image}`}
+                                                alt={v.variantName}
+                                                className="w-12 h-12 rounded-lg object-cover border border-gray-200"
+                                            />
+                                        ) : (
+                                            <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center text-gray-400 text-xs">
+                                                No img
+                                            </div>
+                                        )}
+                                    </td>
                                     <td className="px-4 py-3 font-medium text-gray-900">{v.variantName}</td>
                                     <td className="px-4 py-3">{v.extraPrice}</td>
                                     <td className="px-4 py-3">{v.stock}</td>
