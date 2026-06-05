@@ -51,7 +51,7 @@ export function middleware(request: NextRequest) {
     (pathname.startsWith("/products/") && pathname.endsWith("/checkout"));
 
   if (isRoot) {
-    if (token && role) {
+    if (token && role && role !== "USER") {
       return NextResponse.redirect(new URL(roleRedirect(role), request.url));
     }
     return NextResponse.next(); // Cho vào home mà không cần login
