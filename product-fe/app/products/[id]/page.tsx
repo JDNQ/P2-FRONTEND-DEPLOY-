@@ -92,6 +92,8 @@ export default function ProductDetailPage() {
 
     const apiBase = process.env.NEXT_PUBLIC_API_URL ?? "";
 
+    const [userRole] = useState<string | null>(null);
+
     return (
         <div className="mx-auto w-full max-w-4xl px-4 py-8">
             <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -107,18 +109,22 @@ export default function ProductDetailPage() {
                     ) : null}
                 </div>
                 <div className="flex flex-wrap gap-2">
-                    <button
-                        onClick={() => router.push(`/products/${data.id}/edit`)}
-                        className="rounded-md bg-[#533AB7] px-3 py-2 text-sm font-semibold text-white hover:opacity-95"
-                    >
-                        Chỉnh sửa
-                    </button>
-                    <button
-                        onClick={handleDelete}
-                        className="rounded-md border border-red-200 bg-white px-3 py-2 text-sm font-semibold text-red-600 hover:bg-red-50"
-                    >
-                        Xoá
-                    </button>
+                    {userRole && userRole !== "USER" && (
+                        <>
+                            <button
+                                onClick={() => router.push(`/products/${data.id}/edit`)}
+                                className="rounded-md bg-[#533AB7] px-3 py-2 text-sm font-semibold text-white hover:opacity-95"
+                            >
+                                Chỉnh sửa
+                            </button>
+                            <button
+                                onClick={handleDelete}
+                                className="rounded-md border border-red-200 bg-white px-3 py-2 text-sm font-semibold text-red-600 hover:bg-red-50"
+                            >
+                                Xoá
+                            </button>
+                        </>
+                    )}
                 </div>
             </div>
 
