@@ -4,6 +4,8 @@ import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { getProducts } from "@/lib/api";
+
 
 
 type ProductCard = {
@@ -69,25 +71,14 @@ export default function HomePage() {
 
   const [currentUser, setCurrentUser] = useState<{ username: string; role: string } | null>(null);
 
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const raw = localStorage.getItem("user");
-    // Nếu chưa có user trong localStorage thì giữ state mặc định (null)
-    if (!raw) return;
 
 
-    try {
-      const parsed = JSON.parse(raw) as { username?: string; role?: string };
-      if (parsed?.username && parsed?.role) {
-        setCurrentUser({ username: parsed.username, role: parsed.role });
-      } else {
-        setCurrentUser(null);
-      }
-    } catch {
-      setCurrentUser(null);
-    }
-  }, []);
+  // Read auth info from localStorage for showing user/dashboard actions
+
+
+
+
+
 
 
   const handleLogout = () => {
@@ -150,62 +141,34 @@ export default function HomePage() {
     { id: "v4", title: "FREESHIP", sub: "Toàn quốc", value: "0₫ ship" },
   ];
 
-  const flashProducts: ProductCard[] = [
-    {
-      id: "f1",
-      name: "iPhone 15 Pro 256GB",
-      rating: 4.8,
-      sold: 182,
-      discountPercent: 28,
-      oldPrice: 35990000,
-      price: 25990000,
-    },
-    {
-      id: "f2",
-      name: "Samsung Galaxy S24 256GB",
-      rating: 4.7,
-      sold: 146,
-      discountPercent: 22,
-      oldPrice: 29990000,
-      price: 23390000,
-    },
-    {
-      id: "f3",
-      name: "Xiaomi 14 Pro 512GB",
-      rating: 4.6,
-      sold: 124,
-      discountPercent: 18,
-      oldPrice: 27990000,
-      price: 22990000,
-    },
-    {
-      id: "f4",
-      name: "MacBook Air M2 13-inch",
-      rating: 4.9,
-      sold: 98,
-      discountPercent: 15,
-      oldPrice: 28990000,
-      price: 24690000,
-    },
-    {
-      id: "f5",
-      name: "Asus TUF Gaming FX507",
-      rating: 4.5,
-      sold: 76,
-      discountPercent: 12,
-      oldPrice: 37990000,
-      price: 33390000,
-    },
-    {
-      id: "f6",
-      name: "Laptop Lenovo IdeaPad 5",
-      rating: 4.4,
-      sold: 61,
-      discountPercent: 10,
-      oldPrice: 20990000,
-      price: 18890000,
-    },
-  ];
+  type RealProduct = {
+    id: string;
+    productName: string;
+    basePrice: number;
+    sold?: number;
+    rating?: number;
+    variants?: Array<{ extraPrice?: number }>;
+  };
+
+  const [realProducts, setRealProducts] = useState<RealProduct[]>([]);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const data = await getProducts();
+        if (!mounted) return;
+        setRealProducts(Array.isArray(data) ? data.slice(0, 6) : []);
+      } catch {
+        if (!mounted) return;
+        setRealProducts([]);
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
 
   const featuredTabs = ["Điện thoại", "Laptop", "Điện tử", "Thời trang", "Gia dụng"];
 
@@ -854,32 +817,51 @@ export default function HomePage() {
             </div>
 
             <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {flashProducts.map((p, idx) => {
-                const progress = Math.min(100, Math.round((p.sold / 250) * 100));
+              {realProducts.map((p, idx) => {
+                const discountPercent = (() => {
+                  const extra = p?.variants?.[0]?.extraPrice;
+                  if (extra !== undefined && extra !== null) {
+                    const v = p?.id ? String(p.id).split("").reduce((a, c) => a + c.charCodeAt(0), 0) : idx + 1;
+                    const min = 10;
+                    const max = 30;
+                    const span = max - min;
+                    return min + (v % (span + 1));
+                  }
+                  return 0;
+                })();
+
+                const progress = Math.min(100, Math.round(((p?.sold ?? 0) / 250) * 100));
+                const oldPrice = p?.basePrice ?? 0;
+                const price = p?.basePrice ?? 0;
+
                 return (
                   <div key={p.id} className="rounded-3xl border border-gray-100 bg-gray-50 overflow-hidden">
                     <div className="relative">
                       <div className="h-40 bg-gradient-to-br from-gray-200 to-gray-300" />
-                      <div className="absolute top-3 left-3 bg-red-500 text-white text-xs px-3 py-1 rounded-full font-bold">
-                        -{p.discountPercent}%
-                      </div>
+                      {discountPercent > 0 && (
+                        <div className="absolute top-3 left-3 bg-red-500 text-white text-xs px-3 py-1 rounded-full font-bold">
+                          -{discountPercent}%
+                        </div>
+                      )}
                       <div className="absolute top-3 right-3 bg-white/90 rounded-full px-2 py-1 text-xs font-semibold text-gray-700">
                         {idx % 2 === 0 ? "HOT" : "DEAL"}
                       </div>
                     </div>
                     <div className="p-5">
-                      <h3 className="text-base font-bold text-gray-900 line-clamp-2">{p.name}</h3>
+                      <h3 className="text-base font-bold text-gray-900 line-clamp-2">{p.productName}</h3>
                       <div className="mt-3 flex items-center gap-2">
-                        <span className="text-2xl font-black text-red-600">{formatVND(p.price)} ₫</span>
+                        <span className="text-2xl font-black text-red-600">{formatVND(price)} ₫</span>
                       </div>
-                      <div className="mt-1 text-sm text-gray-500">
-                        <span className="line-through">{formatVND(p.oldPrice)} ₫</span>
-                      </div>
+                      {oldPrice ? (
+                        <div className="mt-1 text-sm text-gray-500">
+                          <span className="line-through">{formatVND(oldPrice)} ₫</span>
+                        </div>
+                      ) : null}
 
                       <div className="mt-4">
                         <div className="flex items-center justify-between text-xs text-gray-600 font-semibold">
                           <span>Đã bán</span>
-                          <span>{p.sold}</span>
+                          <span>{p?.sold ?? 0}</span>
                         </div>
                         <div className="h-2 rounded-full bg-gray-200 mt-2 overflow-hidden">
                           <div className="h-full bg-red-500" style={{ width: `${progress}%` }} />
@@ -888,7 +870,7 @@ export default function HomePage() {
 
                       <div className="mt-5">
                         <Link
-                          href="/products"
+                          href={`/products/${p.id}`}
                           className="w-full inline-flex items-center justify-center rounded-2xl bg-[#1e3a6e] text-white font-bold py-2 hover:bg-[#0f2f63] transition"
                         >
                           Xem chi tiết
@@ -899,6 +881,7 @@ export default function HomePage() {
                 );
               })}
             </div>
+
           </div>
         </section>
 
@@ -927,47 +910,64 @@ export default function HomePage() {
           </div>
 
           <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-            {featured.slice(0, 6).map((p) => (
-              <div key={p.id} className="rounded-3xl bg-white border border-gray-100 overflow-hidden">
-                <div className="relative">
-                  <div className="h-36 bg-gradient-to-br from-gray-200 to-gray-300" />
-                  <button
-                    className="absolute top-3 right-3 h-10 w-10 rounded-full bg-white/90 border border-gray-200 flex items-center justify-center text-gray-700 hover:bg-white transition"
-                    aria-label="Yêu thích"
-                    type="button"
-                  >
-                    ♡
-                  </button>
-                </div>
-                <div className="p-4">
-                  <h3 className="text-sm font-bold text-gray-900 line-clamp-2 min-h-[40px]">{p.name}</h3>
-                  <div className="mt-2 flex items-center justify-between">
-                    <StarRow rating={p.rating} />
-                    <span className="text-xs text-gray-500 font-semibold">{p.rating.toFixed(1)}</span>
-                  </div>
-                  <div className="mt-2 text-xs text-gray-600 font-semibold">Đã bán: {p.sold}</div>
-                  <div className="mt-3 flex items-center justify-between">
-                    <div>
-                      <p className="text-lg font-black text-red-600">{formatVND(p.price)} ₫</p>
-                      <p className="text-xs text-gray-500 line-through">{formatVND(p.oldPrice)} ₫</p>
-                    </div>
-                    <div className="text-xs font-bold text-[#f97316] bg-[#f97316]/15 px-2 py-1 rounded-2xl">
-                      -{p.discountPercent}%
-                    </div>
-                  </div>
+            {realProducts.slice(0, 6).map((p) => {
+              const discountPercent = (() => {
+                const extra = p?.variants?.[0]?.extraPrice;
+                if (extra !== undefined && extra !== null) {
+                  const v = p?.id ? String(p.id).split("").reduce((a, c) => a + c.charCodeAt(0), 0) : 1;
+                  const min = 10;
+                  const max = 30;
+                  const span = max - min;
+                  return min + (v % (span + 1));
+                }
+                return 0;
+              })();
 
-                  <div className="mt-4">
-                    <Link
-                      href={`/products/${p.id}`}
-                      className="w-full inline-flex items-center justify-center rounded-2xl bg-[#f97316] text-white font-bold py-2 hover:bg-[#ea580c] transition"
+              return (
+                <div key={p.id} className="rounded-3xl bg-white border border-gray-100 overflow-hidden">
+                  <div className="relative">
+                    <div className="h-36 bg-gradient-to-br from-gray-200 to-gray-300" />
+                    <button
+                      className="absolute top-3 right-3 h-10 w-10 rounded-full bg-white/90 border border-gray-200 flex items-center justify-center text-gray-700 hover:bg-white transition"
+                      aria-label="Yêu thích"
+                      type="button"
                     >
-                      Thêm giỏ hàng
-                    </Link>
+                      ♡
+                    </button>
+                  </div>
+                  <div className="p-4">
+                    <h3 className="text-sm font-bold text-gray-900 line-clamp-2 min-h-[40px]">{p.productName}</h3>
+                    <div className="mt-2 flex items-center justify-between">
+                      <StarRow rating={p?.rating ?? 4.5} />
+                      <span className="text-xs text-gray-500 font-semibold">{(p?.rating ?? 4.5).toFixed(1)}</span>
+                    </div>
+                    <div className="mt-2 text-xs text-gray-600 font-semibold">Đã bán: {p?.sold ?? 0}</div>
+                    <div className="mt-3 flex items-center justify-between">
+                      <div>
+                        <p className="text-lg font-black text-red-600">{formatVND(p.basePrice ?? 0)} ₫</p>
+                        <p className="text-xs text-gray-500 line-through">{formatVND(p.basePrice ?? 0)} ₫</p>
+                      </div>
+                      {discountPercent > 0 ? (
+                        <div className="text-xs font-bold text-[#f97316] bg-[#f97316]/15 px-2 py-1 rounded-2xl">
+                          -{discountPercent}%
+                        </div>
+                      ) : null}
+                    </div>
+
+                    <div className="mt-4">
+                      <Link
+                        href={`/products/${p.id}`}
+                        className="w-full inline-flex items-center justify-center rounded-2xl bg-[#f97316] text-white font-bold py-2 hover:bg-[#ea580c] transition"
+                      >
+                        Thêm giỏ hàng
+                      </Link>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
+
 
           <div className="mt-6 text-center">
             <Link href="/products" className="inline-flex items-center gap-2 text-[#1e3a6e] font-bold hover:underline">

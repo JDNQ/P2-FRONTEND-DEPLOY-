@@ -29,8 +29,27 @@ export default function ProductDetailPage() {
     const [data, setData] = useState<ProductDetail | null>(null);
 
     const [activeImg, setActiveImg] = useState(0);
+    const [userRole, setUserRole] = useState<string | null>(null);
+    const [selectedVariant, setSelectedVariant] = useState(0);
+    const [quantity, setQuantity] = useState(1);
 
     useEffect(() => {
+        // đọc role từ localStorage
+        try {
+            const raw = localStorage.getItem("user");
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                setUserRole(parsed?.role ?? null);
+            } else {
+                setUserRole(null);
+            }
+        } catch {
+            setUserRole(null);
+        }
+    }, []);
+
+    useEffect(() => {
+
         let mounted = true;
         (async () => {
             try {
@@ -92,7 +111,6 @@ export default function ProductDetailPage() {
 
     const apiBase = process.env.NEXT_PUBLIC_API_URL ?? "";
 
-    const [userRole] = useState<string | null>(null);
 
     return (
         <div className="mx-auto w-full max-w-4xl px-4 py-8">
