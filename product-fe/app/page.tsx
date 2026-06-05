@@ -3,6 +3,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+
 
 type ProductCard = {
   id: string;
@@ -62,9 +64,42 @@ function Icon({ children, className }: { children: React.ReactNode; className?: 
 }
 
 export default function HomePage() {
+  const router = useRouter();
 
+
+  const [currentUser, setCurrentUser] = useState<{ username: string; role: string } | null>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const raw = localStorage.getItem("user");
+    // Nếu chưa có user trong localStorage thì giữ state mặc định (null)
+    if (!raw) return;
+
+
+    try {
+      const parsed = JSON.parse(raw) as { username?: string; role?: string };
+      if (parsed?.username && parsed?.role) {
+        setCurrentUser({ username: parsed.username, role: parsed.role });
+      } else {
+        setCurrentUser(null);
+      }
+    } catch {
+      setCurrentUser(null);
+    }
+  }, []);
+
+
+  const handleLogout = () => {
+    document.cookie = "token=; path=/; max-age=0";
+    localStorage.removeItem("user");
+    setCurrentUser(null);
+    // eslint-disable-next-line @next/next/no-html-link-for-pages
+    window.location.href = "/";
+  };
 
   const [flashRemaining, setFlashRemaining] = useState(
+
     3 * 60 * 60 + 12 * 60 + 45,
   ); // seconds
 
@@ -566,18 +601,51 @@ export default function HomePage() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <Link
-                    href="/login"
-                    className="hidden sm:inline-flex rounded-xl border border-gray-200 px-4 py-2 text-sm font-semibold text-[#1e3a6e] hover:bg-gray-50 transition"
-                  >
-                    Đăng nhập
-                  </Link>
-                  <Link
-                    href="/register"
-                    className="hidden sm:inline-flex rounded-xl bg-[#f97316] px-4 py-2 text-sm font-bold text-white hover:bg-[#ea580c] transition"
-                  >
-                    Đăng ký
-                  </Link>
+                  {currentUser ? (
+                    <>
+                      <span className="hidden sm:inline-flex items-center gap-2 text-sm font-semibold text-[#1e3a6e]">
+                        👤 {currentUser.username}
+                      </span>
+                      {currentUser.role === "ADMIN" && (
+                        <Link
+                          href="/dashboard/admin"
+                          className="hidden sm:inline-flex rounded-xl border border-gray-200 px-4 py-2 text-sm font-semibold text-[#1e3a6e] hover:bg-gray-50 transition"
+                        >
+                          Dashboard
+                        </Link>
+                      )}
+                      {currentUser.role === "MANAGER" && (
+                        <Link
+                          href="/dashboard/manager"
+                          className="hidden sm:inline-flex rounded-xl border border-gray-200 px-4 py-2 text-sm font-semibold text-[#1e3a6e] hover:bg-gray-50 transition"
+                        >
+                          Dashboard
+                        </Link>
+                      )}
+                      <button
+                        type="button"
+                        onClick={handleLogout}
+                        className="hidden sm:inline-flex rounded-xl bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-200 transition"
+                      >
+                        Đăng xuất
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <Link
+                        href="/login"
+                        className="hidden sm:inline-flex rounded-xl border border-gray-200 px-4 py-2 text-sm font-semibold text-[#1e3a6e] hover:bg-gray-50 transition"
+                      >
+                        Đăng nhập
+                      </Link>
+                      <Link
+                        href="/register"
+                        className="hidden sm:inline-flex rounded-xl bg-[#f97316] px-4 py-2 text-sm font-bold text-white hover:bg-[#ea580c] transition"
+                      >
+                        Đăng ký
+                      </Link>
+                    </>
+                  )}
                   <Link
                     href="/products"
                     className="sm:hidden rounded-xl bg-[#1e3a6e] px-3 py-2 text-sm font-bold text-white"
@@ -585,6 +653,7 @@ export default function HomePage() {
                     Mua ngay
                   </Link>
                 </div>
+
               </div>
             </div>
 
