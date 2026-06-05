@@ -22,7 +22,7 @@ function roleRedirect(role?: string) {
     case "MANAGER":
       return "/dashboard/manager";
     case "USER":
-      return "/dashboard/user";
+      return "/";
     default:
       return "/login";
   }
@@ -76,9 +76,6 @@ export function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL(roleRedirect(role), request.url));
     }
     if (pathname.startsWith("/dashboard/manager") && role !== "MANAGER") {
-      return NextResponse.redirect(new URL(roleRedirect(role), request.url));
-    }
-    if (pathname.startsWith("/dashboard/user") && role !== "USER") {
       return NextResponse.redirect(new URL(roleRedirect(role), request.url));
     }
   }
