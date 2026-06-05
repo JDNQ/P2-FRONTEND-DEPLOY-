@@ -45,13 +45,16 @@ export function middleware(request: NextRequest) {
   const isLoginPage = pathname === "/login";
   const isRegisterPage = pathname === "/register";
   const isDashboardRoute = pathname.startsWith("/dashboard");
-  const isProtected = isDashboardRoute || pathname.startsWith("/products");
+  // Sửa isProtected: chỉ bảo vệ /dashboard/* và /products/*/checkout
+  const isProtected =
+    isDashboardRoute ||
+    (pathname.startsWith("/products/") && pathname.endsWith("/checkout"));
 
   if (isRoot) {
     if (token && role) {
       return NextResponse.redirect(new URL(roleRedirect(role), request.url));
     }
-    return NextResponse.redirect(new URL("/login", request.url));
+    return NextResponse.next(); // Cho vào home mà không cần login
   }
 
   if ((isLoginPage || isRegisterPage) && token && role) {
@@ -59,7 +62,13 @@ export function middleware(request: NextRequest) {
   }
 
   if (isProtected && !token) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    const redirectPath = request.nextUrl.pathname + request.nextUrl.search;
+    return NextResponse.redirect(
+      new URL(
+        `/login?redirect=${encodeURIComponent(redirectPath)}`,
+        request.url,
+      ),
+    );
   }
 
   if (isDashboardRoute && role) {
