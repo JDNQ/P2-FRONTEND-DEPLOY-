@@ -2,37 +2,68 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus } from "lucide-react";
+import { Search, SlidersHorizontal, Plus } from "lucide-react";
 import { getProducts } from "@/lib/api";
+
+function readUserRole() {
+    if (typeof window === "undefined") return null;
+    try {
+        const raw = localStorage.getItem("user");
+        if (!raw) return null;
+        const parsed = JSON.parse(raw) as { role?: string };
+        return parsed?.role ?? null;
+    } catch {
+        return null;
+    }
+}
+
 
 type ProductItem = {
     id?: string;
     productName?: string;
     basePrice?: number;
     shopId?: string;
+    images?: Array<{ id?: number; url: string }>;
     variants?: Array<{ stock?: number }>;
 };
 
+type SortBy = "default" | "price_asc" | "price_desc";
+
+function formatVnd(value: number) {
+    return `${Math.round(value).toLocaleString("vi-VN")} ₫`;
+}
+
 export default function ProductsPage() {
     const router = useRouter();
-    const [shopId] = useState<string | undefined>(() => {
-        if (typeof window === "undefined") return undefined;
-        const params = new URLSearchParams(window.location.search);
-        return params.get("shopId") ?? undefined;
-    });
+
     const [products, setProducts] = useState<ProductItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
+    const [userRole, setUserRole] = useState<string | null>(null);
+    const [sortBy, setSortBy] = useState<SortBy>("default");
+
+    useEffect(() => {
+        try {
+            const raw = localStorage.getItem("user");
+            if (!raw) return;
+            const parsed = JSON.parse(raw) as { role?: string };
+            setUserRole(parsed?.role ?? null);
+        } catch {
+            setUserRole(null);
+        }
+    }, []);
+
 
     useEffect(() => {
         let mounted = true;
+
         const load = async () => {
             try {
                 setLoading(true);
                 const productRes = await getProducts();
                 if (!mounted) return;
-                setProducts(Array.isArray(productRes) ? productRes : []);
+                setProducts(Array.isArray(productRes) ? (productRes as ProductItem[]) : []);
             } catch {
                 if (!mounted) return;
                 setError("Không thể tải danh sách sản phẩm.");
@@ -43,95 +74,170 @@ export default function ProductsPage() {
         };
 
         load();
-        return () => { mounted = false; };
+
+        return () => {
+            mounted = false;
+        };
     }, []);
 
-    const filteredProducts = useMemo(() => {
+    const filteredAndSorted = useMemo(() => {
         const term = searchTerm.trim().toLowerCase();
-        return products.filter((product) => {
-            const matchesShop = !shopId || product.shopId === shopId;
+
+        const filtered = products.filter((product) => {
             const matchesSearch = !term || product.productName?.toLowerCase().includes(term);
-            return matchesShop && matchesSearch;
+            return matchesSearch;
         });
-    }, [products, searchTerm, shopId]);
+
+        if (sortBy === "price_asc") {
+            return [...filtered].sort((a, b) => (a.basePrice ?? 0) - (b.basePrice ?? 0));
+        }
+
+        if (sortBy === "price_desc") {
+            return [...filtered].sort((a, b) => (b.basePrice ?? 0) - (a.basePrice ?? 0));
+        }
+
+        return filtered;
+    }, [products, searchTerm, sortBy]);
+
+    const canCreate = userRole === "MANAGER" || userRole === "ADMIN";
+    const apiBase = process.env.NEXT_PUBLIC_API_URL ?? "";
 
     return (
-        <div className="space-y-6">
-            {/* Header Section */}
-            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                        <h1 className="text-2xl font-semibold text-slate-900">Sản phẩm</h1>
-                        <p className="mt-1 text-sm text-slate-500">Xem tất cả sản phẩm công khai trong hệ thống.</p>
-                    </div>
+        <div className="bg-gray-50 min-h-screen">
+            {/* Sticky search bar */}
+            <div className="sticky top-0 z-10 bg-white border-b shadow-sm">
+                <div className="max-w-6xl mx-auto px-4 py-3">
+                    <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                        <div className="relative flex-1">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                            <input
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full rounded-xl border border-gray-200 bg-white pl-9 pr-3 py-2 text-sm outline-none focus:border-[#1e3a6e]"
+                                placeholder="Tìm kiếm sản phẩm..."
+                            />
+                        </div>
 
-                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                        <input
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="max-w-sm rounded-2xl border border-[#e5e7eb] bg-white px-4 py-3 text-sm outline-none focus:border-[#1e3a6e]"
-                            placeholder="Tìm theo tên sản phẩm..."
-                        />
+                        <div className="flex items-center gap-3">
+                            <div className="relative">
+                                <SlidersHorizontal className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                                <select
+                                    title="Sắp xếp"
+                                    value={sortBy}
+                                    onChange={(e) => setSortBy(e.target.value as SortBy)}
+                                    className="rounded-xl border border-gray-200 bg-white pl-9 pr-3 py-2 text-sm outline-none focus:border-[#1e3a6e]"
+                                >
+                                    <option value="default">Mặc định</option>
+                                    <option value="price_asc">Giá thấp  cao</option>
+                                    <option value="price_desc">Giá cao  thấp</option>
+                                </select>
+                            </div>
 
-                        <button
-                            onClick={() => router.push("/products/new")}
-                            className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:from-blue-500 hover:to-indigo-500 hover:shadow-blue-500/40"
-                        >
-                            <Plus className="h-5 w-5" />
-                            Tạo sản phẩm mới
-                        </button>
+                            {canCreate ? (
+                                <button
+                                    type="button"
+                                    onClick={() => router.push("/products/new")}
+                                    className="inline-flex items-center gap-2 rounded-xl bg-[#f97316] text-white px-4 py-2 text-sm font-bold hover:bg-[#f56a11]"
+                                >
+                                    <Plus className="h-4 w-4" />
+                                    + Tạo sản phẩm mới
+                                </button>
+                            ) : null}
+                        </div>
                     </div>
                 </div>
             </div>
 
-            {shopId ? (
-                <div className="rounded-3xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-                    Hiển thị sản phẩm của shop <span className="font-semibold">{shopId}</span>
-                </div>
-            ) : null}
+            <div className="px-4 py-4">
+                <div className="max-w-6xl mx-auto">
+                    {error ? (
+                        <div className="rounded-2xl bg-red-50 border border-red-200 p-4 text-sm text-red-700">
+                            {error}
+                        </div>
+                    ) : null}
 
-            {loading ? (
-                <div className="rounded-3xl border border-slate-200 bg-white p-10 text-center text-sm text-slate-500">
-                    Đang tải sản phẩm...
-                </div>
-            ) : error ? (
-                <div className="rounded-3xl border border-red-200 bg-red-50 p-6 text-sm text-red-700">{error}</div>
-            ) : filteredProducts.length === 0 ? (
-                <div className="rounded-3xl border border-slate-200 bg-white p-10 text-center text-sm text-slate-500">
-                    Không tìm thấy sản phẩm.
-                </div>
-            ) : (
-                <div className="grid gap-4 xl:grid-cols-3">
-                    {filteredProducts.map((product) => {
-                        const variantCount = product.variants?.length ?? 0;
-                        const totalStock = product.variants?.reduce((sum, variant) => sum + (variant.stock ?? 0), 0) ?? 0;
+                    {/* Loading skeleton */}
+                    {loading ? (
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+                            {Array.from({ length: 10 }).map((_, i) => (
+                                <div key={i} className="rounded-xl bg-white border border-gray-100 p-3 animate-pulse">
+                                    <div className="h-44 rounded-lg bg-gray-200" />
+                                    <div className="mt-3 h-4 w-4/5 rounded bg-gray-200" />
+                                    <div className="mt-2 h-3 w-2/3 rounded bg-gray-200" />
+                                    <div className="mt-3 h-5 w-1/2 rounded bg-gray-200" />
+                                    <div className="mt-2 h-3 w-1/3 rounded bg-gray-200" />
+                                </div>
+                            ))}
+                        </div>
+                    ) : filteredAndSorted.length === 0 ? (
+                        <div className="py-16 text-center">
+                            <div className="text-5xl">🛍️</div>
+                            <div className="mt-2 text-gray-600 font-semibold">Không tìm thấy sản phẩm nào</div>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+                            {filteredAndSorted.map((product) => {
+                                const id = product.id ?? "";
+                                const basePrice = product.basePrice ?? 0;
+                                const originalPrice = Math.round(basePrice * 1.15);
+                                const discountPercent = 13;
 
-                        return (
-                            <div key={product.id ?? product.productName} className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition">
-                                <div className="mb-3">
-                                    <p className="text-lg font-semibold text-slate-900 line-clamp-2">
-                                        {product.productName ?? "Sản phẩm"}
-                                    </p>
-                                    <p className="mt-1 text-sm text-slate-500">
-                                        Giá gốc: {product.basePrice?.toLocaleString()}đ
-                                    </p>
-                                </div>
-                                <div className="space-y-2 text-sm text-slate-600">
-                                    <p>Số variants: <span className="font-medium">{variantCount}</span></p>
-                                    <p>Tổng stock: <span className="font-medium">{totalStock}</span></p>
-                                </div>
-                                <button
-                                    type="button"
-                                    onClick={() => router.push(`/products/${product.id}`)}
-                                    className="mt-5 inline-flex w-full items-center justify-center rounded-xl bg-[#1e3a6e] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#173359] transition"
-                                >
-                                    Xem chi tiết
-                                </button>
-                            </div>
-                        );
-                    })}
+                                // deterministic random seed from id
+                                let seed = 0;
+                                for (let i = 0; i < id.length; i++) seed += id.charCodeAt(i) * (i + 1);
+                                const rating = 4.5 + (seed % 50) / 100;
+                                const sold = 50 + (seed % 350);
+
+                                const imgUrl = product.images?.[0]?.url;
+
+                                return (
+                                    <div
+                                        key={product.id ?? product.productName}
+                                        role="button"
+                                        tabIndex={0}
+                                        onClick={() => router.push(`/products/${product.id}`)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter" || e.key === " ") router.push(`/products/${product.id}`);
+                                        }}
+                                        className="cursor-pointer rounded-xl border border-gray-100 bg-white p-3 hover:shadow-md hover:scale-[1.01] transition duration-200"
+                                    >
+                                        <div className="relative">
+                                            {imgUrl ? (
+                                                // eslint-disable-next-line @next/next/no-img-element
+                                                <img
+                                                    src={`${apiBase}${imgUrl}`}
+                                                    alt={product.productName ?? "Sản phẩm"}
+                                                    className="w-full h-44 rounded-lg object-cover bg-gradient-to-br from-gray-100 to-gray-200"
+                                                />
+                                            ) : (
+                                                <div className="h-44 rounded-lg bg-gradient-to-br from-gray-100 to-gray-200" />
+                                            )}
+
+                                            <div className="absolute bottom-2 left-2 bg-red-500 text-white text-xs rounded px-1 py-0.5 font-bold">
+                                                -{discountPercent}%
+                                            </div>
+                                        </div>
+
+                                        <div className="mt-3">
+                                            <div className="text-sm font-medium text-gray-800 line-clamp-2">
+                                                {product.productName ?? "Sản phẩm"}
+                                            </div>
+
+                                            <div className="mt-1 text-xs text-gray-500">⭐ {rating.toFixed(1)} | Đã bán {sold}</div>
+
+                                            <div className="mt-2 flex items-baseline gap-2">
+                                                <div className="text-lg font-black text-red-600">{formatVnd(basePrice)}</div>
+                                                <div className="text-xs line-through text-gray-400">{formatVnd(originalPrice)}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    )}
                 </div>
-            )}
+            </div>
         </div>
     );
 }
+
