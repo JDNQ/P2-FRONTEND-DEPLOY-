@@ -144,14 +144,12 @@ export default function ProductDetailPage() {
 
     const currentVariant = data?.variants?.[selectedVariant];
     const apiBase = process.env.NEXT_PUBLIC_API_URL ?? "";
-    const getUrl = (url?: string) => !url ? null : url.startsWith("http") ? url : `${apiBase}${url}`;
-    const primaryImg = data.images?.find(i => i.isPrimary)?.url ?? data.images?.[0]?.url;
-    const variantImg = currentVariant?.image ?? null;
-    const displayImg = getUrl(variantImg ?? data.images?.[activeImg]?.url ?? primaryImg ?? "");
-    const allThumbs = [
-        ...(data.images ?? []).map(i => ({ url: i.url, id: String(i.id) })),
-        ...(data.variants ?? []).filter(v => v.image).map((v, idx) => ({ url: v.image!, id: `v-${idx}` }))
+    const getUrl = (url?: string) => !url ? "" : url.startsWith("http") ? url : apiBase + url;
+    const allThumbs: Array<{ url: string; type: string; variantIdx?: number }> = [
+        ...(data.images ?? []).sort((a, b) => (b.isPrimary ? 1 : 0) - (a.isPrimary ? 1 : 0)).map(i => ({ url: i.url, type: "product" as const })),
+        ...(data.variants ?? []).filter(v => v.image).map((v, idx) => ({ url: v.image!, type: "variant" as const, variantIdx: idx }))
     ];
+    const displayImg = getUrl(allThumbs[activeImg]?.url);
     const salePrice = (data?.basePrice ?? 0) + (currentVariant?.extraPrice ?? 0);
     const originalPrice = Math.round(salePrice * 1.2);
     const discountPercent = Math.round(((originalPrice - salePrice) / Math.max(1, originalPrice)) * 100);
@@ -205,7 +203,7 @@ export default function ProductDetailPage() {
                                 <div className="flex gap-2 overflow-x-auto mt-3">
                                     {allThumbs.map((thumb, idx) => (
                                         <button
-                                            key={thumb.id}
+                                            key={idx}
                                             type="button"
                                             onClick={() => setActiveImg(idx)}
                                             className={`w-16 h-16 rounded-lg border-2 overflow-hidden transition ${idx === activeImg ? "border-orange-500" : "border-gray-200"
@@ -262,11 +260,9 @@ export default function ProductDetailPage() {
                                                     onClick={() => {
                                                         setSelectedVariant(idx);
                                                         setQuantity(1);
-                                                        if (v.image) {
-                                                            const variantThumbIdx = (data.images?.length ?? 0) + idx;
+                                                        const variantThumbIdx = allThumbs.findIndex(t => t.type === "variant" && t.variantIdx === idx);
+                                                        if (variantThumbIdx !== -1) {
                                                             setActiveImg(variantThumbIdx);
-                                                        } else {
-                                                            setActiveImg(0);
                                                         }
                                                     }}
                                                     className={`border rounded-xl px-4 py-2 text-sm font-medium transition ${isDisabled
