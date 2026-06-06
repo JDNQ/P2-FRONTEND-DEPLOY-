@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FormProvider, useFieldArray, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { ProductFormData } from "@/lib/schema";
@@ -27,6 +27,7 @@ export type ProductFormProps = {
     onSubmit: (data: ProductSubmitPayload) => Promise<void> | void;
     shops?: Array<{ id: number; shopName: string }>;
     isEdit?: boolean;
+    initialImages?: Array<{ url: string; isPrimary: boolean }>;
 };
 
 const DEFAULT_VALUES: Partial<ProductFormData> = {
@@ -41,10 +42,17 @@ export function ProductForm({
     defaultValues,
     onSubmit,
     shops = [],
-    isEdit = false
+    isEdit = false,
+    initialImages = []
 }: ProductFormProps) {
 
-    const [productImages, setProductImages] = useState<Array<{ url: string; isPrimary: boolean }>>([]);
+    const [productImages, setProductImages] = useState<Array<{ url: string; isPrimary: boolean }>>(initialImages ?? []);
+
+    useEffect(() => {
+        if (initialImages && initialImages.length > 0) {
+            setProductImages(initialImages);
+        }
+    }, [initialImages]);
     const [uploadingImages, setUploadingImages] = useState(false);
     const [variantImages, setVariantImages] = useState<string[]>([]);
     const apiBase = process.env.NEXT_PUBLIC_API_URL ?? "";
