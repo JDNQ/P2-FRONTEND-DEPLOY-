@@ -158,6 +158,7 @@ export default function HomePage() {
     sold?: number;
     rating?: number;
     variants?: Array<{ extraPrice?: number }>;
+    images?: Array<{ id?: number; url: string; isPrimary?: boolean }>;
   };
 
   const [realProducts, setRealProducts] = useState<RealProduct[]>([]);
@@ -873,7 +874,16 @@ export default function HomePage() {
                 return (
                   <div key={p.id} className="rounded-3xl border border-gray-100 bg-gray-50 overflow-hidden">
                     <div className="relative">
-                      <div className="h-40 bg-gradient-to-br from-gray-200 to-gray-300" />
+                      {(() => {
+                        const imgUrl = p?.images?.find(i => i.isPrimary)?.url ?? p?.images?.[0]?.url;
+                        const apiBaseLocal = process.env.NEXT_PUBLIC_API_URL ?? "";
+                        const fullUrl = imgUrl ? (imgUrl.startsWith("http") ? imgUrl : apiBaseLocal + imgUrl) : null;
+                        return fullUrl ? (
+                          <img src={fullUrl} alt={p.productName} className="h-40 w-full object-cover" />
+                        ) : (
+                          <div className="h-40 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-4xl text-gray-300">🛍️</div>
+                        );
+                      })()}
                       {discountPercent > 0 && (
                         <div className="absolute top-3 left-3 bg-red-500 text-white text-xs px-3 py-1 rounded-full font-bold">
                           -{discountPercent}%
@@ -962,7 +972,16 @@ export default function HomePage() {
               return (
                 <div key={p.id} className="rounded-3xl bg-white border border-gray-100 overflow-hidden">
                   <div className="relative">
-                    <div className="h-36 bg-gradient-to-br from-gray-200 to-gray-300" />
+                    {(() => {
+                      const imgUrl = p?.images?.find(i => i.isPrimary)?.url ?? p?.images?.[0]?.url;
+                      const apiBaseLocal = process.env.NEXT_PUBLIC_API_URL ?? "";
+                      const fullUrl = imgUrl ? (imgUrl.startsWith("http") ? imgUrl : apiBaseLocal + imgUrl) : null;
+                      return fullUrl ? (
+                        <img src={fullUrl} alt={p.productName} className="h-36 w-full object-cover" />
+                      ) : (
+                        <div className="h-36 bg-gradient-to-br from-gray-100 to-gray-200" />
+                      );
+                    })()}
                     <button
                       className="absolute top-3 right-3 h-10 w-10 rounded-full bg-white/90 border border-gray-200 flex items-center justify-center text-gray-700 hover:bg-white transition"
                       aria-label="Yêu thích"
