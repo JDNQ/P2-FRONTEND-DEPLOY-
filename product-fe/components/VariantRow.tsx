@@ -118,7 +118,7 @@ export function VariantRow({ index, onRemove, canRemove, variantImage, onImageUp
                 {variantImage ? (
                     <div className="relative">
                         <img
-                            src={process.env.NEXT_PUBLIC_API_URL + variantImage}
+                            src={variantImage.startsWith("http") ? variantImage : `${process.env.NEXT_PUBLIC_API_URL}${variantImage}`}
                             alt="Variant"
                             className="w-12 h-12 object-cover rounded border border-gray-200"
                         />

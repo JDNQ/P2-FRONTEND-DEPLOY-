@@ -252,7 +252,7 @@ export function ProductForm({
                                 {productImages.map((img) => (
                                     <div key={img.url} className="relative">
                                         <img
-                                            src={apiBase + img.url}
+                                            src={img.url.startsWith("http") ? img.url : `${apiBase}${img.url}`}
                                             alt="Sản phẩm"
                                             className="w-full h-24 object-cover rounded-lg"
                                         />
