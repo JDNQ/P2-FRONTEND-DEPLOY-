@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Search, SlidersHorizontal, Plus } from "lucide-react";
-import { getProducts } from "@/lib/api";
+import { api, getProducts } from "@/lib/api";
 
 function readUserRole() {
     if (typeof window === "undefined") return null;
@@ -31,6 +31,18 @@ type SortBy = "default" | "price_asc" | "price_desc";
 
 function formatVnd(value: number) {
     return `${Math.round(value).toLocaleString("vi-VN")} ₫`;
+}
+
+const isAdminOrManager = (role: string | null) => role === "ADMIN" || role === "MANAGER";
+
+async function handleDelete(id: string, setProducts: React.Dispatch<React.SetStateAction<ProductItem[]>>) {
+    if (!confirm("Bạn có chắc muốn xóa sản phẩm này?")) return;
+    try {
+        await api.delete("/products/" + id);
+        setProducts(prev => prev.filter(p => p.id !== id));
+    } catch {
+        alert("Xóa thất bại");
+    }
 }
 
 export default function ProductsPage() {
@@ -190,17 +202,8 @@ export default function ProductsPage() {
 
                                 const imgUrl = product.images?.[0]?.url;
 
-                                return (
-                                    <div
-                                        key={product.id ?? product.productName}
-                                        role="button"
-                                        tabIndex={0}
-                                        onClick={() => router.push(`/products/${product.id}`)}
-                                        onKeyDown={(e) => {
-                                            if (e.key === "Enter" || e.key === " ") router.push(`/products/${product.id}`);
-                                        }}
-                                        className="cursor-pointer rounded-xl border border-gray-100 bg-white p-3 hover:shadow-md hover:scale-[1.01] transition duration-200"
-                                    >
+                                const cardContent = (
+                                    <>
                                         <div className="relative">
                                             {imgUrl ? (
                                                 // eslint-disable-next-line @next/next/no-img-element
@@ -230,6 +233,55 @@ export default function ProductsPage() {
                                                 <div className="text-xs line-through text-gray-400">{formatVnd(originalPrice)}</div>
                                             </div>
                                         </div>
+                                    </>
+                                );
+
+                                if (isAdminOrManager(userRole)) {
+                                    return (
+                                        <div
+                                            key={product.id ?? product.productName}
+                                            className="rounded-xl border border-gray-100 bg-white p-3"
+                                        >
+                                            {cardContent}
+                                            <div className="mt-3 flex gap-1.5">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => router.push("/products/" + product.id)}
+                                                    className="flex-1 rounded-md border border-blue-500 px-2 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-50"
+                                                >
+                                                    Xem chi tiết
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => router.push("/products/" + product.id + "/edit")}
+                                                    className="flex-1 rounded-md bg-[#1e3a6e] px-2 py-1.5 text-xs font-medium text-white hover:bg-[#173359]"
+                                                >
+                                                    Chỉnh sửa
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleDelete(product.id ?? "", setProducts)}
+                                                    className="flex-1 rounded-md bg-red-500 px-2 py-1.5 text-xs font-medium text-white hover:bg-red-600"
+                                                >
+                                                    Xóa
+                                                </button>
+                                            </div>
+                                        </div>
+                                    );
+                                }
+
+                                return (
+                                    <div
+                                        key={product.id ?? product.productName}
+                                        role="button"
+                                        tabIndex={0}
+                                        onClick={() => router.push(`/products/${product.id}`)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter" || e.key === " ") router.push(`/products/${product.id}`);
+                                        }}
+                                        className="cursor-pointer rounded-xl border border-gray-100 bg-white p-3 hover:shadow-md hover:scale-[1.01] transition duration-200"
+                                    >
+                                        {cardContent}
                                     </div>
                                 );
                             })}
