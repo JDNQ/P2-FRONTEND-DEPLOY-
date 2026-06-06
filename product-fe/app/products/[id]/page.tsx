@@ -142,9 +142,16 @@ export default function ProductDetailPage() {
         );
     }
 
-    const apiBase = process.env.NEXT_PUBLIC_API_URL ?? "";
-
     const currentVariant = data?.variants?.[selectedVariant];
+    const apiBase = process.env.NEXT_PUBLIC_API_URL ?? "";
+    const getUrl = (url?: string) => !url ? null : url.startsWith("http") ? url : `${apiBase}${url}`;
+    const primaryImg = data.images?.find(i => i.isPrimary)?.url ?? data.images?.[0]?.url;
+    const variantImg = currentVariant?.image ?? null;
+    const displayImg = getUrl(variantImg ?? data.images?.[activeImg]?.url ?? primaryImg ?? "");
+    const allThumbs = [
+        ...(data.images ?? []).map(i => ({ url: i.url, id: String(i.id) })),
+        ...(data.variants ?? []).filter(v => v.image).map((v, idx) => ({ url: v.image!, id: `v-${idx}` }))
+    ];
     const salePrice = (data?.basePrice ?? 0) + (currentVariant?.extraPrice ?? 0);
     const originalPrice = Math.round(salePrice * 1.2);
     const discountPercent = Math.round(((originalPrice - salePrice) / Math.max(1, originalPrice)) * 100);
@@ -182,7 +189,7 @@ export default function ProductDetailPage() {
                                 {data.images && data.images.length > 0 ? (
                                     // eslint-disable-next-line @next/next/no-img-element
                                     <img
-                                        src={data.images?.[activeImg]?.url?.startsWith("http") ? data.images[activeImg].url : `${apiBase}${data.images?.[activeImg]?.url}`}
+                                        src={displayImg ?? ""}
                                         alt={data.productName}
                                         className="w-full h-full object-contain"
                                     />
@@ -194,11 +201,11 @@ export default function ProductDetailPage() {
                             </div>
 
                             {/* Thumbnail strip */}
-                            {data.images && data.images.length > 1 ? (
+                            {allThumbs.length > 1 ? (
                                 <div className="flex gap-2 overflow-x-auto mt-3">
-                                    {data.images.map((img, idx) => (
+                                    {allThumbs.map((thumb, idx) => (
                                         <button
-                                            key={img.id ?? idx}
+                                            key={thumb.id}
                                             type="button"
                                             onClick={() => setActiveImg(idx)}
                                             className={`w-16 h-16 rounded-lg border-2 overflow-hidden transition ${idx === activeImg ? "border-orange-500" : "border-gray-200"
@@ -206,7 +213,7 @@ export default function ProductDetailPage() {
                                         >
                                             {/* eslint-disable-next-line @next/next/no-img-element */}
                                             <img
-                                                src={img.url.startsWith("http") ? img.url : `${apiBase}${img.url}`}
+                                                src={getUrl(thumb.url) ?? ""}
                                                 alt={`Ảnh ${idx + 1}`}
                                                 className="w-full h-full object-cover"
                                             />
@@ -255,6 +262,12 @@ export default function ProductDetailPage() {
                                                     onClick={() => {
                                                         setSelectedVariant(idx);
                                                         setQuantity(1);
+                                                        if (v.image) {
+                                                            const variantThumbIdx = (data.images?.length ?? 0) + idx;
+                                                            setActiveImg(variantThumbIdx);
+                                                        } else {
+                                                            setActiveImg(0);
+                                                        }
                                                     }}
                                                     className={`border rounded-xl px-4 py-2 text-sm font-medium transition ${isDisabled
                                                         ? "opacity-50 cursor-not-allowed border-gray-200"
