@@ -1,20 +1,26 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
 import type { ProductFormData } from "@/lib/schema";
+import { api } from "@/lib/api";
 
 export type VariantRowProps = {
     index: number;
     onRemove: () => void;
     canRemove: boolean;
+    variantImage?: string | null;
+    onImageUploaded?: (url: string) => void;
 };
 
-export function VariantRow({ index, onRemove, canRemove }: VariantRowProps) {
+export function VariantRow({ index, onRemove, canRemove, variantImage, onImageUploaded }: VariantRowProps) {
+    const resolvedOnImageUploaded = onImageUploaded ?? (() => { });
     const {
         register,
         formState: { errors },
     } = useFormContext<ProductFormData>();
+
+    const [uploading, setUploading] = useState(false);
 
     // watch values to ensure UI can respond if needed (not required by spec, but fine)
     const variant = useWatch({
@@ -23,8 +29,31 @@ export function VariantRow({ index, onRemove, canRemove }: VariantRowProps) {
 
     const variantErrors = errors.variants?.[index];
 
+    const handleVariantImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setUploading(true);
+        try {
+            const formData = new FormData();
+            formData.append("file", file);
+
+            const response = await api.post("/upload/variant-image", formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+            });
+
+            const url: string = response.data.url;
+            resolvedOnImageUploaded(url);
+        } catch (err) {
+            console.error("❌ Lỗi upload ảnh variant:", err);
+        } finally {
+            setUploading(false);
+            e.target.value = "";
+        }
+    };
+
     return (
-        <div className="grid grid-cols-1 items-start gap-3 py-3 sm:grid-cols-[1.2fr_0.7fr_0.7fr_auto] sm:items-center">
+        <div className="grid grid-cols-1 items-start gap-3 py-3 sm:grid-cols-[1.2fr_0.7fr_0.7fr_0.7fr_auto] sm:items-center">
             <div>
                 <input
                     {...register(`variants.${index}.variantName` as const)}
@@ -83,6 +112,42 @@ export function VariantRow({ index, onRemove, canRemove }: VariantRowProps) {
                 )}
             </div>
 
+            {/* Variant Image Upload */}
+            <div className="flex flex-col items-center gap-1">
+                {variantImage ? (
+                    <div className="relative">
+                        <img
+                            src={process.env.NEXT_PUBLIC_API_URL + variantImage}
+                            alt="Variant"
+                            className="w-12 h-12 object-cover rounded border border-gray-200"
+                        />
+                        <button
+                            type="button"
+                            onClick={() => resolvedOnImageUploaded("")}
+                            className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs hover:bg-red-600"
+                        >
+                            ✕
+                        </button>
+                    </div>
+                ) : (
+                    <label className="cursor-pointer">
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleVariantImageUpload}
+                            className="hidden"
+                        />
+                        <span className="text-xs text-blue-600 hover:text-blue-800 font-medium">
+                            {uploading ? (
+                                <span className="text-gray-500">Đang tải...</span>
+                            ) : (
+                                "Chọn ảnh"
+                            )}
+                        </span>
+                    </label>
+                )}
+            </div>
+
             <div className="sm:text-right">
                 <button
                     type="button"
@@ -99,4 +164,3 @@ export function VariantRow({ index, onRemove, canRemove }: VariantRowProps) {
         </div>
     );
 }
-
