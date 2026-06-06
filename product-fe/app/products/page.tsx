@@ -205,7 +205,7 @@ export default function ProductsPage() {
                                             {imgUrl ? (
                                                 // eslint-disable-next-line @next/next/no-img-element
                                                 <img
-                                                    src={`${apiBase}${imgUrl}`}
+                                                    src={imgUrl.startsWith("http") ? imgUrl : `${apiBase}${imgUrl}`}
                                                     alt={product.productName ?? "Sản phẩm"}
                                                     className="w-full h-44 rounded-lg object-cover bg-gradient-to-br from-gray-100 to-gray-200"
                                                 />

@@ -182,7 +182,7 @@ export default function ProductDetailPage() {
                                 {data.images && data.images.length > 0 ? (
                                     // eslint-disable-next-line @next/next/no-img-element
                                     <img
-                                        src={`${apiBase}${data.images?.[activeImg]?.url}`}
+                                        src={data.images?.[activeImg]?.url?.startsWith("http") ? data.images[activeImg].url : `${apiBase}${data.images?.[activeImg]?.url}`}
                                         alt={data.productName}
                                         className="w-full h-full object-contain"
                                     />
@@ -206,7 +206,7 @@ export default function ProductDetailPage() {
                                         >
                                             {/* eslint-disable-next-line @next/next/no-img-element */}
                                             <img
-                                                src={`${apiBase}${img.url}`}
+                                                src={img.url.startsWith("http") ? img.url : `${apiBase}${img.url}`}
                                                 alt={`Ảnh ${idx + 1}`}
                                                 className="w-full h-full object-cover"
                                             />
