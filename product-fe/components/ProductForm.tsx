@@ -86,7 +86,8 @@ export function ProductForm({
                 headers: { "Content-Type": "multipart/form-data" },
             });
 
-            const urls: string[] = response.data.urls;
+            const body = response.data;
+            const urls: string[] = body?.data?.urls ?? body?.urls ?? [];
             const newImages = urls.map((url: string) => ({ url, isPrimary: false }));
 
             if (productImages.length === 0 && newImages.length > 0) {

@@ -42,7 +42,8 @@ export function VariantRow({ index, onRemove, canRemove, variantImage, onImageUp
                 headers: { "Content-Type": "multipart/form-data" },
             });
 
-            const url: string = response.data.url;
+            const body = response.data;
+            const url: string = body?.data?.url ?? body?.url ?? "";
             resolvedOnImageUploaded(url);
         } catch (err) {
             console.error("❌ Lỗi upload ảnh variant:", err);
