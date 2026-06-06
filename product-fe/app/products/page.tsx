@@ -116,8 +116,8 @@ export default function ProductsPage() {
 
     return (
         <div className="bg-gray-50 min-h-screen">
-            {/* Sticky search bar */}
-            <div className="sticky top-0 z-10 bg-white border-b shadow-sm">
+            {/* Search bar: sticky for regular users, static for admin/manager */}
+            <div className={isAdminOrManager(userRole) ? "bg-white border-b mb-4" : "sticky top-0 z-10 bg-white border-b shadow-sm"}>
                 <div className="max-w-6xl mx-auto px-4 py-3">
                     <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                         <div className="relative flex-1">
