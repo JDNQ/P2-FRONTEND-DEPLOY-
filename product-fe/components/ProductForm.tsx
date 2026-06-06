@@ -12,6 +12,7 @@ export type ProductSubmitPayload = {
     productName: string;
     description?: string;
     basePrice: number;
+    shopId?: number;
     images?: Array<{ url: string; isPrimary: boolean }>;
     variants: Array<{
         variantName: string;
@@ -133,6 +134,7 @@ export function ProductForm({
             productName: data.productName?.trim() || "",
             description: data.description?.trim() || "",
             basePrice: Number(data.basePrice) || 0,
+            shopId: data.shopId ?? undefined,
             images: productImages.length > 0 ? productImages : undefined,
             variants: data.variants
                 .filter(v => v.variantName?.trim())
