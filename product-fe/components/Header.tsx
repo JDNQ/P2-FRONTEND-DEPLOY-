@@ -5,7 +5,7 @@
 import React from "react";
 import Link from "next/link";
 import { useLocale } from "@/lib/useTranslations";
-import { Bell, ChevronDown, Menu, Search, User } from "lucide-react";
+import { Bell, ChevronDown, Menu, User } from "lucide-react";
 
 export type UserInfo = {
     username: string;
@@ -33,15 +33,7 @@ export default function Header({ onToggleSidebar, user }: HeaderProps) {
                     <Menu className="h-5 w-5 text-gray-800" />
                 </button>
 
-                <div className="relative flex-1 min-w-[200px]">
-                    <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                        <Search className="h-4 w-4" />
-                    </span>
-                    <input
-                        className="h-10 w-full rounded-md border border-gray-200 bg-white pl-10 pr-3 text-sm outline-none focus:border-[#1e3a6e]"
-                        placeholder="Search products..."
-                    />
-                </div>
+                <div className="flex-1" />
 
                 <div className="hidden items-center gap-2 sm:flex">
                     <div className="rounded-md border border-gray-200 bg-white p-1">
@@ -77,7 +69,7 @@ export default function Header({ onToggleSidebar, user }: HeaderProps) {
                     <Bell className="h-5 w-5 text-gray-800" />
                 </button>
 
-                <div className="flex flex-1 items-center gap-2 rounded-md px-2 py-1 text-sm">
+                <div className="flex items-center gap-2 rounded-md px-2 py-1 text-sm">
                     <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100">
                         <User className="h-4 w-4 text-gray-700" />
                     </div>
