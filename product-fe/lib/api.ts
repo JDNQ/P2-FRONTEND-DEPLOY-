@@ -152,3 +152,54 @@ export async function createProduct(data: unknown) {
 export async function updateProduct(id: string, data: unknown) {
   return extractData(await api.patch(`/products/${id}`, data));
 }
+
+export async function getCart() {
+  return extractData(await api.get("/cart"));
+}
+
+export async function addToCart(data: {
+  productId: number;
+  variantId: number;
+  quantity: number;
+}) {
+  return extractData(await api.post("/cart", data));
+}
+
+export async function updateCartItem(
+  cartItemId: number,
+  data: { quantity: number },
+) {
+  return extractData(await api.patch("/cart/" + cartItemId, data));
+}
+
+export async function removeCartItem(cartItemId: number) {
+  return extractData(await api.delete("/cart/" + cartItemId));
+}
+
+export async function clearCart() {
+  return extractData(await api.delete("/cart"));
+}
+
+export async function getVouchers() {
+  return extractData(await api.get("/vouchers"));
+}
+
+export async function applyVoucher(data: { code: string; orderTotal: number }) {
+  return extractData(await api.post("/vouchers/apply", data));
+}
+
+export async function createOrder(data: {
+  items: Array<{ productId: number; variantId: number; quantity: number }>;
+  voucherCode?: string;
+  note?: string;
+}) {
+  return extractData(await api.post("/orders", data));
+}
+
+export async function getMyOrders() {
+  return extractData(await api.get("/orders/my"));
+}
+
+export async function getOrderById(id: number) {
+  return extractData(await api.get("/orders/" + id));
+}

@@ -70,6 +70,7 @@ export default function HomePage() {
 
 
   const [currentUser, setCurrentUser] = useState<{ username: string; role: string } | null>(null);
+  const [cartCount, setCartCount] = useState(0);
 
 
 
@@ -158,7 +159,7 @@ export default function HomePage() {
       try {
         const data = await getProducts();
         if (!mounted) return;
-        setRealProducts(Array.isArray(data) ? data.slice(0, 6) : []);
+        setRealProducts(Array.isArray(data) ? data.slice(0, 8) : []);
       } catch {
         if (!mounted) return;
         setRealProducts([]);
@@ -167,6 +168,20 @@ export default function HomePage() {
     return () => {
       mounted = false;
     };
+  }, []);
+
+  // Fetch cart count
+  useEffect(() => {
+    (async () => {
+      try {
+        const { getCart } = await import("@/lib/api");
+        const res = await getCart();
+        const cartItems = Array.isArray(res) ? (res as unknown[]) : ((res as Record<string, unknown>)?.items as unknown[] ?? []);
+        setCartCount(cartItems.length);
+      } catch {
+        setCartCount(0);
+      }
+    })();
   }, []);
 
 
@@ -557,8 +572,18 @@ export default function HomePage() {
                     <Icon className="text-[#1e3a6e]">❤️</Icon>
                     <span className="text-[11px]">Yêu thích</span>
                   </div>
-                  <div className="flex flex-col items-center">
-                    <Icon className="text-[#1e3a6e]">🛒</Icon>
+                  <div
+                    className="flex flex-col items-center cursor-pointer"
+                    onClick={() => router.push("/cart")}
+                  >
+                    <div className="relative">
+                      <Icon className="text-[#1e3a6e]">🛒</Icon>
+                      {cartCount > 0 && (
+                        <span className="absolute -top-1 -right-2 bg-red-500 text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
+                          {cartCount > 99 ? "99+" : cartCount}
+                        </span>
+                      )}
+                    </div>
                     <span className="text-[11px]">Giỏ hàng</span>
                   </div>
                 </div>
@@ -817,7 +842,7 @@ export default function HomePage() {
             </div>
 
             <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {realProducts.map((p, idx) => {
+              {realProducts.slice(0, 4).map((p, idx) => {
                 const discountPercent = (() => {
                   const extra = p?.variants?.[0]?.extraPrice;
                   if (extra !== undefined && extra !== null) {
@@ -910,7 +935,7 @@ export default function HomePage() {
           </div>
 
           <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-            {realProducts.slice(0, 6).map((p) => {
+            {realProducts.slice(0, 8).map((p) => {
               const discountPercent = (() => {
                 const extra = p?.variants?.[0]?.extraPrice;
                 if (extra !== undefined && extra !== null) {

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { api, getProductById } from "@/lib/api";
+import { api, getProductById, addToCart } from "@/lib/api";
 
 type ProductDetail = {
     id: string;
@@ -12,6 +12,7 @@ type ProductDetail = {
     createdAt?: string;
     images?: Array<{ id: number; url: string; isPrimary: boolean }>;
     variants: Array<{
+        id: number;
         variantName: string;
         extraPrice: number;
         stock: number;
@@ -32,6 +33,8 @@ export default function ProductDetailPage() {
     const [userRole, setUserRole] = useState<string | null>(null);
     const [selectedVariant, setSelectedVariant] = useState(0);
     const [quantity, setQuantity] = useState(1);
+    const [addingToCart, setAddingToCart] = useState(false);
+    const [addedToCart, setAddedToCart] = useState(false);
 
     useEffect(() => {
         try {
@@ -73,6 +76,39 @@ export default function ProductDetailPage() {
             mounted = false;
         };
     }, [id]);
+
+    const handleAddToCart = async (): Promise<boolean> => {
+        const tokenExists = typeof document !== "undefined" && document.cookie.includes("token=");
+        if (!tokenExists) {
+            router.push("/login");
+            return false;
+        }
+        if (!data?.variants?.[selectedVariant]) return false;
+        setAddingToCart(true);
+        try {
+            await addToCart({
+                productId: Number(data.id),
+                variantId: data.variants[selectedVariant].id as number,
+                quantity,
+            });
+            setAddedToCart(true);
+            setTimeout(() => setAddedToCart(false), 2000);
+            return true;
+        } catch (e: unknown) {
+            const message = e instanceof Error ? e.message : "Không thể thêm vào giỏ hàng";
+            alert(message);
+            return false;
+        } finally {
+            setAddingToCart(false);
+        }
+    };
+
+    const handleBuyNow = async () => {
+        const ok = await handleAddToCart();
+        if (ok) {
+            router.push("/cart");
+        }
+    };
 
     const handleDelete = async () => {
         if (!id) return;
@@ -271,15 +307,17 @@ export default function ProductDetailPage() {
                             <div className="grid grid-cols-1 gap-3">
                                 <button
                                     type="button"
-                                    onClick={() => alert("Chức năng đang phát triển")}
-                                    className="w-full border-2 border-orange-500 text-orange-600 bg-orange-50 hover:bg-orange-100 py-3 rounded-2xl font-bold"
+                                    disabled={addingToCart}
+                                    onClick={handleAddToCart}
+                                    className="w-full border-2 border-orange-500 text-orange-600 bg-orange-50 hover:bg-orange-100 py-3 rounded-2xl font-bold disabled:opacity-50"
                                 >
-                                    🛒 Thêm vào giỏ hàng
+                                    {addingToCart ? "Đang thêm..." : addedToCart ? "✓ Đã thêm!" : "🛒 Thêm vào giỏ hàng"}
                                 </button>
                                 <button
                                     type="button"
-                                    onClick={() => alert("Chức năng đang phát triển")}
-                                    className="w-full bg-orange-500 text-white hover:bg-orange-600 py-3 rounded-2xl font-bold"
+                                    disabled={addingToCart}
+                                    onClick={handleBuyNow}
+                                    className="w-full bg-orange-500 text-white hover:bg-orange-600 py-3 rounded-2xl font-bold disabled:opacity-50"
                                 >
                                     ⚡ Mua ngay
                                 </button>
