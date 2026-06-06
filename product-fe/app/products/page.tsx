@@ -100,56 +100,53 @@ export default function ProductsPage() {
     }, [products, searchTerm, sortBy]);
 
     const canCreate = userRole === "MANAGER" || userRole === "ADMIN";
-    const isAdminOrManager = userRole === "ADMIN" || userRole === "MANAGER";
     const apiBase = process.env.NEXT_PUBLIC_API_URL ?? "";
 
     return (
         <div className="bg-gray-50 min-h-screen">
             {/* Sticky search bar */}
-            {!isAdminOrManager && (
-                <div className="sticky top-0 z-10 bg-white border-b shadow-sm">
-                    <div className="max-w-6xl mx-auto px-4 py-3">
-                        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                            <div className="relative flex-1">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                                <input
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="w-full rounded-xl border border-gray-200 bg-white pl-9 pr-3 py-2 text-sm outline-none focus:border-[#1e3a6e]"
-                                    placeholder="Tìm kiếm sản phẩm..."
-                                />
+            <div className="sticky top-0 z-10 bg-white border-b shadow-sm">
+                <div className="max-w-6xl mx-auto px-4 py-3">
+                    <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                        <div className="relative flex-1">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                            <input
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full rounded-xl border border-gray-200 bg-white pl-9 pr-3 py-2 text-sm outline-none focus:border-[#1e3a6e]"
+                                placeholder="Tìm kiếm sản phẩm..."
+                            />
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                            <div className="relative">
+                                <SlidersHorizontal className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                                <select
+                                    title="Sắp xếp"
+                                    value={sortBy}
+                                    onChange={(e) => setSortBy(e.target.value as SortBy)}
+                                    className="rounded-xl border border-gray-200 bg-white pl-9 pr-3 py-2 text-sm outline-none focus:border-[#1e3a6e]"
+                                >
+                                    <option value="default">Mặc định</option>
+                                    <option value="price_asc">Giá thấp  cao</option>
+                                    <option value="price_desc">Giá cao  thấp</option>
+                                </select>
                             </div>
 
-                            <div className="flex items-center gap-3">
-                                <div className="relative">
-                                    <SlidersHorizontal className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                                    <select
-                                        title="Sắp xếp"
-                                        value={sortBy}
-                                        onChange={(e) => setSortBy(e.target.value as SortBy)}
-                                        className="rounded-xl border border-gray-200 bg-white pl-9 pr-3 py-2 text-sm outline-none focus:border-[#1e3a6e]"
-                                    >
-                                        <option value="default">Mặc định</option>
-                                        <option value="price_asc">Giá thấp  cao</option>
-                                        <option value="price_desc">Giá cao  thấp</option>
-                                    </select>
-                                </div>
-
-                                {canCreate ? (
-                                    <button
-                                        type="button"
-                                        onClick={() => router.push("/products/new")}
-                                        className="inline-flex items-center gap-2 rounded-xl bg-[#f97316] text-white px-4 py-2 text-sm font-bold hover:bg-[#f56a11]"
-                                    >
-                                        <Plus className="h-4 w-4" />
-                                        + Tạo sản phẩm mới
-                                    </button>
-                                ) : null}
-                            </div>
+                            {canCreate ? (
+                                <button
+                                    type="button"
+                                    onClick={() => router.push("/products/new")}
+                                    className="inline-flex items-center gap-2 rounded-xl bg-[#f97316] text-white px-4 py-2 text-sm font-bold hover:bg-[#f56a11]"
+                                >
+                                    <Plus className="h-4 w-4" />
+                                    + Tạo sản phẩm mới
+                                </button>
+                            ) : null}
                         </div>
                     </div>
                 </div>
-            )}
+            </div>
 
             <div className="px-4 py-4">
                 <div className="max-w-6xl mx-auto">
