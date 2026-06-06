@@ -22,7 +22,7 @@ function roleRedirect(role?: string) {
     case "MANAGER":
       return "/dashboard/manager";
     case "USER":
-      return "/";
+      return "/products";
     default:
       return "/login";
   }
@@ -45,14 +45,19 @@ export function middleware(request: NextRequest) {
   const isLoginPage = pathname === "/login";
   const isRegisterPage = pathname === "/register";
   const isDashboardRoute = pathname.startsWith("/dashboard");
-  // Sửa isProtected: chỉ bảo vệ /dashboard/* và /products/*/checkout
   const isProtected =
     isDashboardRoute ||
+    pathname === "/cart" ||
+    pathname === "/checkout" ||
+    pathname === "/orders" ||
     (pathname.startsWith("/products/") && pathname.endsWith("/checkout"));
 
   if (isRoot) {
-    if (token && role && role !== "USER") {
+    if (token && role && role !== "USER" && role !== undefined) {
       return NextResponse.redirect(new URL(roleRedirect(role), request.url));
+    }
+    if (token && role === "USER") {
+      return NextResponse.next();
     }
     return NextResponse.next(); // Cho vào home mà không cần login
   }
@@ -90,5 +95,8 @@ export const config = {
     "/register",
     "/dashboard/:path*",
     "/products/:path*",
+    "/cart",
+    "/checkout",
+    "/orders",
   ],
 };
