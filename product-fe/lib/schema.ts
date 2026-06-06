@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const variantSchema = z.object({
   variantName: z.string().min(1, "Variant name là bắt buộc"),
-  extraPrice: z.coerce.number().min(0),
+  extraPrice: z.coerce.number(),
   stock: z.coerce.number().min(0, "Stock phải lớn hơn hoặc bằng 0"),
 });
 
