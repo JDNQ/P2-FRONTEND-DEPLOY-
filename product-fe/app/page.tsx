@@ -72,7 +72,16 @@ export default function HomePage() {
   const [currentUser, setCurrentUser] = useState<{ username: string; role: string } | null>(null);
   const [cartCount, setCartCount] = useState(0);
 
-
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const raw = localStorage.getItem("user");
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw);
+        if (parsed?.username && parsed?.role) setCurrentUser(parsed);
+      } catch { }
+    }
+  }, []);
 
   // Read auth info from localStorage for showing user/dashboard actions
 
@@ -172,6 +181,8 @@ export default function HomePage() {
 
   // Fetch cart count
   useEffect(() => {
+    const hasCookie = typeof document !== "undefined" && document.cookie.includes("token=");
+    if (!hasCookie) return;
     (async () => {
       try {
         const { getCart } = await import("@/lib/api");
