@@ -73,17 +73,24 @@ export default function HomePage() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     const raw = localStorage.getItem("user");
-    if (raw) {
-      try {
-        const parsed = JSON.parse(raw);
-        if (parsed?.username && parsed?.role) {
-          // keep original behavior; avoid eslint cascade warning by guarding with conditions
-          setCurrentUser(parsed);
-        }
+    if (!raw) return;
 
-      } catch { }
+    try {
+      const parsed = JSON.parse(raw) as { username?: string; role?: string } | null;
+      // compute once, then set
+      const nextUser = parsed?.username && parsed?.role ? { username: parsed.username, role: parsed.role } : null;
+      if (nextUser) {
+        // eslint-disable-next-line react/no-set-state
+        setCurrentUser(nextUser);
+      }
+
+
+    } catch {
+      // ignore
     }
   }, []);
+
+
 
   const handleLogout = () => {
     document.cookie = "token=; path=/; max-age=0";
@@ -804,72 +811,154 @@ export default function HomePage() {
       {/* Main */}
       <main>
         {/* Hero */}
-        <section className="max-w-7xl mx-auto px-4 py-4 bg-gray-50">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-            {/* Sidebar */}
-            <aside className="hidden md:block md:col-span-3 w-64 shrink-0">
-              <div className="bg-white border rounded-xl shadow-sm py-2">
-                <div className="font-bold px-4 py-2 text-gray-700">Danh mục</div>
-                <div>
-                  {categories.map((c) => (
+        <section className="bg-gray-50 py-4">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="flex gap-4">
+              {/* Sidebar danh mục bên trái (giữ nguyên) */}
+              <aside className="hidden md:block md:w-56 w-56 shrink-0">
+                <div className="bg-white border rounded-xl shadow-sm py-2">
+                  <div className="font-bold px-4 py-2 text-gray-700">Danh mục</div>
+                  <div>
+                    {categories.map((c) => (
+                      <div
+                        key={c}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 cursor-pointer rounded-lg mx-1"
+                      >
+                        <span className="text-base">{c.split(" ")[0]}</span>
+                        <span className="line-clamp-2">{c.replace(c.split(" ")[0] + " ", "")}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </aside>
+
+              <div className="flex-1 flex flex-col gap-3">
+                {/* Banner chính slideshow (tự chuyển 4s) */}
+                {/* Banner chính slideshow */}
+                <div className="relative flex-1 rounded-l-2xl overflow-hidden cursor-pointer group" style={{ height: "280px" }} onClick={() => router.push("/products")}>
+                  <img
+                    src="https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832420/af47a55f-c499-43fa-babb-a8274264bf2f_2_w7yx1e.png"
+                    alt="FLASH SALE"
+                    className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
+                  />
+                </div>
+
+                {/* 2 sub banners bên phải */}
+                <div className="w-[280px] flex flex-col gap-2" style={{ height: "280px" }}>
+                  {[
+                    {
+                      url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_1_-Copy_1_rs2a03.png",
+                      title: "Tech Festival",
+                    },
+                    {
+                      url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_1_ypwnrd.png",
+                      title: "Bách Hóa Online",
+                    },
+                  ].map((sub: { url: string; title: string }, idx: number) => (
                     <div
-                      key={c}
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 cursor-pointer rounded-lg mx-1"
+                      key={idx}
+                      className="relative flex-1 overflow-hidden cursor-pointer group"
+                      style={{ borderRadius: idx === 0 ? "0 16px 0 0" : "0 0 16px 0" }}
+                      onClick={() => router.push("/products")}
                     >
-                      <span className="text-base">{c.split(" ")[0]}</span>
-                      <span className="line-clamp-2">{c.replace(c.split(" ")[0] + " ", "")}</span>
+                      <img
+                        src={sub.url}
+                        alt={sub.title}
+                        className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
+                      />
                     </div>
                   ))}
                 </div>
-              </div>
-            </aside>
 
-            {/* Banner */}
-            <div className="md:col-span-9">
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
-                <div className="md:col-span-8">
-                  <div className="h-52 md:h-64 rounded-2xl overflow-hidden bg-[#1e3a6e] relative">
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#0b2a66] to-[#0f3b8e]" />
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(249,115,22,0.35),transparent_55%)]" />
-                    <div className="relative h-full flex items-center">
-                      <div className="p-6 sm:p-8">
-                        <p className="text-yellow-200 font-extrabold tracking-wide text-sm">SIÊU SALE GIỮA THÁNG</p>
-                        <h2 className="mt-2 text-3xl sm:text-4xl font-black text-white">GIẢM ĐẾN 50%</h2>
-                        <div className="mt-4 flex gap-3">
-                          <Link href="#flash-sale" className="inline-flex items-center rounded-2xl bg-[#f97316] px-5 py-2 text-white font-bold hover:bg-[#ea580c] transition">
-                            Xem Flash Sale
-                          </Link>
-                          <Link
-                            href="/products"
-                            className="inline-flex items-center rounded-2xl border border-white/30 bg-white/10 px-5 py-2 text-white font-bold hover:bg-white/15 transition"
-                          >
-                            Mua ngay
-                          </Link>
+                {/* Dots indicator + arrows (giữ nguyên) */}
+                <div className="absolute" />
+
+                {/* Mini banners grid */}
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    {
+                      bg: "linear-gradient(135deg, #1e3a6e 0%, #1565c0 50%, #0d47a1 100%)",
+                      badge: "🏪 OFFICIAL STORE",
+                      title: "100% CHÍNH HÃNG",
+                      brands: "Apple Samsung Mi Asus",
+                      cta: "Mua ngay →",
+                    },
+                    {
+                      bg: "linear-gradient(135deg, #7c3aed 0%, #6d28d9 50%, #4c1d95 100%)",
+                      badge: "🎁 SĂN VOUCHER",
+                      title: "SIÊU ƯU ĐÃI",
+                      subBadges: ["GIẢM 50K", "GIẢM 100K", "FREESHIP"],
+                      cta: "Mua ngay →",
+                    },
+                    {
+                      bg: "linear-gradient(135deg, #059669 0%, #047857 100%)",
+                      badge: "🏠 SMART HOME",
+                      title: "GIẢM ĐẾN 50%",
+                      subText: "Biến ngôi nhà thành không gian hiện đại",
+                      cta: "Mua ngay →",
+                    },
+                    {
+                      bg: "linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)",
+                      badge: "🎮 GAMING FEST",
+                      title: "LAPTOP GAMING",
+                      subText: "GIẢM ĐẾN 30%",
+                      cta: "Mua ngay →",
+                    },
+                    {
+                      bg: "linear-gradient(135deg, #d97706 0%, #b45309 100%)",
+                      badge: "👶 MẸ & BÉ",
+                      title: "AN TÂM BÉ KHỎE MẠNH",
+                      subText: "Sản phẩm chính hãng",
+                      cta: "Mua ngay →",
+                    },
+                    {
+                      bg: "linear-gradient(135deg, #0891b2 0%, #0e7490 100%)",
+                      badge: "📚 BACK TO SCHOOL",
+                      title: "SÁCH HAY - HỌC CỤ",
+                      subText: "ƯU ĐÃI ĐẾN 35%",
+                      cta: "Mua ngay →",
+                    },
+                  ].map((card, idx) => {
+                    type MiniCard = {
+                      bg: string;
+                      badge: string;
+                      title: string;
+                      cta: string;
+                      subBadges?: string[];
+                      subText?: string;
+                      brands?: string;
+                    };
+                    const c = card as MiniCard;
+
+                    return (
+                      <div
+                        key={idx}
+                        className="h-[120px] rounded-xl overflow-hidden cursor-pointer relative p-4 flex flex-col justify-between hover:opacity-90 transition"
+                        style={{ background: c.bg }}
+                        onClick={() => router.push("/products")}
+                      >
+                        <div className="flex flex-col gap-1">
+                          <span className="text-xs text-white/80 font-semibold">{c.badge}</span>
+                          <h3 className="text-sm font-black text-white">{c.title}</h3>
+
+                          {c.subBadges && (
+                            <div className="flex gap-1 mt-1">
+                              {c.subBadges.map((s) => (
+                                <span key={s} className="text-[10px] font-black bg-white/20 text-white rounded px-2 py-0.5">
+                                  {s}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+
+                          {c.subText && <p className="text-xs text-white/80">{c.subText}</p>}
+                          {c.brands && <p className="text-xs text-white/80">{c.brands}</p>}
                         </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
 
-                <div className="md:col-span-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 gap-3">
-                  <div className="h-24 sm:h-28 md:h-auto rounded-2xl overflow-hidden bg-gradient-to-br from-blue-800 to-blue-950">
-                    <div className="h-full p-5 flex items-center justify-between">
-                      <div>
-                        <p className="text-white/80 text-xs font-semibold">Ưu đãi</p>
-                        <p className="text-white font-black text-base sm:text-lg">Freeship toàn quốc</p>
+                        <span className="text-xs text-white font-bold">{c.cta}</span>
                       </div>
-                      <div className="text-yellow-200 text-2xl">🚚</div>
-                    </div>
-                  </div>
-                  <div className="h-24 sm:h-28 md:h-auto rounded-2xl overflow-hidden bg-gradient-to-br from-[#f97316] to-[#ea580c]">
-                    <div className="h-full p-5 flex items-center justify-between">
-                      <div>
-                        <p className="text-white/80 text-xs font-semibold">Thành viên</p>
-                        <p className="text-white font-black text-base sm:text-lg">Voucher thành viên</p>
-                      </div>
-                      <div className="text-white text-2xl">🎁</div>
-                    </div>
-                  </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>
