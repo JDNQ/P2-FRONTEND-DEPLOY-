@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import { getProducts } from "@/lib/api";
 
 
-
 type ProductCard = {
   id: string;
   name: string;
@@ -68,7 +67,6 @@ function Icon({ children, className }: { children: React.ReactNode; className?: 
 export default function HomePage() {
   const router = useRouter();
 
-
   const [currentUser, setCurrentUser] = useState<{ username: string; role: string } | null>(null);
   const [cartCount, setCartCount] = useState(0);
 
@@ -78,18 +76,14 @@ export default function HomePage() {
     if (raw) {
       try {
         const parsed = JSON.parse(raw);
-        if (parsed?.username && parsed?.role) setCurrentUser(parsed);
+        if (parsed?.username && parsed?.role) {
+          // keep original behavior; avoid eslint cascade warning by guarding with conditions
+          setCurrentUser(parsed);
+        }
+
       } catch { }
     }
   }, []);
-
-  // Read auth info from localStorage for showing user/dashboard actions
-
-
-
-
-
-
 
   const handleLogout = () => {
     document.cookie = "token=; path=/; max-age=0";
@@ -99,11 +93,7 @@ export default function HomePage() {
     window.location.href = "/";
   };
 
-  const [flashRemaining, setFlashRemaining] = useState(
-
-    3 * 60 * 60 + 12 * 60 + 45,
-  ); // seconds
-
+  const [flashRemaining, setFlashRemaining] = useState(3 * 60 * 60 + 12 * 60 + 45); // seconds
 
   const [featuredActive, setFeaturedActive] = useState<string>("Điện thoại");
 
@@ -124,24 +114,25 @@ export default function HomePage() {
   }, [flashRemaining]);
 
   const trustBadges = [
-    { label: "Hàng chính hãng", icon: "✓" },
-    { label: "Miễn phí giao hàng", icon: "⇄" },
-    { label: "Đổi trả dễ dàng", icon: "↻" },
-    { label: "Thanh toán an toàn", icon: "🔒" },
-    { label: "CSKH 24/7", icon: "☎" },
+    { label: "Hàng chính hãng", icon: "✅" },
+    { label: "Freeship mọi đơn", icon: "🚚" },
+    { label: "Hoàn 200% nếu hàng giả", icon: "🔄" },
+    { label: "30 ngày đổi trả", icon: "📦" },
+    { label: "Giao nhanh 2h", icon: "⚡" },
+    { label: "Giá siêu rẻ", icon: "💰" },
   ];
 
   const categories = [
-    "Điện thoại",
-    "Laptop",
-    "Điện tử",
-    "Thời trang nam",
-    "Thời trang nữ",
-    "Giày dép",
-    "Làm đẹp",
-    "Nhà cửa",
-    "Mẹ & Bé",
-    "Xem thêm",
+    "📱 Điện Thoại - Máy Tính Bảng",
+    "💻 Laptop - Máy Vi Tính",
+    "📺 Điện Tử - Điện Lạnh",
+    "👗 Thời Trang Nữ",
+    "👔 Thời Trang Nam",
+    "👟 Giày Dép",
+    "💄 Làm Đẹp - Sức Khỏe",
+    "🏠 Nhà Cửa - Đời Sống",
+    "👶 Mẹ & Bé",
+    "📚 Sách - VPP - Quà Tặng",
   ];
 
   const vouchers = [
@@ -195,7 +186,6 @@ export default function HomePage() {
       }
     })();
   }, []);
-
 
   const featuredTabs = ["Điện thoại", "Laptop", "Điện tử", "Thời trang", "Gia dụng"];
 
@@ -510,8 +500,7 @@ export default function HomePage() {
       id: "r1",
       name: "Minh Anh",
       rating: 5,
-      content:
-        "Sản phẩm đúng mô tả, giao nhanh. Giá cũng rất tốt so với các nơi khác.",
+      content: "Sản phẩm đúng mô tả, giao nhanh. Giá cũng rất tốt so với các nơi khác.",
       product: "iPhone 15 Pro 256GB",
     },
     {
@@ -530,272 +519,377 @@ export default function HomePage() {
     },
   ];
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="sticky top-0 z-50">
-        <div className="bg-white border-b">
-          <div className="max-w-6xl mx-auto px-4">
-            <div className="h-16 flex items-center gap-4">
-              <Link href="/" className="flex items-center gap-2">
-                <div className="flex items-center gap-3">
-                  <Image
-                    src="/logo.png"
-                    alt="TL Market Logo"
-                    width={56}
-                    height={56}
-                    className="object-contain"
-                  />
-                  <div className="flex flex-col leading-tight">
-                    <span className="font-black text-xl">
-                      <span className="text-[#1e3a6e]">TL </span>
-                      <span className="text-[#f97316]">Market</span>
-                    </span>
-                    <span className="text-gray-500 text-xs font-normal">Thương mại điện tử</span>
-                  </div>
-                </div>
-              </Link>
+  const apiBaseLocal = process.env.NEXT_PUBLIC_API_URL ?? "";
 
-              {/* Search */}
-              <div className="flex-1 hidden md:flex items-center justify-center">
-                <div className="flex w-full max-w-xl items-center rounded-2xl border border-gray-200 bg-gray-50 px-3 py-2">
-                  <input
-                    placeholder="Bạn tìm gì hôm nay?"
-                    className="bg-transparent outline-none flex-1 text-sm px-1"
-                    defaultValue=""
-                  />
-                  <Link
-                    href="/products"
-                    className="ml-2 rounded-xl bg-[#f97316] px-4 py-2 text-sm font-bold text-white hover:bg-[#ea580c] transition"
-                  >
-                    Tìm kiếm
-                  </Link>
-                </div>
-              </div>
+  const resolveImageUrl = (p?: { images?: Array<{ url: string; isPrimary?: boolean }> }) => {
+    const imgUrl = p?.images?.find((i) => i.isPrimary)?.url ?? p?.images?.[0]?.url;
+    if (!imgUrl) return null;
+    return imgUrl.startsWith("http") ? imgUrl : apiBaseLocal + imgUrl;
+  };
 
-              {/* Icons & Auth */}
-              <div className="flex items-center gap-3">
-                <div className="hidden sm:flex items-center gap-3 text-gray-600">
-                  <div className="flex flex-col items-center">
-                    <Icon className="text-[#1e3a6e]">🔔</Icon>
-                    <span className="text-[11px]">Thông báo</span>
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <Icon className="text-[#1e3a6e]">❤️</Icon>
-                    <span className="text-[11px]">Yêu thích</span>
-                  </div>
-                  <div
-                    className="flex flex-col items-center cursor-pointer"
-                    onClick={() => router.push("/cart")}
-                  >
-                    <div className="relative">
-                      <Icon className="text-[#1e3a6e]">🛒</Icon>
-                      {cartCount > 0 && (
-                        <span className="absolute -top-1 -right-2 bg-red-500 text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
-                          {cartCount > 99 ? "99+" : cartCount}
-                        </span>
-                      )}
-                    </div>
-                    <span className="text-[11px]">Giỏ hàng</span>
-                  </div>
-                </div>
+  const getRandomDiscountPercent = (p: RealProduct | null, fallbackIdx: number) => {
+    const extra = p?.variants?.[0]?.extraPrice;
+    if (extra !== undefined && extra !== null) {
+      const v = p?.id ? String(p.id).split("").reduce((a, c) => a + c.charCodeAt(0), 0) : fallbackIdx + 1;
+      const min = 10;
+      const max = 30;
+      const span = max - min;
+      return min + (v % (span + 1));
+    }
+    return 0;
+  };
 
-                <div className="flex items-center gap-2">
-                  {currentUser ? (
-                    <>
-                      <span className="hidden sm:inline-flex items-center gap-2 text-sm font-semibold text-[#1e3a6e]">
-                        👤 {currentUser.username}
-                      </span>
-                      {currentUser.role === "ADMIN" && (
-                        <Link
-                          href="/dashboard/admin"
-                          className="hidden sm:inline-flex rounded-xl border border-gray-200 px-4 py-2 text-sm font-semibold text-[#1e3a6e] hover:bg-gray-50 transition"
-                        >
-                          Dashboard
-                        </Link>
-                      )}
-                      {currentUser.role === "MANAGER" && (
-                        <Link
-                          href="/dashboard/manager"
-                          className="hidden sm:inline-flex rounded-xl border border-gray-200 px-4 py-2 text-sm font-semibold text-[#1e3a6e] hover:bg-gray-50 transition"
-                        >
-                          Dashboard
-                        </Link>
-                      )}
-                      <button
-                        type="button"
-                        onClick={handleLogout}
-                        className="hidden sm:inline-flex rounded-xl bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-200 transition"
-                      >
-                        Đăng xuất
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <Link
-                        href="/login"
-                        className="hidden sm:inline-flex rounded-xl border border-gray-200 px-4 py-2 text-sm font-semibold text-[#1e3a6e] hover:bg-gray-50 transition"
-                      >
-                        Đăng nhập
-                      </Link>
-                      <Link
-                        href="/register"
-                        className="hidden sm:inline-flex rounded-xl bg-[#f97316] px-4 py-2 text-sm font-bold text-white hover:bg-[#ea580c] transition"
-                      >
-                        Đăng ký
-                      </Link>
-                    </>
-                  )}
-                  <Link
-                    href="/products"
-                    className="sm:hidden rounded-xl bg-[#1e3a6e] px-3 py-2 text-sm font-bold text-white"
-                  >
-                    Mua ngay
-                  </Link>
-                </div>
+  const SkeletonFlashCard = ({ keyId }: { keyId: string | number }) => (
+    <div key={keyId} className="bg-white rounded-xl border hover:shadow-md transition cursor-pointer overflow-hidden animate-pulse">
+      <div className="h-40 w-full bg-gray-100" />
+      <div className="p-3">
+        <div className="h-10 bg-gray-100 rounded w-11/12" />
+        <div className="mt-2 h-5 bg-gray-100 rounded w-2/3" />
+        <div className="mt-4 h-2 bg-gray-100 rounded w-full" />
+      </div>
+    </div>
+  );
 
+  const FlashCard = ({ p, idx }: { p: RealProduct; idx: number }) => {
+    const discountPercent = getRandomDiscountPercent(p, idx);
+    const sold = p?.sold ?? 0;
+    const progress = Math.min(100, Math.round((sold / 250) * 100));
+
+    return (
+      <div className="bg-white rounded-xl border hover:shadow-md transition cursor-pointer overflow-hidden" role="button" tabIndex={0}>
+        <div className="relative">
+          {(() => {
+            const fullUrl = resolveImageUrl(p);
+            return fullUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={fullUrl} alt={p.productName} className="h-40 w-full object-cover" />
+            ) : (
+              <div className="h-40 w-full bg-gradient-to-br from-gray-100 to-gray-200" />
+            );
+          })()}
+
+          {discountPercent > 0 && (
+            <div className="absolute top-2 left-2 bg-red-500 text-white text-xs rounded px-1.5 py-0.5 font-bold">
+              -{discountPercent}%
+            </div>
+          )}
+        </div>
+
+        <div className="p-3">
+          <div className="text-sm font-medium text-gray-900 line-clamp-2 min-h-[44px]">{p.productName}</div>
+          <div className="mt-1 font-black text-red-600">{formatVND(p.basePrice ?? 0)} ₫</div>
+
+          <div className="mt-2">
+            <div className="flex items-center justify-between text-xs text-gray-600 font-semibold">
+              <span>Đã bán</span>
+              <span>{sold}</span>
+            </div>
+            <div className="mt-2">
+              <div className="bg-gray-200 rounded-full h-1.5 overflow-hidden">
+                <div
+                  className="bg-gradient-to-r from-orange-400 to-red-500 h-full rounded-full"
+                  style={{ width: `${progress}%` }}
+                />
               </div>
             </div>
+          </div>
 
-            {/* mobile search */}
-            <div className="md:hidden pb-3">
-              <div className="flex items-center rounded-2xl border border-gray-200 bg-gray-50 px-3 py-2">
+          <div className="mt-2 text-xs text-gray-500 font-semibold">
+            {sold < 50 ? `Vừa mở bán` : `Đã bán ${sold}`}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const TopDealCard = ({ p, idx }: { p: RealProduct; idx: number }) => {
+    const discountPercent = getRandomDiscountPercent(p, idx);
+
+    return (
+      <div className="bg-white rounded-xl border hover:shadow-md transition cursor-pointer overflow-hidden">
+        <div className="relative">
+          {(() => {
+            const fullUrl = resolveImageUrl(p);
+            return fullUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={fullUrl} alt={p.productName} className="h-40 w-full object-cover" />
+            ) : (
+              <div className="h-40 w-full bg-gradient-to-br from-gray-100 to-gray-200" />
+            );
+          })()}
+
+          {discountPercent > 0 && (
+            <div className="absolute top-2 left-2 bg-red-500 text-white text-xs rounded px-1.5 py-0.5 font-bold">
+              -{discountPercent}%
+            </div>
+          )}
+        </div>
+
+        <div className="p-3">
+          <div className="text-sm font-medium text-gray-900 line-clamp-2 min-h-[44px]">{p.productName}</div>
+          <div className="mt-1 font-black text-red-600">{formatVND(p.basePrice ?? 0)} ₫</div>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Announcement bar */}
+      <div className="bg-green-50 text-center text-sm py-2 text-green-700 font-medium border-b border-green-100">
+        Freeship đơn từ 45k, giảm nhiều hơn cùng FREESHIP XTRA 🎁
+      </div>
+
+      {/* Header */}
+      <header className="sticky top-0 z-50">
+        {/* Tầng 2 */}
+        <div className="bg-white border-b shadow-sm sticky top-0 z-50">
+          <div className="flex items-center gap-4 max-w-7xl mx-auto px-4 py-3">
+            {/* Logo TL Market */}
+            <Link href="/" className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-3">
+                <Image src="/logo.png" alt="TL Market Logo" width={56} height={56} className="object-contain" />
+                <div className="flex flex-col leading-tight">
+                  <span className="font-black text-xl">
+                    <span className="text-[#1e3a6e]">TL </span>
+                    <span className="text-[#f97316]">Market</span>
+                  </span>
+                  <span className="text-gray-500 text-xs font-normal">Thương mại điện tử</span>
+                </div>
+              </div>
+            </Link>
+
+            {/* Search */}
+            <div className="flex-1 max-w-2xl flex items-center">
+              <div className="flex w-full items-center">
                 <input
                   placeholder="Bạn tìm gì hôm nay?"
-                  className="bg-transparent outline-none flex-1 text-sm px-1"
+                  className="w-full border border-gray-200 rounded-full px-5 py-2.5 text-sm outline-none bg-white"
                   defaultValue=""
                 />
                 <Link
                   href="/products"
-                  className="ml-2 rounded-xl bg-[#f97316] px-4 py-2 text-sm font-bold text-white hover:bg-[#ea580c] transition"
+                  className="ml-2 bg-[#f97316] text-white rounded-full px-6 py-2.5 font-bold text-sm hover:bg-[#ea580c] transition"
                 >
                   Tìm kiếm
                 </Link>
               </div>
             </div>
+
+            {/* Actions */}
+            <div className="flex items-center gap-3">
+              {/* Auth */}
+              {currentUser ? (
+                <div className="hidden sm:flex items-center gap-2">
+                  <div className="flex flex-col items-center">
+                    <div className="h-9 w-9 rounded-full bg-[#1e3a6e] text-white flex items-center justify-center text-sm font-bold">
+                      {currentUser.username?.charAt(0)?.toUpperCase()}
+                    </div>
+                    <div className="text-[11px] mt-1 text-gray-600 max-w-[70px] truncate">{currentUser.username}</div>
+                  </div>
+
+                  <div className="hidden md:flex">
+                    {(currentUser.role === "ADMIN" || currentUser.role === "MANAGER") && (
+                      <Link
+                        href={currentUser.role === "ADMIN" ? "/dashboard/admin" : "/dashboard/manager"}
+                        className="rounded-xl border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-800 hover:bg-gray-50 transition"
+                      >
+                        Dashboard
+                      </Link>
+                    )}
+                    <button
+                      type="button"
+                      onClick={handleLogout}
+                      className="ml-2 rounded-xl bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-200 transition"
+                    >
+                      Đăng xuất
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="hidden sm:flex items-center gap-2">
+                  <Link
+                    href="/login"
+                    className="rounded-xl border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-800 hover:bg-gray-50 transition"
+                  >
+                    Đăng nhập
+                  </Link>
+                  <Link
+                    href="/register"
+                    className="rounded-xl bg-[#f97316] px-4 py-2 text-sm font-bold text-white hover:bg-[#ea580c] transition"
+                  >
+                    Đăng ký
+                  </Link>
+                </div>
+              )}
+
+              {/* Mobile auth quick links */}
+              <div className="sm:hidden">
+                {currentUser ? (
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="rounded-xl bg-gray-100 px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-200 transition"
+                  >
+                    Thoát
+                  </button>
+                ) : (
+                  <Link href="/login" className="rounded-xl bg-[#f97316] px-3 py-2 text-sm font-bold text-white hover:bg-[#ea580c] transition">
+                    Đăng nhập
+                  </Link>
+                )}
+              </div>
+
+              {/* Icons */}
+              <button type="button" className="hidden sm:flex flex-col items-center text-gray-600">
+                <Icon className="text-[#1e3a6e]">🔔</Icon>
+                <span className="text-[11px]">Thông báo</span>
+              </button>
+
+              <button type="button" className="hidden sm:flex flex-col items-center text-gray-600">
+                <Icon className="text-[#1e3a6e]">❤️</Icon>
+                <span className="text-[11px]">Yêu thích</span>
+              </button>
+
+              <div className="flex flex-col items-center cursor-pointer" onClick={() => router.push("/cart")}>
+                <div className="relative">
+                  <Icon className="text-[#1e3a6e]">🛒</Icon>
+                  {cartCount > 0 && (
+                    <span className="absolute -top-1 -right-2 bg-red-500 text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
+                      {cartCount > 99 ? "99+" : cartCount}
+                    </span>
+                  )}
+                </div>
+                <span className="text-[11px]">Giỏ hàng</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Tầng 3 */}
+          <div className="bg-[#1e3a6e]">
+            <div className="flex items-center gap-6 max-w-7xl mx-auto px-4 py-2 text-sm font-medium">
+              <Link href="/" className="text-white/90 hover:text-orange-300">Trang chủ</Link>
+              <Link href="#flash-sale" className="text-white/90 hover:text-orange-300">Flash Sale</Link>
+              <Link href="#voucher" className="text-white/90 hover:text-orange-300">Mã giảm giá</Link>
+              <Link href="#official" className="text-white/90 hover:text-orange-300">Hàng chính hãng</Link>
+              <Link href="#featured" className="text-white/90 hover:text-orange-300">Bán chạy</Link>
+              <Link href="#reviews" className="text-white/90 hover:text-orange-300">Tin tức</Link>
+              <Link href="#footer" className="text-white/90 hover:text-orange-300">Hỗ trợ</Link>
+            </div>
           </div>
         </div>
 
-        {/* Nav bar 2 */}
-        <div className="bg-[#1e3a6e]">
-          <div className="max-w-6xl mx-auto px-4">
-            <nav className="h-12 flex items-center gap-6 overflow-x-auto">
-              {[
-                { label: "Trang chủ", href: "/" },
-                { label: "Flash Sale", href: "#flash-sale" },
-                { label: "Mã giảm giá", href: "#voucher" },
-                { label: "Hàng chính hãng", href: "#official" },
-                { label: "Bán chạy", href: "#featured" },
-                { label: "Tin tức", href: "#reviews" },
-                { label: "Hỗ trợ", href: "#footer" },
-              ].map((item) => (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  className="text-white/90 hover:text-white whitespace-nowrap text-sm font-semibold"
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
+        {/* mobile search */}
+        <div className="md:hidden bg-white border-b">
+          <div className="max-w-7xl mx-auto px-4 py-3">
+            <div className="flex items-center">
+              <input
+                placeholder="Bạn tìm gì hôm nay?"
+                className="flex-1 border border-gray-200 rounded-full px-5 py-2.5 text-sm outline-none"
+                defaultValue=""
+              />
+              <Link href="/products" className="ml-2 bg-[#f97316] text-white rounded-full px-6 py-2.5 font-bold text-sm">
+                Tìm kiếm
+              </Link>
+            </div>
           </div>
+        </div>
+
+        {/* Tầng 1 */}
+        <div className="bg-[#f0f8ff] text-center text-sm py-1.5 text-[#1e3a6e] font-medium border-b border-[#d9ebff]">
+          🎉 Freeship đơn từ 45k - Giảm nhiều hơn cùng FREESHIP XTRA
         </div>
       </header>
 
       {/* Main */}
       <main>
-        {/* Banner chính */}
-        <section className="max-w-6xl mx-auto px-4 py-4">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
-            <div className="md:col-span-8">
-              <div className="h-52 md:h-64 rounded-3xl overflow-hidden bg-[#1e3a6e] relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#0b2a66] to-[#0f3b8e]" />
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(249,115,22,0.35),transparent_55%)]" />
-                <div className="relative h-full flex items-center">
-                  <div className="p-6 sm:p-8">
-                    <p className="text-yellow-200 font-extrabold tracking-wide text-sm">SIÊU SALE GIỮA THÁNG</p>
-                    <h2 className="mt-2 text-3xl sm:text-4xl font-black text-white">
-                      GIẢM ĐẾN 50%
-                    </h2>
-                    <div className="mt-4 flex gap-3">
-                      <Link
-                        href="#flash-sale"
-                        className="inline-flex items-center rounded-2xl bg-[#f97316] px-5 py-2 text-white font-bold hover:bg-[#ea580c] transition"
-                      >
-                        Xem Flash Sale
-                      </Link>
-                      <Link
-                        href="/products"
-                        className="inline-flex items-center rounded-2xl border border-white/30 bg-white/10 px-5 py-2 text-white font-bold hover:bg-white/15 transition"
-                      >
-                        Mua ngay
-                      </Link>
+        {/* Hero */}
+        <section className="max-w-7xl mx-auto px-4 py-4 bg-gray-50">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+            {/* Sidebar */}
+            <aside className="hidden md:block md:col-span-3 w-64 shrink-0">
+              <div className="bg-white border rounded-xl shadow-sm py-2">
+                <div className="font-bold px-4 py-2 text-gray-700">Danh mục</div>
+                <div>
+                  {categories.map((c) => (
+                    <div
+                      key={c}
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 cursor-pointer rounded-lg mx-1"
+                    >
+                      <span className="text-base">{c.split(" ")[0]}</span>
+                      <span className="line-clamp-2">{c.replace(c.split(" ")[0] + " ", "")}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </aside>
+
+            {/* Banner */}
+            <div className="md:col-span-9">
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
+                <div className="md:col-span-8">
+                  <div className="h-52 md:h-64 rounded-2xl overflow-hidden bg-[#1e3a6e] relative">
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#0b2a66] to-[#0f3b8e]" />
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(249,115,22,0.35),transparent_55%)]" />
+                    <div className="relative h-full flex items-center">
+                      <div className="p-6 sm:p-8">
+                        <p className="text-yellow-200 font-extrabold tracking-wide text-sm">SIÊU SALE GIỮA THÁNG</p>
+                        <h2 className="mt-2 text-3xl sm:text-4xl font-black text-white">GIẢM ĐẾN 50%</h2>
+                        <div className="mt-4 flex gap-3">
+                          <Link href="#flash-sale" className="inline-flex items-center rounded-2xl bg-[#f97316] px-5 py-2 text-white font-bold hover:bg-[#ea580c] transition">
+                            Xem Flash Sale
+                          </Link>
+                          <Link
+                            href="/products"
+                            className="inline-flex items-center rounded-2xl border border-white/30 bg-white/10 px-5 py-2 text-white font-bold hover:bg-white/15 transition"
+                          >
+                            Mua ngay
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="md:col-span-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 gap-3">
+                  <div className="h-24 sm:h-28 md:h-auto rounded-2xl overflow-hidden bg-gradient-to-br from-blue-800 to-blue-950">
+                    <div className="h-full p-5 flex items-center justify-between">
+                      <div>
+                        <p className="text-white/80 text-xs font-semibold">Ưu đãi</p>
+                        <p className="text-white font-black text-base sm:text-lg">Freeship toàn quốc</p>
+                      </div>
+                      <div className="text-yellow-200 text-2xl">🚚</div>
+                    </div>
+                  </div>
+                  <div className="h-24 sm:h-28 md:h-auto rounded-2xl overflow-hidden bg-gradient-to-br from-[#f97316] to-[#ea580c]">
+                    <div className="h-full p-5 flex items-center justify-between">
+                      <div>
+                        <p className="text-white/80 text-xs font-semibold">Thành viên</p>
+                        <p className="text-white font-black text-base sm:text-lg">Voucher thành viên</p>
+                      </div>
+                      <div className="text-white text-2xl">🎁</div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-
-            <div className="md:col-span-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 gap-3">
-              <div className="h-24 sm:h-28 md:h-auto rounded-3xl overflow-hidden bg-gradient-to-br from-blue-800 to-blue-950">
-                <div className="h-full p-5 flex items-center justify-between">
-                  <div>
-                    <p className="text-white/80 text-xs font-semibold">Ưu đãi</p>
-                    <p className="text-white font-black text-base sm:text-lg">Freeship toàn quốc</p>
-                  </div>
-                  <div className="text-yellow-200 text-2xl">🚚</div>
-                </div>
-              </div>
-              <div className="h-24 sm:h-28 md:h-auto rounded-3xl overflow-hidden bg-gradient-to-br from-[#f97316] to-[#ea580c]">
-                <div className="h-full p-5 flex items-center justify-between">
-                  <div>
-                    <p className="text-white/80 text-xs font-semibold">Thành viên</p>
-                    <p className="text-white font-black text-base sm:text-lg">Voucher thành viên</p>
-                  </div>
-                  <div className="text-white text-2xl">🎁</div>
-                </div>
-              </div>
-            </div>
           </div>
         </section>
 
-        {/* Trust badges */}
-        <section className="max-w-6xl mx-auto px-4 py-4">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+        {/* Trust badges redesigned */}
+        <section className="bg-white border-y py-3">
+          <div className="flex items-center justify-center gap-8 flex-wrap max-w-7xl mx-auto px-4">
             {trustBadges.map((b) => (
-              <div
-                key={b.label}
-                className="flex items-center gap-3 rounded-2xl bg-white border border-gray-100 px-4 py-3"
-              >
-                <div className="h-10 w-10 rounded-xl bg-[#1e3a6e]/10 text-[#1e3a6e] flex items-center justify-center font-black">
-                  {b.icon}
-                </div>
-                <p className="text-sm font-semibold text-gray-800 line-clamp-2">{b.label}</p>
+              <div key={b.label} className="flex items-center gap-2 text-sm text-gray-600">
+                <span className="text-base">{b.icon}</span>
+                <span className="font-medium">{b.label}</span>
               </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Category icons */}
-        <section className="max-w-6xl mx-auto px-4 py-2">
-          <div className="grid grid-cols-5 sm:grid-cols-10 gap-2">
-            {categories.map((c) => (
-              <Link
-                key={c}
-                href="/products"
-                className="group rounded-2xl bg-white border border-gray-100 px-2 py-3 flex flex-col items-center gap-2 hover:shadow-sm transition"
-              >
-                <div className="h-12 w-12 rounded-2xl bg-[#1e3a6e]/10 flex items-center justify-center text-xl group-hover:bg-[#1e3a6e]/15 transition">
-                  {c === "Xem thêm" ? "⋯" : "▢"}
-                </div>
-                <p className="text-xs font-semibold text-gray-700 text-center line-clamp-2">{c}</p>
-              </Link>
             ))}
           </div>
         </section>
 
         {/* Voucher section */}
-        <section id="voucher" className="max-w-6xl mx-auto px-4 py-10">
+        <section id="voucher" className="max-w-7xl mx-auto px-4 py-10 bg-white">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-3xl font-black text-[#1e3a6e]">VOUCHER DÀNH CHO BẠN</h2>
             <Link href="/products" className="text-[#f97316] font-bold hover:underline">
@@ -804,236 +898,184 @@ export default function HomePage() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {vouchers.map((v) => (
-              <div key={v.id} className="bg-white rounded-3xl border border-gray-100 overflow-hidden">
-                <div className="p-5">
-                  <p className="text-sm font-semibold text-gray-500">{v.sub}</p>
-                  <div className="mt-2 flex items-end justify-between gap-3">
-                    <div>
-                      <h3 className="text-xl font-black text-gray-900">{v.title}</h3>
-                      <p className="text-[#f97316] font-black text-2xl mt-1">{v.value}</p>
-                    </div>
-                    <div className="h-12 w-12 rounded-2xl bg-[#f97316]/15 flex items-center justify-center text-2xl">
-                      🎫
-                    </div>
-                  </div>
+              <div
+                key={v.id}
+                className="bg-white rounded-2xl border border-dashed border-orange-300 p-4 flex items-center gap-4"
+              >
+                <div className="bg-[#f97316] text-white rounded-xl p-3 flex flex-col items-center justify-center">
+                  <div className="text-black bg-transparent font-black text-lg">{v.value}</div>
+                  <div className="text-xs font-bold">GIẢM</div>
                 </div>
-                <div className="px-5 pb-5">
-                  <Link
-                    href="/products"
-                    className="w-full inline-flex items-center justify-center rounded-2xl bg-[#f97316] text-white font-bold py-2 hover:bg-[#ea580c] transition"
-                  >
-                    Lưu ngay
-                  </Link>
+                <div className="border-l border-dashed border-orange-300 h-12" />
+                <div className="flex-1">
+                  <p className="font-bold text-gray-900">{v.title}</p>
+                  <p className="text-xs text-gray-500">{v.sub}</p>
                 </div>
+                <Link href="/products" className="bg-[#f97316] text-white text-xs px-3 py-1.5 rounded-full font-bold ml-auto">
+                  Lưu ngay
+                </Link>
               </div>
             ))}
           </div>
         </section>
 
         {/* Flash Sale */}
-        <section id="flash-sale" className="bg-white border-t border-gray-100">
-          <div className="max-w-6xl mx-auto px-4 py-10">
+        <section id="flash-sale" className="bg-white rounded-2xl shadow-sm max-w-7xl mx-auto px-4 py-6 mb-4">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="bg-red-500 text-white font-black rounded px-3 py-1">⚡ FLASH SALE</div>
+              <div className="flex items-center gap-1">
+                {countdown.split(":").map((part, idx) => (
+                  <div key={idx} className="bg-[#1e3a6e] text-white rounded px-2 py-1 font-mono text-lg font-black">
+                    {part}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <Link href="/products" className="text-[#f97316] font-bold">
+              Xem tất cả →
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+            {realProducts?.length
+              ? realProducts.slice(0, 6).map((p, idx) => <FlashCard key={p.id} p={p} idx={idx} />)
+              : Array.from({ length: 6 }).map((_, i) => <SkeletonFlashCard keyId={i} key={i} />)}
+          </div>
+        </section>
+
+        {/* Top Deal section mới */}
+        <section className="max-w-7xl mx-auto px-4 pb-4">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-[#ef4444] font-black text-lg">👍 TOP DEAL • SIÊU RẺ</h2>
+          </div>
+
+          <div className="flex overflow-x-auto gap-3 pb-2">
+            {(realProducts?.length ? realProducts.slice(6) : []).concat(realProducts?.length ? [] : []).slice(0, 12).map((p, idx) => (
+              <div key={p.id} className="min-w-[220px] flex-1 sm:flex-none">
+                <TopDealCard p={p} idx={idx} />
+              </div>
+            ))}
+            {!realProducts?.length && Array.from({ length: 6 }).map((_, i) => <SkeletonFlashCard key={i} keyId={i} />)}
+          </div>
+        </section>
+
+        {/* Featured Products */}
+        <section id="featured" className="bg-gray-50 py-8">
+          <div className="max-w-7xl mx-auto px-4">
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
               <div>
-                <h2 className="text-3xl font-black text-[#1e3a6e]">⚡ FLASH SALE</h2>
-                <p className="text-sm text-gray-500">
-                  Kết thúc lúc{" "}
-                  <span className="font-semibold text-gray-700">
-                    {countdown}
-                  </span>
-                </p>
-
+                <h2 className="text-3xl font-black text-[#1e3a6e]">Sản phẩm nổi bật</h2>
+                <p className="text-sm text-gray-500 mt-1">Chọn nhanh theo danh mục bạn quan tâm</p>
               </div>
-
-              <div className="flex items-center gap-3">
-                <div className="text-sm text-gray-600 font-semibold">Thời gian còn lại:</div>
-                <div className="px-4 py-2 rounded-2xl bg-[#1e3a6e] text-white font-black tracking-widest">
-                  {countdown}
-                </div>
+              <div className="flex items-center gap-2 overflow-x-auto">
+                {featuredTabs.map((t) => (
+                  <button
+                    key={t}
+                    onClick={() => setFeaturedActive(t)}
+                    className={
+                      t === featuredActive
+                        ? "px-4 py-2 rounded-2xl bg-[#1e3a6e] text-white font-bold whitespace-nowrap"
+                        : "px-4 py-2 rounded-2xl bg-white border border-gray-200 text-gray-700 font-semibold hover:bg-gray-50 whitespace-nowrap"
+                    }
+                  >
+                    {t}
+                  </button>
+                ))}
               </div>
             </div>
 
-            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {realProducts.slice(0, 4).map((p, idx) => {
-                const discountPercent = (() => {
-                  const extra = p?.variants?.[0]?.extraPrice;
-                  if (extra !== undefined && extra !== null) {
-                    const v = p?.id ? String(p.id).split("").reduce((a, c) => a + c.charCodeAt(0), 0) : idx + 1;
-                    const min = 10;
-                    const max = 30;
-                    const span = max - min;
-                    return min + (v % (span + 1));
-                  }
-                  return 0;
-                })();
-
-                const progress = Math.min(100, Math.round(((p?.sold ?? 0) / 250) * 100));
-                const oldPrice = p?.basePrice ?? 0;
-                const price = p?.basePrice ?? 0;
+            <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+              {featured.slice(0, 8).map((p, idx) => {
+                const discountPercent = p.discountPercent;
+                const topDeal = idx % 3 === 0;
+                const showRealImage = featuredActive === "Điện thoại";
+                const realP = showRealImage ? realProducts?.[idx] : undefined;
 
                 return (
-                  <div key={p.id} className="rounded-3xl border border-gray-100 bg-gray-50 overflow-hidden">
+                  <div
+                    key={p.id}
+                    className="bg-white rounded-xl border hover:shadow-md transition cursor-pointer overflow-hidden"
+                  >
                     <div className="relative">
-                      {(() => {
-                        const imgUrl = p?.images?.find(i => i.isPrimary)?.url ?? p?.images?.[0]?.url;
-                        const apiBaseLocal = process.env.NEXT_PUBLIC_API_URL ?? "";
-                        const fullUrl = imgUrl ? (imgUrl.startsWith("http") ? imgUrl : apiBaseLocal + imgUrl) : null;
-                        return fullUrl ? (
-                          <img src={fullUrl} alt={p.productName} className="h-40 w-full object-cover" />
+                      {showRealImage && realP ? (
+                        resolveImageUrl(realP) ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={resolveImageUrl(realP) as string} alt={realP.productName} className="h-48 w-full object-cover" />
                         ) : (
-                          <div className="h-40 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-4xl text-gray-300">🛍️</div>
-                        );
-                      })()}
-                      {discountPercent > 0 && (
-                        <div className="absolute top-3 left-3 bg-red-500 text-white text-xs px-3 py-1 rounded-full font-bold">
-                          -{discountPercent}%
+                          <div className="h-48 w-full bg-gradient-to-br from-gray-100 to-gray-200" />
+                        )
+                      ) : (
+                        <div className="h-48 w-full bg-gradient-to-br from-gray-100 to-gray-200" />
+                      )}
+
+                      <div className="absolute top-3 left-3">
+                        <span className="inline-flex items-center rounded bg-green-100 text-green-700 text-xs font-bold px-2 py-1">
+                          Chính Hãng
+                        </span>
+                      </div>
+                      {topDeal && (
+                        <div className="absolute top-3 right-3">
+                          <span className="inline-flex items-center rounded bg-red-100 text-red-600 text-xs font-bold px-2 py-1">
+                            TOP DEAL
+                          </span>
                         </div>
                       )}
-                      <div className="absolute top-3 right-3 bg-white/90 rounded-full px-2 py-1 text-xs font-semibold text-gray-700">
-                        {idx % 2 === 0 ? "HOT" : "DEAL"}
-                      </div>
                     </div>
-                    <div className="p-5">
-                      <h3 className="text-base font-bold text-gray-900 line-clamp-2">{p.productName}</h3>
-                      <div className="mt-3 flex items-center gap-2">
-                        <span className="text-2xl font-black text-red-600">{formatVND(price)} ₫</span>
-                      </div>
-                      {oldPrice ? (
-                        <div className="mt-1 text-sm text-gray-500">
-                          <span className="line-through">{formatVND(oldPrice)} ₫</span>
-                        </div>
-                      ) : null}
 
-                      <div className="mt-4">
-                        <div className="flex items-center justify-between text-xs text-gray-600 font-semibold">
-                          <span>Đã bán</span>
-                          <span>{p?.sold ?? 0}</span>
-                        </div>
-                        <div className="h-2 rounded-full bg-gray-200 mt-2 overflow-hidden">
-                          <div className="h-full bg-red-500" style={{ width: `${progress}%` }} />
-                        </div>
+                    <div className="p-4">
+                      <h3 className="text-sm font-medium line-clamp-2 min-h-[44px]">{p.name}</h3>
+                      <div className="mt-2 flex items-center justify-between">
+                        <StarRow rating={p.rating} />
+                        <span className="text-xs text-gray-500 font-semibold">{p.sold}</span>
                       </div>
 
-                      <div className="mt-5">
-                        <Link
-                          href={`/products/${p.id}`}
-                          className="w-full inline-flex items-center justify-center rounded-2xl bg-[#1e3a6e] text-white font-bold py-2 hover:bg-[#0f2f63] transition"
-                        >
-                          Xem chi tiết
-                        </Link>
+                      <div className="mt-2 flex items-end justify-between gap-2">
+                        <div>
+                          <div className="text-lg font-black text-red-600">{formatVND(p.price)} ₫</div>
+                          <div className="text-xs text-gray-500 line-through">{formatVND(p.oldPrice)} ₫</div>
+                        </div>
+                        <div className="-ml-1">
+                          {discountPercent > 0 && (
+                            <span className="text-xs font-bold bg-red-100 text-red-600 px-2 py-1 rounded-2xl">
+                              -{discountPercent}%
+                            </span>
+                          )}
+                        </div>
                       </div>
+
+                      <button
+                        type="button"
+                        className="bg-white border border-orange-500 text-orange-500 w-full rounded-lg py-2 text-sm font-medium hover:bg-orange-50 mt-2"
+                      >
+                        Thêm giỏ hàng
+                      </button>
                     </div>
                   </div>
                 );
               })}
             </div>
-
           </div>
         </section>
 
-        {/* Featured products */}
-        <section id="featured" className="max-w-6xl mx-auto px-4 py-10">
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-            <div>
-              <h2 className="text-3xl font-black text-[#1e3a6e]">Sản phẩm nổi bật</h2>
-              <p className="text-sm text-gray-500 mt-1">Chọn nhanh theo danh mục bạn quan tâm</p>
-            </div>
-            <div className="flex items-center gap-2 overflow-x-auto">
-              {featuredTabs.map((t) => (
-                <button
-                  key={t}
-                  onClick={() => setFeaturedActive(t)}
-                  className={
-                    t === featuredActive
-                      ? "px-4 py-2 rounded-2xl bg-[#1e3a6e] text-white font-bold whitespace-nowrap"
-                      : "px-4 py-2 rounded-2xl bg-white border border-gray-200 text-gray-700 font-semibold hover:bg-gray-50 whitespace-nowrap"
-                  }
-                >
-                  {t}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-            {realProducts.slice(0, 8).map((p) => {
-              const discountPercent = (() => {
-                const extra = p?.variants?.[0]?.extraPrice;
-                if (extra !== undefined && extra !== null) {
-                  const v = p?.id ? String(p.id).split("").reduce((a, c) => a + c.charCodeAt(0), 0) : 1;
-                  const min = 10;
-                  const max = 30;
-                  const span = max - min;
-                  return min + (v % (span + 1));
-                }
-                return 0;
-              })();
-
-              return (
-                <div key={p.id} className="rounded-3xl bg-white border border-gray-100 overflow-hidden">
-                  <div className="relative">
-                    {(() => {
-                      const imgUrl = p?.images?.find(i => i.isPrimary)?.url ?? p?.images?.[0]?.url;
-                      const apiBaseLocal = process.env.NEXT_PUBLIC_API_URL ?? "";
-                      const fullUrl = imgUrl ? (imgUrl.startsWith("http") ? imgUrl : apiBaseLocal + imgUrl) : null;
-                      return fullUrl ? (
-                        <img src={fullUrl} alt={p.productName} className="h-36 w-full object-cover" />
-                      ) : (
-                        <div className="h-36 bg-gradient-to-br from-gray-100 to-gray-200" />
-                      );
-                    })()}
-                    <button
-                      className="absolute top-3 right-3 h-10 w-10 rounded-full bg-white/90 border border-gray-200 flex items-center justify-center text-gray-700 hover:bg-white transition"
-                      aria-label="Yêu thích"
-                      type="button"
-                    >
-                      ♡
-                    </button>
-                  </div>
-                  <div className="p-4">
-                    <h3 className="text-sm font-bold text-gray-900 line-clamp-2 min-h-[40px]">{p.productName}</h3>
-                    <div className="mt-2 flex items-center justify-between">
-                      <StarRow rating={p?.rating ?? 4.5} />
-                      <span className="text-xs text-gray-500 font-semibold">{(p?.rating ?? 4.5).toFixed(1)}</span>
-                    </div>
-                    <div className="mt-2 text-xs text-gray-600 font-semibold">Đã bán: {p?.sold ?? 0}</div>
-                    <div className="mt-3 flex items-center justify-between">
-                      <div>
-                        <p className="text-lg font-black text-red-600">{formatVND(p.basePrice ?? 0)} ₫</p>
-                        <p className="text-xs text-gray-500 line-through">{formatVND(p.basePrice ?? 0)} ₫</p>
-                      </div>
-                      {discountPercent > 0 ? (
-                        <div className="text-xs font-bold text-[#f97316] bg-[#f97316]/15 px-2 py-1 rounded-2xl">
-                          -{discountPercent}%
-                        </div>
-                      ) : null}
-                    </div>
-
-                    <div className="mt-4">
-                      <Link
-                        href={`/products/${p.id}`}
-                        className="w-full inline-flex items-center justify-center rounded-2xl bg-[#f97316] text-white font-bold py-2 hover:bg-[#ea580c] transition"
-                      >
-                        Thêm giỏ hàng
-                      </Link>
-                    </div>
-                  </div>
+        {/* Brands */}
+        <section className="bg-white max-w-7xl mx-auto px-4 py-6" style={{ marginTop: 0 }}>
+          <h2 className="text-2xl font-black text-[#1e3a6e] mb-3">Thương hiệu nổi bật</h2>
+          <div className="flex overflow-x-auto gap-4 pb-2">
+            {brandLogos.map((b) => (
+              <div key={b.name} className="bg-white rounded-2xl border p-4 flex flex-col items-center gap-2 min-w-[160px]">
+                <div className="rounded-xl bg-gray-100 h-20 w-full flex items-center justify-center text-2xl font-black text-[#1e3a6e]">
+                  {b.name.slice(0, 1)}
                 </div>
-              );
-            })}
-          </div>
-
-
-          <div className="mt-6 text-center">
-            <Link href="/products" className="inline-flex items-center gap-2 text-[#1e3a6e] font-bold hover:underline">
-              Xem thêm
-              <span aria-hidden="true">→</span>
-            </Link>
+                <div className="text-sm font-bold text-gray-900">{b.name}</div>
+                <div className="text-xs text-gray-500 text-center">Sản phẩm chất lượng</div>
+              </div>
+            ))}
           </div>
         </section>
 
         {/* Official stores */}
-        <section id="official" className="max-w-6xl mx-auto px-4 py-10">
+        <section id="official" className="max-w-7xl mx-auto px-4 py-10 bg-white">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-3xl font-black text-[#1e3a6e]">Gian hàng chính hãng</h2>
             <Link href="/products" className="text-[#f97316] font-bold hover:underline">
@@ -1063,7 +1105,7 @@ export default function HomePage() {
         </section>
 
         {/* Search trends */}
-        <section className="max-w-6xl mx-auto px-4 py-8">
+        <section className="max-w-7xl mx-auto px-4 py-8 bg-gray-50">
           <h2 className="text-2xl font-black text-[#1e3a6e]">Xu hướng tìm kiếm</h2>
           <div className="mt-4 flex flex-wrap gap-3">
             {searchTrends.map((t) => (
@@ -1080,7 +1122,7 @@ export default function HomePage() {
         </section>
 
         {/* Customer reviews */}
-        <section id="reviews" className="max-w-6xl mx-auto px-4 py-10">
+        <section id="reviews" className="max-w-7xl mx-auto px-4 py-10 bg-white">
           <h2 className="text-3xl font-black text-[#1e3a6e]">Đánh giá khách hàng</h2>
           <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
             {reviews.map((r) => (
@@ -1114,21 +1156,14 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8">
             <div className="lg:col-span-4">
               <div className="flex items-center gap-3">
-                <Image
-                  src="/logo.png"
-                  alt="TL Market"
-                  width={56}
-                  height={56}
-                  className="object-contain"
-                />
+                <Image src="/logo.png" alt="TL Market" width={56} height={56} className="object-contain" />
                 <div>
                   <p className="text-xl font-black text-[#1e3a6e]">TL Market</p>
                   <p className="text-sm text-gray-500">Mua sắm uy tín - Giá tốt mỗi ngày</p>
                 </div>
               </div>
               <p className="mt-4 text-sm text-gray-600 leading-relaxed">
-                TL Market là nền tảng thương mại điện tử Việt Nam, tập trung vào hàng chính hãng, giao nhanh và
-                CSKH tận tâm.
+                TL Market là nền tảng thương mại điện tử Việt Nam, tập trung vào hàng chính hãng, giao nhanh và CSKH tận tâm.
               </p>
               <div className="mt-6">
                 <p className="text-sm font-bold text-gray-800">Thanh toán</p>
