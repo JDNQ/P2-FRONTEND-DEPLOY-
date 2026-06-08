@@ -74,7 +74,7 @@ export default function Header({ onToggleSidebar, user: adminUser, onLogout }: H
             )}
 
             {/* Main Header */}
-            <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+            <header className={`bg-white border-b border-gray-200 z-40 ${isAdminMode ? '' : 'sticky top-0'}`}>
                 <div className={`${isAdminMode ? 'px-6' : 'max-w-7xl mx-auto px-4'} py-3`}>
                     {/* Admin Mode Header */}
                     {isAdminMode && (

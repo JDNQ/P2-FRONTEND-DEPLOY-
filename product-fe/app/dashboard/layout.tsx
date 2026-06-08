@@ -72,16 +72,16 @@ export default function DashboardLayout({ children }: Readonly<{ children: React
     }
 
     return (
-        <div className="flex h-screen overflow-hidden bg-[#f8fafc]">
+        <div className="flex h-dvh overflow-hidden bg-[#f8fafc]">
             {/* Sidebar */}
-            <div
+            <aside
                 className={`shrink-0 border-r border-slate-200 transition-all duration-300 ${sidebarOpen ? "w-64" : "w-0 overflow-hidden"}`}
             >
                 <Sidebar open={sidebarOpen} user={user} onLogout={handleLogout} />
-            </div>
+            </aside>
 
             {/* Main Content Area */}
-            <div className="flex flex-1 flex-col overflow-hidden">
+            <div className="flex flex-1 flex-col min-w-0">
                 <Header
                     onToggleSidebar={() => setSidebarOpen((prev) => !prev)}
                     user={user}
