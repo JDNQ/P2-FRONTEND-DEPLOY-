@@ -820,37 +820,38 @@ export default function HomePage() {
       {/* Main */}
       <main>
         {/* Hero */}
-        <section className="bg-gray-50 py-4 pb-0">
+        {/* Hero Section - Đã fix layout dư khoảng trắng */}
+        <section className="bg-gray-50 py-4">
           <div className="max-w-7xl mx-auto px-4">
-            <div className="flex gap-4 w-full">
+            <div className="flex gap-4">
 
-              {/* Sidebar danh mục bên trái (giữ nguyên) */}
+              {/* Sidebar Danh mục */}
               <aside className="hidden md:block w-56 shrink-0">
-
-                <div className="bg-white border rounded-xl shadow-sm py-2">
-                  <div className="font-bold px-4 py-2 text-gray-700">Danh mục</div>
-                  <div>
-                    {categories.map((c) => (
+                <div className="bg-white border rounded-xl shadow-sm h-full flex flex-col">
+                  <div className="font-bold px-4 py-3 text-gray-700 border-b">Danh mục</div>
+                  <div className="flex-1 overflow-y-auto py-1">
+                    {categories.map((c, index) => (
                       <div
-                        key={c}
-                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 cursor-pointer rounded-lg mx-1"
+                        key={index}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 cursor-pointer mx-1 rounded-lg transition-colors"
                       >
                         <span className="text-base">{c.split(" ")[0]}</span>
-                        <span className="line-clamp-2">{c.replace(c.split(" ")[0] + " ", "")}</span>
+                        <span className="line-clamp-2 flex-1">{c.replace(c.split(" ")[0] + " ", "")}</span>
                       </div>
                     ))}
                   </div>
                 </div>
               </aside>
 
-              <div className="flex-1 min-w-0 flex flex-col gap-3">
+              {/* Banner Area - Fixed Height */}
+              <div className="flex-1 relative" style={{ height: "280px" }}>
+                <div className="relative w-full h-full">
+                  {/* Main Banner Container */}
+                  <div className="flex h-full gap-2">
 
-                {/* Banner slideshow kiểu Tiki */}
-                <div className="relative" style={{ height: "280px" }}>
-                  <div style={{ display: "flex", gap: "8px", height: "100%" }}>
                     {/* Banner lớn bên trái */}
                     <div
-                      style={{ position: "relative", flex: 1, borderRadius: "16px 0 0 16px", overflow: "hidden", cursor: "pointer" }}
+                      className="flex-1 relative rounded-2xl overflow-hidden cursor-pointer"
                       onClick={() => router.push("/products")}
                     >
                       {[
@@ -863,19 +864,14 @@ export default function HomePage() {
                           key={i}
                           src={url}
                           alt={`Banner ${i + 1}`}
-                          style={{
-                            position: "absolute", top: 0, left: 0,
-                            width: "100%", height: "100%",
-                            objectFit: "cover",
-                            opacity: i === bannerSlide ? 1 : 0,
-                            transition: "opacity 0.7s ease",
-                          }}
+                          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700"
+                          style={{ opacity: i === bannerSlide ? 1 : 0 }}
                         />
                       ))}
                     </div>
 
-                    {/* 2 sub banners bên phải */}
-                    <div style={{ width: "280px", display: "flex", flexDirection: "column", gap: "8px", flexShrink: 0 }}>
+                    {/* 2 Banner nhỏ bên phải */}
+                    <div className="w-[280px] flex flex-col gap-2 flex-shrink-0">
                       {[
                         [
                           { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_1_-_Copy_1_rs2a03.png", title: "Tech Festival" },
@@ -896,55 +892,50 @@ export default function HomePage() {
                       ][bannerSlide].map((sub, idx) => (
                         <div
                           key={idx}
-                          style={{
-                            position: "relative", flex: 1, overflow: "hidden", cursor: "pointer",
-                            borderRadius: idx === 0 ? "0 16px 0 0" : "0 0 16px 0",
-                          }}
+                          className="flex-1 relative rounded-2xl overflow-hidden cursor-pointer"
+                          style={{ borderRadius: idx === 0 ? "0 16px 0 0" : "0 0 16px 0" }}
                           onClick={() => router.push("/products")}
                         >
-                          <img src={sub.url} alt={sub.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                          <img
+                            src={sub.url}
+                            alt={sub.title}
+                            className="w-full h-full object-cover"
+                          />
                         </div>
                       ))}
                     </div>
                   </div>
 
-                  {/* Mũi tên */}
+                  {/* Navigation Buttons */}
                   <button
                     type="button"
-                    aria-label="Prev banner"
-                    title="Prev banner"
-                    style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", zIndex: 10, background: "rgba(255,255,255,0.8)", border: "none", borderRadius: "50%", width: "32px", height: "32px", cursor: "pointer", fontSize: "20px", display: "flex", alignItems: "center", justifyContent: "center" }}
                     onClick={() => setBannerSlide((i) => (i - 1 + 4) % 4)}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white w-9 h-9 rounded-full flex items-center justify-center text-2xl shadow-md z-10 transition-all"
                   >
-                    &#8249;
+                    ‹
                   </button>
                   <button
                     type="button"
-                    aria-label="Next banner"
-                    title="Next banner"
-                    style={{ position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", zIndex: 10, background: "rgba(255,255,255,0.8)", border: "none", borderRadius: "50%", width: "32px", height: "32px", cursor: "pointer", fontSize: "20px", display: "flex", alignItems: "center", justifyContent: "center" }}
                     onClick={() => setBannerSlide((i) => (i + 1) % 4)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white w-9 h-9 rounded-full flex items-center justify-center text-2xl shadow-md z-10 transition-all"
                   >
-                    &#8250;
+                    ›
                   </button>
 
-
-                  {/* Dots */}
-                  <div style={{ position: "absolute", bottom: "8px", left: "50%", transform: "translateX(-50%)", display: "flex", gap: "6px" }}>
+                  {/* Dots Indicator */}
+                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
                     {[0, 1, 2, 3].map((idx) => (
                       <button
-                        type="button"
                         key={idx}
-                        aria-label={`Go to banner ${idx + 1}`}
-                        title={`Go to banner ${idx + 1}`}
                         onClick={() => setBannerSlide(idx)}
-                        style={{ border: "none", cursor: "pointer", borderRadius: "9999px", transition: "all 0.3s", background: idx === bannerSlide ? "#f97316" : "rgba(255,255,255,0.7)", width: idx === bannerSlide ? "24px" : "8px", height: "8px", padding: 0 }}
+                        className={`w-3 h-3 rounded-full transition-all ${idx === bannerSlide
+                            ? "bg-orange-500 w-8"
+                            : "bg-white/70 hover:bg-white"
+                          }`}
                       />
                     ))}
                   </div>
                 </div>
-
-
               </div>
             </div>
           </div>
