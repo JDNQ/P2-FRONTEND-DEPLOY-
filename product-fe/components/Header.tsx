@@ -114,16 +114,16 @@ export default function Header({ onToggleSidebar, user: adminUser, onLogout }: H
 
                                 {/* Right Actions */}
                                 <div className="flex items-center gap-6">
-                                    <button className="flex items-center gap-1 text-gray-700 hover:text-orange-500 transition" aria-label="Thông báo">
+                                    <Link href="/orders" className="flex items-center gap-1 text-gray-700 hover:text-orange-500 transition" aria-label="Đơn hàng">
                                         <Bell className="w-6 h-6" />
-                                        <span className="text-sm hidden lg:inline">Thông báo</span>
-                                    </button>
+                                        <span className="text-sm hidden lg:inline">Đơn hàng</span>
+                                    </Link>
 
 
-                                    <button className="flex items-center gap-1 text-gray-700 hover:text-orange-500 transition" aria-label="Yêu thích">
+                                    <Link href="/products" className="flex items-center gap-1 text-gray-700 hover:text-orange-500 transition" aria-label="Sản phẩm">
                                         <Heart className="w-6 h-6" />
                                         <span className="text-sm hidden lg:inline">Yêu thích</span>
-                                    </button>
+                                    </Link>
 
                                     <Link href="/cart" className="flex items-center gap-1 text-gray-700 hover:text-orange-500 transition relative">
 
@@ -206,7 +206,7 @@ export default function Header({ onToggleSidebar, user: adminUser, onLogout }: H
                                 Flash Sale
                             </Link>
                             <Link href={isLoggedIn ? '/' : '/login'} className="block px-3 py-2 rounded hover:bg-gray-100">
-                                {isLoggedIn ? user?.name : 'Đăng nhập'}
+                                {isLoggedIn ? (user?.name || user?.username || 'Tài khoản') : 'Đăng nhập'}
                             </Link>
                         </nav>
                     </div>

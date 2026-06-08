@@ -13,10 +13,7 @@ export const productSchema = z.object({
     .max(100, "Product name không được vượt quá 100 ký tự"),
   description: z.string().optional(),
   basePrice: z.coerce.number().min(0, "Base price phải lớn hơn hoặc bằng 0"),
-  shopId: z.coerce.number({
-    required_error: "Vui lòng chọn shop",
-    invalid_type_error: "Vui lòng chọn shop",
-  }), // ← Thêm dòng này
+  shopId: z.coerce.number().optional(),
   variants: z.array(variantSchema).min(1, "Phải có ít nhất 1 variant"),
 });
 

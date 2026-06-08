@@ -18,7 +18,7 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
     const links = [
         { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
         { href: '/products', label: 'Sản phẩm', icon: Package },
-        { href: '/users', label: 'Người dùng', icon: Users },
+        { href: '/dashboard/admin/users', label: 'Người dùng', icon: Users },
     ]
 
     return (

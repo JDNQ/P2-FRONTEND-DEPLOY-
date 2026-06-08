@@ -20,16 +20,16 @@ export default function Footer() {
                             Nền tảng mua sắm trực tuyến uy tín với hàng triệu sản phẩm chính hãng.
                         </p>
                         <div className="flex gap-3">
-                            <a href="#" className="hover:text-accent-400 transition text-lg">
+                            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-accent-400 transition text-lg">
                                 f
                             </a>
-                            <a href="#" className="hover:text-accent-400 transition text-lg">
+                            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="hover:text-accent-400 transition text-lg">
                                 𝕏
                             </a>
-                            <a href="#" className="hover:text-accent-400 transition text-lg">
+                            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-accent-400 transition text-lg">
                                 📷
                             </a>
-                            <a href="#" className="hover:text-accent-400 transition text-lg">
+                            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="hover:text-accent-400 transition text-lg">
                                 ▶
                             </a>
                         </div>
@@ -40,22 +40,22 @@ export default function Footer() {
                         <h4 className="font-bold mb-4">Hỗ trợ</h4>
                         <ul className="space-y-2 text-sm">
                             <li>
-                                <Link href="#" className="text-gray-300 hover:text-accent-400 transition">
+                                <Link href="/contact" className="text-gray-300 hover:text-accent-400 transition">
                                     Liên hệ chúng tôi
                                 </Link>
                             </li>
                             <li>
-                                <Link href="#" className="text-gray-300 hover:text-accent-400 transition">
-                                    FAQ
+                                <Link href="/products" className="text-gray-300 hover:text-accent-400 transition">
+                                    Sản phẩm
                                 </Link>
                             </li>
                             <li>
-                                <Link href="#" className="text-gray-300 hover:text-accent-400 transition">
+                                <Link href="/orders" className="text-gray-300 hover:text-accent-400 transition">
                                     Theo dõi đơn hàng
                                 </Link>
                             </li>
                             <li>
-                                <Link href="#" className="text-gray-300 hover:text-accent-400 transition">
+                                <Link href="/help" className="text-gray-300 hover:text-accent-400 transition">
                                     Trợ giúp
                                 </Link>
                             </li>
@@ -67,22 +67,22 @@ export default function Footer() {
                         <h4 className="font-bold mb-4">Chính sách</h4>
                         <ul className="space-y-2 text-sm">
                             <li>
-                                <Link href="#" className="text-gray-300 hover:text-accent-400 transition">
+                                <Link href="/products" className="text-gray-300 hover:text-accent-400 transition">
                                     Điều khoản dịch vụ
                                 </Link>
                             </li>
                             <li>
-                                <Link href="#" className="text-gray-300 hover:text-accent-400 transition">
+                                <Link href="/products" className="text-gray-300 hover:text-accent-400 transition">
                                     Chính sách bảo mật
                                 </Link>
                             </li>
                             <li>
-                                <Link href="#" className="text-gray-300 hover:text-accent-400 transition">
+                                <Link href="/products" className="text-gray-300 hover:text-accent-400 transition">
                                     Chính sách hoàn trả
                                 </Link>
                             </li>
                             <li>
-                                <Link href="#" className="text-gray-300 hover:text-accent-400 transition">
+                                <Link href="/products" className="text-gray-300 hover:text-accent-400 transition">
                                     Bảo vệ người mua
                                 </Link>
                             </li>
@@ -94,22 +94,22 @@ export default function Footer() {
                         <h4 className="font-bold mb-4">Công ty</h4>
                         <ul className="space-y-2 text-sm">
                             <li>
-                                <Link href="#" className="text-gray-300 hover:text-accent-400 transition">
+                                <Link href="/products" className="text-gray-300 hover:text-accent-400 transition">
                                     Về chúng tôi
                                 </Link>
                             </li>
                             <li>
-                                <Link href="#" className="text-gray-300 hover:text-accent-400 transition">
+                                <Link href="/products" className="text-gray-300 hover:text-accent-400 transition">
                                     Tuyển dụng
                                 </Link>
                             </li>
                             <li>
-                                <Link href="#" className="text-gray-300 hover:text-accent-400 transition">
+                                <Link href="/products" className="text-gray-300 hover:text-accent-400 transition">
                                     Blog
                                 </Link>
                             </li>
                             <li>
-                                <Link href="#" className="text-gray-300 hover:text-accent-400 transition">
+                                <Link href="/products" className="text-gray-300 hover:text-accent-400 transition">
                                     Tin tức
                                 </Link>
                             </li>

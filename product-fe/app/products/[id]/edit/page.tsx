@@ -18,6 +18,7 @@ type ProductResponse = {
         variantName: string;
         extraPrice: number;
         stock: number;
+        image?: string;
     }>;
 };
 
@@ -30,6 +31,7 @@ export default function EditProductPage() {
     const [data, setData] = useState<ProductFormData | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [initialImages, setInitialImages] = useState<Array<{ url: string; isPrimary: boolean }>>([]);
+    const [initialVariantImages, setInitialVariantImages] = useState<string[]>([]);
 
     useEffect(() => {
         let mounted = true;
@@ -54,6 +56,7 @@ export default function EditProductPage() {
                 });
 
                 setInitialImages(p.images?.map(img => ({ url: img.url, isPrimary: img.isPrimary })) ?? []);
+                setInitialVariantImages(p.variants?.map(v => v.image ?? "") ?? []);
             } catch (e: unknown) {
                 const message = e instanceof Error ? e.message : "Không thể tải dữ liệu";
                 if (!mounted) return;
@@ -125,7 +128,7 @@ export default function EditProductPage() {
                 </button>
             </div>
 
-            <ProductForm defaultValues={data} onSubmit={handleUpdate} initialImages={initialImages} isEdit />
+            <ProductForm defaultValues={data} onSubmit={handleUpdate} initialImages={initialImages} initialVariantImages={initialVariantImages} isEdit />
         </div>
     );
 }

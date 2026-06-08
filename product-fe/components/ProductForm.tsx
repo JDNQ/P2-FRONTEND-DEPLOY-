@@ -28,6 +28,7 @@ export type ProductFormProps = {
     shops?: Array<{ id: number; shopName: string }>;
     isEdit?: boolean;
     initialImages?: Array<{ url: string; isPrimary: boolean }>;
+    initialVariantImages?: string[];
 };
 
 const DEFAULT_VALUES: Partial<ProductFormData> = {
@@ -43,12 +44,13 @@ export function ProductForm({
     onSubmit,
     shops = [],
     isEdit = false,
-    initialImages = []
+    initialImages = [],
+    initialVariantImages = []
 }: ProductFormProps) {
 
     const [productImages, setProductImages] = useState<Array<{ url: string; isPrimary: boolean }>>(() => initialImages ?? []);
     const [uploadingImages, setUploadingImages] = useState(false);
-    const [variantImages, setVariantImages] = useState<string[]>([]);
+    const [variantImages, setVariantImages] = useState<string[]>(() => initialVariantImages ?? []);
     const apiBase = process.env.NEXT_PUBLIC_API_URL ?? "";
 
     const form = useForm<ProductFormData>({
@@ -157,13 +159,14 @@ export function ProductForm({
             <form onSubmit={handleSubmit(onValid)} className="w-full" noValidate>
                 <div className="rounded-xl border border-gray-200 bg-white p-6 space-y-6">
 
-                    {/* Chọn Shop - Chỉ hiển thị khi tạo mới */}
-                    {!isEdit && shops.length > 0 && (
+                    {/* Chọn Shop */}
+                    {shops.length > 0 && (
                         <div>
                             <label className="text-sm font-medium text-gray-800">Chọn Shop <span className="text-red-500">*</span></label>
                             <select
                                 {...register("shopId", { valueAsNumber: true })}
-                                className="mt-2 w-full rounded-md border border-gray-200 px-3 py-2 outline-none focus:border-[#1e3a6e]"
+                                disabled={isEdit}
+                                className="mt-2 w-full rounded-md border border-gray-200 px-3 py-2 outline-none focus:border-[#1e3a6e] disabled:bg-gray-100 disabled:cursor-not-allowed"
                             >
                                 <option value="">-- Chọn shop --</option>
                                 {shops.map((shop) => (

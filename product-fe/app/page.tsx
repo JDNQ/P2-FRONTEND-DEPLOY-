@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import ProductCard from '@/components/ProductCard'
 import { SkeletonGrid } from '@/components/Skeleton'
 import { getProducts } from '@/lib/api'
@@ -141,6 +142,7 @@ const categories = [
 ]
 
 export default function HomePage() {
+  const router = useRouter()
   const [bannerSlide, setBannerSlide] = useState(0)
   const mainBanners = [
     "https://res.cloudinary.com/dy2gieleq/image/upload/v1780832420/af47a55f-c499-43fa-babb-a8274264bf2f_2_w7yx1e.png",
@@ -240,7 +242,7 @@ export default function HomePage() {
   const mappedProducts = products.length > 0
     ? Array.from(
       new Map(
-        products.map((p) => mapApiProductToCardProps(p)).map(item => [item.id, item])
+        products.map((p) => mapApiProductToCardProps(p)).filter(item => item.id && item.id !== "undefined").map(item => [item.id, item])
       ).values()
     )
     : mockProducts;
@@ -379,7 +381,8 @@ export default function HomePage() {
           {categories.map((cat) => (
             <button
               key={cat.id}
-              className="bg-white border border-gray-200 rounded-lg p-3 text-center hover:border-accent-400 hover:bg-accent-50 transition"
+              onClick={() => router.push(`/products?category=${encodeURIComponent(cat.name)}`)}
+              className="bg-white border border-gray-200 rounded-lg p-3 text-center hover:border-accent-400 hover:bg-accent-50 transition cursor-pointer"
             >
               <div className="text-3xl mb-1">{cat.icon}</div>
               <p className="text-xs font-medium line-clamp-2">{cat.name}</p>
@@ -449,6 +452,7 @@ export default function HomePage() {
           ].map((voucher) => (
             <div
               key={voucher.code}
+              onClick={() => router.push(`/cart?voucher=${encodeURIComponent(voucher.code)}`)}
               className="bg-white border-2 border-dashed border-accent-400 rounded-lg p-4 hover:shadow-lg transition cursor-pointer"
             >
               <div className="flex items-center gap-3 mb-2">

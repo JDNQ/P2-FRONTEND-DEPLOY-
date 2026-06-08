@@ -37,20 +37,32 @@ function ProductsPageInner() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const urlSearch = searchParams.get("search") || "";
+    const urlCategory = searchParams.get("category") || "";
+    const urlShopId = searchParams.get("shopId") || "";
 
     const [products, setProducts] = useState<ProductItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [searchTerm, setSearchTerm] = useState("");
+    const [searchTerm, setSearchTerm] = useState(urlSearch);
+    const [categoryFilter, setCategoryFilter] = useState(urlCategory);
+    const [shopIdFilter, setShopIdFilter] = useState(urlShopId);
     const [userRole, setUserRole] = useState<string | null>(null);
     const [sortBy, setSortBy] = useState<SortBy>("default");
 
     useEffect(() => {
-        if (urlSearch) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
-            setSearchTerm(urlSearch);
-        }
+        const t = window.setTimeout(() => { if (urlSearch) setSearchTerm(urlSearch); }, 0);
+        return () => window.clearTimeout(t);
     }, [urlSearch]);
+
+    useEffect(() => {
+        const t = window.setTimeout(() => { if (urlCategory) setCategoryFilter(urlCategory); }, 0);
+        return () => window.clearTimeout(t);
+    }, [urlCategory]);
+
+    useEffect(() => {
+        const t = window.setTimeout(() => { if (urlShopId) setShopIdFilter(urlShopId); }, 0);
+        return () => window.clearTimeout(t);
+    }, [urlShopId]);
 
     useEffect(() => {
         try {
@@ -92,8 +104,11 @@ function ProductsPageInner() {
 
     const filteredAndSorted = useMemo(() => {
         const term = searchTerm.trim().toLowerCase();
+        const cat = categoryFilter.trim().toLowerCase();
 
         const filtered = products.filter((product) => {
+            if (cat && !product.productName?.toLowerCase().includes(cat)) return false;
+            if (shopIdFilter && product.shopId !== shopIdFilter) return false;
             const matchesSearch = !term || product.productName?.toLowerCase().includes(term);
             return matchesSearch;
         });
@@ -107,7 +122,7 @@ function ProductsPageInner() {
         }
 
         return filtered;
-    }, [products, searchTerm, sortBy]);
+    }, [products, searchTerm, sortBy, categoryFilter, shopIdFilter]);
 
     const canCreate = userRole === "MANAGER" || userRole === "ADMIN";
     const apiBase = process.env.NEXT_PUBLIC_API_URL ?? "";

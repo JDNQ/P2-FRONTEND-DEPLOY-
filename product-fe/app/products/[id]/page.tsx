@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { api, getProductById, addToCart } from "@/lib/api";
+import { useApp } from "@/lib/store";
 
 type ProductDetail = {
     id: string;
@@ -29,6 +30,7 @@ export default function ProductDetailPage() {
     const [error, setError] = useState<string | null>(null);
     const [data, setData] = useState<ProductDetail | null>(null);
 
+    const { addToCart: addToLocalCart } = useApp();
     const [activeImg, setActiveImg] = useState(0);
     const [userRole, setUserRole] = useState<string | null>(null);
     const [selectedVariant, setSelectedVariant] = useState(0);
@@ -91,6 +93,15 @@ export default function ProductDetailPage() {
                 productId: Number(data.id),
                 variantId: data.variants[selectedVariant].id as number,
                 quantity,
+            });
+            addToLocalCart({
+                productId: String(data.id),
+                productName: data.productName,
+                price: salePrice,
+                salePrice: data.basePrice ?? 0,
+                quantity,
+                image: getUrl(data.images?.[0]?.url) || "",
+                variants: { [currentVariant?.variantName ?? ""]: String(currentVariant?.extraPrice ?? 0) },
             });
             setAddedToCart(true);
             setTimeout(() => setAddedToCart(false), 2000);
