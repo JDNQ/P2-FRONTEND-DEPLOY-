@@ -103,6 +103,60 @@ export default function HomePage() {
   const [flashRemaining, setFlashRemaining] = useState(3 * 60 * 60 + 12 * 60 + 45); // seconds
 
   const [featuredActive, setFeaturedActive] = useState<string>("Điện thoại");
+  const [bannerSlide, setBannerSlide] = useState(0);
+  const bannerSets = [
+    {
+      main: {
+        url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832420/af47a55f-c499-43fa-babb-a8274264bf2f_2_w7yx1e.png",
+        title: "FLASH SALE",
+        href: "/products",
+      },
+      subs: [
+        {
+          url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_1_-Copy_1_rs2a03.png",
+          title: "Tech Festival",
+        },
+        {
+          url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_1_ypwnrd.png",
+          title: "Bách Hóa Online",
+        },
+      ],
+    },
+    {
+      main: {
+        url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_1_-_Copy_1_rs2a03.png",
+        title: "Tech Festival",
+        href: "/products",
+      },
+      subs: [
+        {
+          url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832420/af47a55f-c499-43fa-babb-a8274264bf2f_2_w7yx1e.png",
+          title: "FLASH SALE",
+        },
+        {
+          url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_1_ypwnrd.png",
+          title: "Bách Hóa Online",
+        },
+      ],
+    },
+    {
+      main: {
+        url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_1_ypwnrd.png",
+        title: "Bách Hóa Online",
+        href: "/products",
+      },
+      subs: [
+        {
+          url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_1_-Copy_1_rs2a03.png",
+          title: "Tech Festival",
+        },
+        {
+          url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832420/af47a55f-c499-43fa-babb-a8274264bf2f_2_w7yx1e.png",
+          title: "FLASH SALE",
+        },
+      ],
+    },
+  ];
 
   useEffect(() => {
     const t = window.setInterval(() => {
@@ -193,6 +247,12 @@ export default function HomePage() {
       }
     })();
   }, []);
+
+  useEffect(() => {
+    const t = setInterval(() => setBannerSlide((i) => (i + 1) % 4), 4000);
+    return () => clearInterval(t);
+  }, []);
+
 
   const featuredTabs = ["Điện thoại", "Laptop", "Điện tử", "Thời trang", "Gia dụng"];
 
@@ -833,45 +893,104 @@ export default function HomePage() {
               </aside>
 
               <div className="flex-1 flex flex-col gap-3">
-                {/* Banner chính slideshow (tự chuyển 4s) */}
-                {/* Banner chính slideshow */}
-                <div className="relative flex-1 rounded-l-2xl overflow-hidden cursor-pointer group" style={{ height: "280px" }} onClick={() => router.push("/products")}>
-                  <img
-                    src="https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832420/af47a55f-c499-43fa-babb-a8274264bf2f_2_w7yx1e.png"
-                    alt="FLASH SALE"
-                    className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
-                  />
-                </div>
-
-                {/* 2 sub banners bên phải */}
-                <div className="w-[280px] flex flex-col gap-2" style={{ height: "280px" }}>
-                  {[
-                    {
-                      url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_1_-Copy_1_rs2a03.png",
-                      title: "Tech Festival",
-                    },
-                    {
-                      url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_1_ypwnrd.png",
-                      title: "Bách Hóa Online",
-                    },
-                  ].map((sub: { url: string; title: string }, idx: number) => (
+                {/* Banner slideshow kiểu Tiki */}
+                <div className="relative" style={{ height: "280px" }}>
+                  <div style={{ display: "flex", gap: "8px", height: "100%" }}>
+                    {/* Banner lớn bên trái */}
                     <div
-                      key={idx}
-                      className="relative flex-1 overflow-hidden cursor-pointer group"
-                      style={{ borderRadius: idx === 0 ? "0 16px 0 0" : "0 0 16px 0" }}
+                      style={{ position: "relative", flex: 1, borderRadius: "16px 0 0 16px", overflow: "hidden", cursor: "pointer" }}
                       onClick={() => router.push("/products")}
                     >
-                      <img
-                        src={sub.url}
-                        alt={sub.title}
-                        className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
-                      />
+                      {[
+                        "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832420/af47a55f-c499-43fa-babb-a8274264bf2f_2_w7yx1e.png",
+                        "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832418/af47a55f-c499-43fa-babb-a8274264bf2f_2_-_Copy_s0zszz.png",
+                        "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_5_-_Copy_tb9aok.png",
+                        "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_8_-_Copy_rrks6a.png",
+                      ].map((url, i) => (
+                        <img
+                          key={i}
+                          src={url}
+                          alt={`Banner ${i + 1}`}
+                          style={{
+                            position: "absolute", top: 0, left: 0,
+                            width: "100%", height: "100%",
+                            objectFit: "cover",
+                            opacity: i === bannerSlide ? 1 : 0,
+                            transition: "opacity 0.7s ease",
+                          }}
+                        />
+                      ))}
                     </div>
-                  ))}
-                </div>
 
-                {/* Dots indicator + arrows (giữ nguyên) */}
-                <div className="absolute" />
+                    {/* 2 sub banners bên phải */}
+                    <div style={{ width: "280px", display: "flex", flexDirection: "column", gap: "8px", flexShrink: 0 }}>
+                      {[
+                        [
+                          { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_1_-Copy_1_rs2a03.png", title: "Tech Festival" },
+                          { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_1_ypwnrd.png", title: "Bach Hoa" },
+                        ],
+                        [
+                          { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_3_-_Copy_tkbhrv.png", title: "Summer" },
+                          { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832418/af47a55f-c499-43fa-babb-a8274264bf2f_4_-_Copy_mcqjxi.png", title: "Gaming" },
+                        ],
+                        [
+                          { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_6_-_Copy_dceenr.png", title: "Me Be" },
+                          { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_7_-_Copy_jkravy.png", title: "School" },
+                        ],
+                        [
+                          { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_9_-_Copy_trbcqg.png", title: "Voucher" },
+                          { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_ympuvm.png", title: "TL Plus" },
+                        ],
+                      ][bannerSlide].map((sub, idx) => (
+                        <div
+                          key={idx}
+                          style={{
+                            position: "relative", flex: 1, overflow: "hidden", cursor: "pointer",
+                            borderRadius: idx === 0 ? "0 16px 0 0" : "0 0 16px 0",
+                          }}
+                          onClick={() => router.push("/products")}
+                        >
+                          <img src={sub.url} alt={sub.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Mũi tên */}
+                  <button
+                    type="button"
+                    aria-label="Prev banner"
+                    title="Prev banner"
+                    style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", zIndex: 10, background: "rgba(255,255,255,0.8)", border: "none", borderRadius: "50%", width: "32px", height: "32px", cursor: "pointer", fontSize: "20px", display: "flex", alignItems: "center", justifyContent: "center" }}
+                    onClick={() => setBannerSlide((i) => (i - 1 + 4) % 4)}
+                  >
+                    &#8249;
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="Next banner"
+                    title="Next banner"
+                    style={{ position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", zIndex: 10, background: "rgba(255,255,255,0.8)", border: "none", borderRadius: "50%", width: "32px", height: "32px", cursor: "pointer", fontSize: "20px", display: "flex", alignItems: "center", justifyContent: "center" }}
+                    onClick={() => setBannerSlide((i) => (i + 1) % 4)}
+                  >
+                    &#8250;
+                  </button>
+
+
+                  {/* Dots */}
+                  <div style={{ position: "absolute", bottom: "8px", left: "50%", transform: "translateX(-50%)", display: "flex", gap: "6px" }}>
+                    {[0, 1, 2, 3].map((idx) => (
+                      <button
+                        type="button"
+                        key={idx}
+                        aria-label={`Go to banner ${idx + 1}`}
+                        title={`Go to banner ${idx + 1}`}
+                        onClick={() => setBannerSlide(idx)}
+                        style={{ border: "none", cursor: "pointer", borderRadius: "9999px", transition: "all 0.3s", background: idx === bannerSlide ? "#f97316" : "rgba(255,255,255,0.7)", width: idx === bannerSlide ? "24px" : "8px", height: "8px", padding: 0 }}
+                      />
+                    ))}
+                  </div>
+                </div>
 
                 {/* Mini banners grid */}
                 <div className="grid grid-cols-3 gap-3">
@@ -1388,4 +1507,3 @@ export default function HomePage() {
     </div>
   );
 }
-
