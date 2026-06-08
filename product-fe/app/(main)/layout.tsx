@@ -14,8 +14,8 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
       {/* Header */}
       <header className="bg-surface sticky top-0 z-50 shadow-sm">
         <div className="flex justify-between items-center px-4 py-4 w-full max-w-[1280px] mx-auto">
-          <a href="/" className="font-heading text-2xl font-bold text-m3-primary">
-            TL Market
+          <a href="/">
+            <img src="/logo-removebg-preview.png" alt="TL Market" className="h-8 w-auto" />
           </a>
           <nav className="hidden md:flex items-center gap-6 text-sm">
             <a href="/products" className="text-m3-on-surface-variant hover:text-m3-primary transition-colors duration-200">
@@ -51,7 +51,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
       <footer className="bg-m3-surface-container-highest border-t border-m3-outline-variant">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 px-4 py-16 max-w-[1280px] mx-auto">
           <div className="space-y-4">
-            <span className="font-heading text-xl font-bold text-m3-primary">TL Market</span>
+            <img src="/logo-removebg-preview.png" alt="TL Market" className="h-8 w-auto" />
             <p className="text-m3-on-surface-variant text-sm">
               Nền tảng mua sắm trực tuyến hàng đầu Việt Nam. Cung cấp hàng ngàn sản phẩm từ những thương hiệu uy tín nhất.
             </p>

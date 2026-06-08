@@ -36,7 +36,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Sidebar */}
       <aside className="hidden md:flex flex-col h-screen w-64 border-r border-outline-variant bg-surface-container p-4 sticky top-0">
         <div className="mb-6 px-2">
-          <Link href="/" className="font-heading text-xl font-bold text-m3-primary">TL Market</Link>
+          <Link href="/">
+            <img src="/logo-removebg-preview.png" alt="TL Market" className="h-8 w-auto" />
+          </Link>
           <p className="text-sm text-m3-on-surface-variant opacity-70">Manage your store</p>
         </div>
 

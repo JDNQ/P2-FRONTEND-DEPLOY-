@@ -49,7 +49,7 @@ function LoginForm() {
       <div className="w-full max-w-md space-y-8">
         {/* Mobile Logo */}
         <div className="lg:hidden flex justify-center mb-6">
-          <span className="font-heading text-3xl font-bold text-m3-primary">TL Market</span>
+          <img src="/logo-removebg-preview.png" alt="TL Market" className="h-10 w-auto" />
         </div>
 
         <div className="space-y-2">

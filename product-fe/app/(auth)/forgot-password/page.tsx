@@ -33,7 +33,7 @@ export default function ForgotPasswordPage() {
         <div className="bg-white/95 backdrop-blur p-8 md:p-10 rounded-[24px] shadow-sm border border-outline-variant/30 flex flex-col items-center">
           {/* Logo */}
           <div className="mb-6">
-            <span className="font-heading text-4xl font-bold text-m3-primary">TL Market</span>
+            <img src="/logo-removebg-preview.png" alt="TL Market" className="h-12 w-auto" />
           </div>
 
           {!isSent ? (
