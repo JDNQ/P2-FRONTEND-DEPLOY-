@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 import { ShoppingCart, User, Heart, Bell, Search, Menu, X, LogOut, LayoutDashboard } from 'lucide-react'
 import { useApp } from '@/lib/store'
@@ -20,9 +21,22 @@ interface HeaderProps {
 }
 
 export default function Header({ onToggleSidebar, user: adminUser, onLogout }: HeaderProps) {
+    const router = useRouter()
     const { cart, isLoggedIn, user } = useApp()
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const [isSearchOpen, setIsSearchOpen] = useState(false)
+    const [searchQuery, setSearchQuery] = useState('')
+
+    const handleSearchSubmit = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            const query = searchQuery.trim()
+            if (query) {
+                router.push(`/products?search=${encodeURIComponent(query)}`)
+            } else {
+                router.push('/products')
+            }
+        }
+    }
 
     const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0)
     const isAdminMode = !!adminUser
@@ -86,6 +100,9 @@ export default function Header({ onToggleSidebar, user: adminUser, onLogout }: H
                                     <div className="relative">
                                         <input
                                             type="text"
+                                            value={searchQuery}
+                                            onChange={(e) => setSearchQuery(e.target.value)}
+                                            onKeyDown={handleSearchSubmit}
                                             placeholder="Tìm kiếm sản phẩm..."
                                             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-[#f97316]"
                                         />
@@ -162,6 +179,9 @@ export default function Header({ onToggleSidebar, user: adminUser, onLogout }: H
                                 <div className="md:hidden mt-3">
                                     <input
                                         type="text"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        onKeyDown={handleSearchSubmit}
                                         placeholder="Tìm kiếm..."
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none text-sm focus:border-[#f97316]"
                                     />

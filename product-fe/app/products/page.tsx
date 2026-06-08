@@ -1,21 +1,9 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import React, { Suspense, useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Search, SlidersHorizontal, Plus } from "lucide-react";
 import { api, getProducts } from "@/lib/api";
-
-function readUserRole() {
-    if (typeof window === "undefined") return null;
-    try {
-        const raw = localStorage.getItem("user");
-        if (!raw) return null;
-        const parsed = JSON.parse(raw) as { role?: string };
-        return parsed?.role ?? null;
-    } catch {
-        return null;
-    }
-}
 
 
 type ProductItem = {
@@ -45,8 +33,10 @@ async function handleDelete(id: string, setProducts: React.Dispatch<React.SetSta
     }
 }
 
-export default function ProductsPage() {
+function ProductsPageInner() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const urlSearch = searchParams.get("search") || "";
 
     const [products, setProducts] = useState<ProductItem[]>([]);
     const [loading, setLoading] = useState(true);
@@ -56,10 +46,18 @@ export default function ProductsPage() {
     const [sortBy, setSortBy] = useState<SortBy>("default");
 
     useEffect(() => {
+        if (urlSearch) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setSearchTerm(urlSearch);
+        }
+    }, [urlSearch]);
+
+    useEffect(() => {
         try {
             const raw = localStorage.getItem("user");
             if (!raw) return;
             const parsed = JSON.parse(raw) as { role?: string };
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setUserRole(parsed?.role ?? null);
         } catch {
             setUserRole(null);
@@ -290,6 +288,18 @@ export default function ProductsPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function ProductsPage() {
+    return (
+        <Suspense fallback={
+            <div className="bg-gray-50 min-h-screen">
+                <div className="max-w-6xl mx-auto px-4 py-6">Đang tải danh sách sản phẩm...</div>
+            </div>
+        }>
+            <ProductsPageInner />
+        </Suspense>
     );
 }
 

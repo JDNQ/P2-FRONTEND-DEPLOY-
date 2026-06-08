@@ -41,6 +41,7 @@ export default function ProductDetailPage() {
             const raw = localStorage.getItem("user");
             if (raw) {
                 const parsed = JSON.parse(raw);
+                // eslint-disable-next-line react-hooks/set-state-in-effect
                 setUserRole(parsed?.role ?? null);
             } else {
                 setUserRole(null);
@@ -248,7 +249,6 @@ export default function ProductDetailPage() {
                                     <div className="text-sm font-semibold text-gray-700">Phân loại:</div>
                                     <div className="mt-2 flex flex-wrap gap-2">
                                         {data.variants.map((v, idx) => {
-                                            const disabled = stock === 0 ? (v.stock ?? 0) === 0 : (v.stock ?? 0) === 0;
                                             const active = idx === selectedVariant;
                                             const isDisabled = (v.stock ?? 0) === 0;
 

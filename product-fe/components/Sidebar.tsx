@@ -3,7 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Package, Users, LogOut, Menu } from 'lucide-react'
+import { LayoutDashboard, Package, Users, LogOut } from 'lucide-react'
 import type { UserInfo } from '@/components/Header'
 
 interface SidebarProps {
@@ -12,7 +12,7 @@ interface SidebarProps {
     onLogout: () => void
 }
 
-export default function Sidebar({ open, user, onLogout }: SidebarProps) {
+export default function Sidebar({ user, onLogout }: SidebarProps) {
     const pathname = usePathname()
 
     const links = [

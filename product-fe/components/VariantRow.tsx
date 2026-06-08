@@ -117,6 +117,7 @@ export function VariantRow({ index, onRemove, canRemove, variantImage, onImageUp
             <div className="flex flex-col items-center gap-1">
                 {variantImage ? (
                     <div className="relative">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                             src={variantImage.startsWith("http") ? variantImage : `${process.env.NEXT_PUBLIC_API_URL}${variantImage}`}
                             alt="Variant"

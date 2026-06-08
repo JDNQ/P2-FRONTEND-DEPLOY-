@@ -30,7 +30,7 @@ function CheckoutPageInner() {
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const [note, setNote] = useState("");
-    const [voucherCode, setVoucherCode] = useState(voucherCodeFromUrl);
+    const voucherCode = voucherCodeFromUrl;
     const [discountAmount, setDiscountAmount] = useState(0);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);

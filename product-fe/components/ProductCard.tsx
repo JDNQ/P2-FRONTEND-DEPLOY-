@@ -32,6 +32,7 @@ export default function ProductCard({
             onClick={() => router.push(`/products/${id}`)}
         >
             <div className="relative">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={image} alt={name} className="w-full h-40 object-cover rounded-t-xl" />
                 {badge && (
                     <span className="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded font-bold">

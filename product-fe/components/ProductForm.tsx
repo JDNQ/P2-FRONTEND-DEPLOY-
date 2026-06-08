@@ -50,6 +50,7 @@ export function ProductForm({
 
     useEffect(() => {
         if (initialImages && initialImages.length > 0) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setProductImages(initialImages);
         }
     }, [initialImages]);
@@ -251,6 +252,7 @@ export function ProductForm({
                             <div className="grid grid-cols-4 gap-3 mt-4">
                                 {productImages.map((img) => (
                                     <div key={img.url} className="relative">
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
                                         <img
                                             src={img.url.startsWith("http") ? img.url : `${apiBase}${img.url}`}
                                             alt="Sản phẩm"

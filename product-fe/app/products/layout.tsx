@@ -16,13 +16,9 @@ export default function ProductsLayout({
     const router = useRouter();
 
     useEffect(() => {
-        if (typeof window === "undefined") {
-            setLoading(false);
-            return;
-        }
-
-        const raw = localStorage.getItem("user");
+        const raw = typeof window !== "undefined" ? localStorage.getItem("user") : null;
         if (!raw) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setUser(null);
             setLoading(false);
             return;

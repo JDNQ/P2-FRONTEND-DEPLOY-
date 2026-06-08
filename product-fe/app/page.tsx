@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import ProductCard from '@/components/ProductCard'
 import { SkeletonGrid } from '@/components/Skeleton'
+import { getProducts } from '@/lib/api'
 
 import { Clock } from 'lucide-react'
 
@@ -166,7 +167,75 @@ export default function HomePage() {
     ],
   ]
 
-  const [isLoading] = useState(false)
+  type ApiProduct = {
+    id?: string;
+    productName?: string;
+    name?: string;
+    basePrice?: number;
+    badge?: string;
+    image?: string;
+    isFlashSale?: boolean;
+    images?: Array<{ id?: number; url: string }>;
+    variants?: Array<{ stock?: number; extraPrice?: number }>;
+  };
+
+  const [products, setProducts] = useState<ApiProduct[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    let active = true
+    getProducts()
+      .then((res) => {
+        if (active) {
+          setProducts(Array.isArray(res) ? (res as ApiProduct[]) : [])
+        }
+      })
+      .catch((err) => {
+        console.error("Lỗi lấy sản phẩm trang chủ:", err)
+      })
+      .finally(() => {
+        if (active) {
+          setIsLoading(false)
+        }
+      })
+    return () => {
+      active = false
+    }
+  }, [])
+
+  const apiBase = process.env.NEXT_PUBLIC_API_URL ?? "https://p2-backend-1fme.onrender.com";
+
+  function mapApiProductToCardProps(p: ApiProduct) {
+    const seed = p.id ? String(p.id).split('').reduce((acc: number, char: string, i: number) => acc + char.charCodeAt(0) * (i + 1), 0) : 0;
+    const rating = 4.5 + (seed % 50) / 100;
+    const soldCount = 50 + (seed % 350);
+
+    const hasVariants = p.variants && p.variants.length > 0;
+    const price = p.basePrice ?? 0;
+    const extraPrice = p.variants?.[0]?.extraPrice ?? 0;
+    const salePrice = price + extraPrice;
+    const originalPrice = Math.round(salePrice * 1.2);
+
+
+    const imgUrl = p.images?.[0]?.url || p.image;
+    const fullImgUrl = imgUrl
+      ? (imgUrl.startsWith("http") ? imgUrl : `${apiBase}${imgUrl}`)
+      : "https://images.unsplash.com/photo-1592286927505-1fed5016107c?w=400&h=400&fit=crop";
+
+    return {
+      id: String(p.id),
+      name: p.productName || p.name || "Sản phẩm",
+      price: originalPrice,
+      salePrice: salePrice,
+      rating: Number(rating.toFixed(1)),
+      soldCount: soldCount,
+      image: fullImgUrl,
+      badge: p.badge || (extraPrice > 0 ? "Sale" : undefined),
+      isFlashSale: p.isFlashSale ?? ((p.variants?.[0]?.extraPrice ?? 0) > 0),
+    };
+  }
+
+  const mappedProducts = products.length > 0 ? products.map(mapApiProductToCardProps) : mockProducts;
 
 
 
@@ -184,23 +253,26 @@ export default function HomePage() {
           <div style={{ position: "relative", height: "280px" }}>
             <div style={{ display: "flex", gap: "8px", height: "100%" }}>
               <div style={{ position: "relative", flex: 1, borderRadius: "16px 0 0 16px", overflow: "hidden", cursor: "pointer" }}>
-                {mainBanners.map((url, i) => (
-                  <img
-                    key={i}
-                    src={url}
-                    alt={`Banner ${i + 1}`}
-                    style={{
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                      opacity: i === bannerSlide ? 1 : 0,
-                      transition: "opacity 0.7s ease",
-                    }}
-                  />
-                ))}
+                {mainBanners.map((url, i) => {
+                  return (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      key={i}
+                      src={url}
+                      alt={`Banner ${i + 1}`}
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        opacity: i === bannerSlide ? 1 : 0,
+                        transition: "opacity 0.7s ease",
+                      }}
+                    />
+                  );
+                })}
               </div>
               <div style={{ width: "280px", display: "flex", flexDirection: "column", gap: "8px", flexShrink: 0 }}>
                 {subBanners[bannerSlide].map((url, idx) => (
@@ -214,6 +286,7 @@ export default function HomePage() {
                       borderRadius: idx === 0 ? "0 16px 0 0" : "0 0 16px 0",
                     }}
                   >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={url} alt={`Sub banner ${idx + 1}`} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                   </div>
                 ))}
@@ -329,7 +402,7 @@ export default function HomePage() {
           <SkeletonGrid count={6} />
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {mockProducts.filter((p) => p.isFlashSale).map((product) => (
+            {mappedProducts.filter((p) => p.isFlashSale).map((product) => (
               <ProductCard key={product.id} {...product} />
             ))}
           </div>
@@ -340,7 +413,6 @@ export default function HomePage() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold">Sản phẩm nổi bật</h2>
-          {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
           {/* Use Next Link to satisfy lint rule */}
           <Link href="/products" className="text-accent-400 font-medium hover:underline">
             Xem tất cả →
@@ -351,7 +423,7 @@ export default function HomePage() {
           <SkeletonGrid count={12} />
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            {mockProducts.map((product) => (
+            {mappedProducts.map((product) => (
               <ProductCard key={product.id} {...product} />
             ))}
           </div>

@@ -127,6 +127,7 @@ export default function LoginPage() {
             {/* Left Panel: Branding */}
             <div className="relative flex min-h-[300px] w-full flex-col items-center justify-center bg-gradient-to-br from-[#0f2460] to-[#1a3d8f] px-8 py-12 text-center lg:min-h-screen lg:w-[40%]">
                 <div className="flex flex-1 flex-col items-center justify-center">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src="/logo.png" alt="TL Market" className="w-48 h-auto" />
                     <h1 className="mt-6 text-3xl font-extrabold tracking-tight text-white">TL Market</h1>
                     <p className="mt-3 text-sm font-medium text-blue-200/80">Hệ thống quản lý sản phẩm</p>

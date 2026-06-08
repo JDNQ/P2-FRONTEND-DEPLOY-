@@ -154,6 +154,14 @@ export default function CartPage() {
                 <h1 className="text-2xl font-bold text-gray-900">Giỏ hàng ({items.length} sản phẩm)</h1>
             </div>
 
+            {error && (
+                <div className="max-w-5xl mx-auto px-4 mb-4">
+                    <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+                        {error}
+                    </div>
+                </div>
+            )}
+
             {/* Main content */}
             <div className="max-w-5xl mx-auto px-4 py-4 grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Left - product list */}
