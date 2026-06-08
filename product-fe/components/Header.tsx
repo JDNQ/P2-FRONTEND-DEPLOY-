@@ -1,11 +1,12 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
-import { ShoppingCart, User, Heart, Bell, Search, Menu, X, LogOut, LayoutDashboard } from 'lucide-react'
+import { ShoppingCart, User, Heart, Bell, Search, Menu, X, LogOut, LayoutDashboard, ChevronDown, Settings, FileText, ShieldCheck } from 'lucide-react'
 import { useApp } from '@/lib/store'
+import { deleteCookie } from '@/lib/api'
 
 
 export type UserInfo = {
@@ -25,7 +26,29 @@ export default function Header({ onToggleSidebar, user: adminUser, onLogout }: H
     const { cart, isLoggedIn, user } = useApp()
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const [isSearchOpen, setIsSearchOpen] = useState(false)
+    const [isAccountOpen, setIsAccountOpen] = useState(false)
     const [searchQuery, setSearchQuery] = useState('')
+    const accountRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            if (accountRef.current && !accountRef.current.contains(e.target as Node)) {
+                setIsAccountOpen(false)
+            }
+        }
+        document.addEventListener('mousedown', handleClickOutside)
+        return () => document.removeEventListener('mousedown', handleClickOutside)
+    }, [])
+
+    const handleLogout = () => {
+        deleteCookie("token", { path: "/" })
+        localStorage.removeItem("user")
+        setIsAccountOpen(false)
+        router.push("/")
+    }
+
+    const displayName = user?.name || user?.username || 'Tài khoản'
+    const avatarChar = (displayName && displayName !== 'Tài khoản') ? displayName.charAt(0).toUpperCase() : '?'
 
     const handleSearchSubmit = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
@@ -136,11 +159,80 @@ export default function Header({ onToggleSidebar, user: adminUser, onLogout }: H
                                         <span className="text-sm hidden lg:inline">Giỏ hàng</span>
                                     </Link>
 
-                                    <Link href={isLoggedIn ? '/' : '/login'} className="flex items-center gap-1 text-gray-700 hover:text-orange-500 transition">
+                                    <div className="relative" ref={accountRef}>
+                                        {isLoggedIn ? (
+                                            <>
+                                                <button
+                                                    onClick={() => setIsAccountOpen(!isAccountOpen)}
+                                                    className="flex items-center gap-2 text-gray-700 hover:text-orange-500 transition"
+                                                >
+                                                    <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold text-sm">
+                                                        {avatarChar}
+                                                    </div>
+                                                    <span className="text-sm hidden lg:inline max-w-[100px] truncate">{displayName}</span>
+                                                    <ChevronDown className={`w-4 h-4 hidden lg:block transition ${isAccountOpen ? 'rotate-180' : ''}`} />
+                                                </button>
 
-                                        <User className="w-6 h-6" />
-                                        <span className="text-sm hidden lg:inline">{isLoggedIn ? 'Tài khoản' : 'Đăng nhập'}</span>
-                                    </Link>
+                                                {isAccountOpen && (
+                                                    <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50">
+                                                        <div className="px-4 py-3 border-b border-gray-100">
+                                                            <p className="text-sm font-semibold text-gray-900 truncate">{displayName}</p>
+                                                            <p className="text-xs text-gray-500">{user?.role || 'Người dùng'}</p>
+                                                        </div>
+                                                        <button
+                                                            onClick={() => { setIsAccountOpen(false); router.push('/orders'); }}
+                                                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition"
+                                                        >
+                                                            <FileText className="w-4 h-4 text-gray-400" />
+                                                            Đơn hàng
+                                                        </button>
+                                                        <button
+                                                            onClick={() => { setIsAccountOpen(false); router.push('/products'); }}
+                                                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition"
+                                                        >
+                                                            <Settings className="w-4 h-4 text-gray-400" />
+                                                            Cài đặt
+                                                        </button>
+                                                        {user?.role === "ADMIN" || user?.role === "MANAGER" ? (
+                                                            <button
+                                                                onClick={() => { setIsAccountOpen(false); router.push('/dashboard'); }}
+                                                                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition"
+                                                            >
+                                                                <ShieldCheck className="w-4 h-4 text-gray-400" />
+                                                                Dashboard
+                                                            </button>
+                                                        ) : null}
+                                                        <div className="border-t border-gray-100 mt-1 pt-1">
+                                                            <button
+                                                                onClick={handleLogout}
+                                                                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition"
+                                                            >
+                                                                <LogOut className="w-4 h-4" />
+                                                                Đăng xuất
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </>
+                                        ) : (
+                                            <div className="flex items-center gap-2">
+                                                <button
+                                                    onClick={() => router.push('/login')}
+                                                    className="flex items-center gap-1 text-gray-700 hover:text-orange-500 transition text-sm"
+                                                >
+                                                    <User className="w-6 h-6" />
+                                                    <span className="hidden lg:inline">Đăng nhập</span>
+                                                </button>
+                                                <span className="text-gray-300 hidden lg:inline">/</span>
+                                                <button
+                                                    onClick={() => router.push('/register')}
+                                                    className="text-sm text-gray-700 hover:text-orange-500 transition hidden lg:inline"
+                                                >
+                                                    Đăng ký
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
 
@@ -205,9 +297,24 @@ export default function Header({ onToggleSidebar, user: adminUser, onLogout }: H
                             <Link href="/products?category=flash-sale" className="block px-3 py-2 rounded hover:bg-gray-100">
                                 Flash Sale
                             </Link>
-                            <Link href={isLoggedIn ? '/' : '/login'} className="block px-3 py-2 rounded hover:bg-gray-100">
-                                {isLoggedIn ? (user?.name || user?.username || 'Tài khoản') : 'Đăng nhập'}
-                            </Link>
+                            {isLoggedIn ? (
+                                <>
+                                    <div className="px-3 py-2 text-sm font-semibold text-gray-800 border-b border-gray-100">
+                                        {displayName}
+                                    </div>
+                                    <Link href="/orders" className="block px-3 py-2 rounded hover:bg-gray-100">Đơn hàng</Link>
+                                    <Link href="/products" className="block px-3 py-2 rounded hover:bg-gray-100">Cài đặt</Link>
+                                    {(user?.role === "ADMIN" || user?.role === "MANAGER") && (
+                                        <Link href="/dashboard" className="block px-3 py-2 rounded hover:bg-gray-100">Dashboard</Link>
+                                    )}
+                                    <button onClick={handleLogout} className="block w-full text-left px-3 py-2 rounded hover:bg-red-50 text-red-600">Đăng xuất</button>
+                                </>
+                            ) : (
+                                <>
+                                    <Link href="/login" className="block px-3 py-2 rounded hover:bg-gray-100">Đăng nhập</Link>
+                                    <Link href="/register" className="block px-3 py-2 rounded hover:bg-gray-100">Đăng ký</Link>
+                                </>
+                            )}
                         </nav>
                     </div>
                 )}
