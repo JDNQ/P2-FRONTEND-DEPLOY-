@@ -895,6 +895,8 @@ export default function HomePage() {
                   </div>
                 </div>
               </aside>
+
+
               <div className="relative" style={{ height: "280px" }}>
                 <div style={{ display: "flex", gap: "8px", height: "100%" }}>
                   {/* Banner lớn bên trái */}
@@ -992,6 +994,7 @@ export default function HomePage() {
                   ))}
                 </div>
               </div>
+
             </div>
           </div>
         </section>
