@@ -50,8 +50,13 @@ export default function CartPage() {
     }, []);
 
     useEffect(() => {
-        loadCart();
+        // Defer to avoid react-hooks/set-state-in-effect lint issues
+        const t = window.setTimeout(() => {
+            loadCart()
+        }, 0)
+        return () => window.clearTimeout(t)
     }, [loadCart]);
+
 
     const subtotal = items.reduce((sum, item) => {
         const unitPrice = (item.product.basePrice ?? 0) + (item.variant.extraPrice ?? 0);

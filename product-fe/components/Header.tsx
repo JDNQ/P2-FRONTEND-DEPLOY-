@@ -1,91 +1,219 @@
-// === HEADER.TSX - XÓA NÚT LOGOUT Ở ĐÂY ===
+'use client'
 
-"use client";
+import Link from 'next/link'
+import { useState } from 'react'
 
-import React from "react";
-import Link from "next/link";
-import { useLocale } from "@/lib/useTranslations";
-import { Bell, ChevronDown, Menu, User } from "lucide-react";
+import { ShoppingCart, User, Heart, Bell, Search, Menu, X, LogOut, LayoutDashboard } from 'lucide-react'
+import { useApp } from '@/lib/store'
+
 
 export type UserInfo = {
-    username: string;
-    role: string;
-};
+    username?: string
+    role?: string
+    name?: string
+}
 
-export type HeaderProps = {
-    onToggleSidebar?: () => void;
-    user?: UserInfo;
-    onLogout?: () => void;   // vẫn giữ prop này để sau này dùng nếu cần
-};
+interface HeaderProps {
+    onToggleSidebar?: () => void
+    user?: UserInfo | null
+    onLogout?: () => void
+}
 
-export default function Header({ onToggleSidebar, user }: HeaderProps) {
-    const { locale, setLocale } = useLocale();
+export default function Header({ onToggleSidebar, user: adminUser, onLogout }: HeaderProps) {
+    const { cart, isLoggedIn, user } = useApp()
+    const [isMenuOpen, setIsMenuOpen] = useState(false)
+    const [isSearchOpen, setIsSearchOpen] = useState(false)
+
+    const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0)
+    const isAdminMode = !!adminUser
 
     return (
-        <header className="sticky top-0 z-20 w-full border-b border-gray-200 bg-white">
-            <div className="flex flex-wrap items-center gap-3 px-4 py-3">
-                <button
-                    type="button"
-                    onClick={onToggleSidebar || (() => { })}
-                    className="inline-flex h-10 w-10 items-center justify-center rounded-md hover:bg-gray-50"
-                    aria-label="Toggle sidebar"
-                >
-                    <Menu className="h-5 w-5 text-gray-800" />
-                </button>
+        <>
+            {/* Top Promo Bar - Only show in regular user mode */}
+            {!isAdminMode && (
+                <div style={{ backgroundColor: '#1e3a6e' }} className="text-white text-xs py-2 px-4 text-center">
+                    <p>Miễn phí vận chuyển cho đơn hàng từ 100.000 ₫ | Hoàn tiền 30 ngày nếu không hài lòng</p>
+                </div>
+            )}
 
-                <div className="flex-1" />
+            {/* Main Header */}
+            <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+                <div className={`${isAdminMode ? 'px-6' : 'max-w-7xl mx-auto px-4'} py-3`}>
+                    {/* Admin Mode Header */}
+                    {isAdminMode && (
+                        <div className="flex items-center justify-between">
+                            <button
+                                onClick={onToggleSidebar}
+                                className="p-2 hover:bg-gray-100 rounded-lg transition"
+                                title="Toggle sidebar"
+                            >
+                                <Menu className="w-6 h-6 text-gray-600" />
+                            </button>
 
-                <div className="hidden items-center gap-2 sm:flex">
-                    <div className="rounded-md border border-gray-200 bg-white p-1">
-                        <span className="sr-only">Language</span>
-                        <button
-                            type="button"
-                            onClick={() => setLocale("en")}
-                            className={`rounded-sm px-3 py-1 text-xs font-semibold ${locale === "en"
-                                ? "bg-[#1e3a6e] text-white"
-                                : "text-gray-700 hover:bg-gray-50"
-                                }`}
-                        >
-                            EN
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => setLocale("vi")}
-                            className={`ml-1 rounded-sm px-3 py-1 text-xs font-semibold ${locale === "vi"
-                                ? "bg-[#1e3a6e] text-white"
-                                : "text-gray-700 hover:bg-gray-50"
-                                }`}
-                        >
-                            VI
-                        </button>
-                    </div>
+                            <div className="flex items-center gap-4">
+                                <LayoutDashboard className="w-6 h-6" style={{ color: '#1e3a6e' }} />
+                                <span className="font-bold text-lg" style={{ color: '#1e3a6e' }}>Admin Dashboard</span>
+                            </div>
+
+                            <div className="flex items-center gap-4">
+                                <span className="text-sm text-gray-600">{adminUser?.username}</span>
+                                <button
+                                    onClick={onLogout}
+                                    className="flex items-center gap-2 px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition text-sm"
+                                >
+                                    <LogOut className="w-4 h-4" />
+                                    Đăng xuất
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Regular User Mode Header */}
+                    {!isAdminMode && (
+                        <>
+                            {/* Desktop Header */}
+                            <div className="hidden md:flex items-center justify-between gap-4">
+                                {/* Logo */}
+                                <Link href="/" className="flex items-center gap-2 flex-shrink-0">
+                                    <div className="w-10 h-10 rounded flex items-center justify-center text-white font-bold text-lg" style={{ backgroundColor: '#f97316' }}>
+                                        TL
+                                    </div>
+                                    <span className="font-bold text-lg" style={{ color: '#1e3a6e' }}>Market</span>
+                                </Link>
+
+                                {/* Search Bar */}
+                                <div className="flex-1 max-w-md">
+                                    <div className="relative">
+                                        <input
+                                            type="text"
+                                            placeholder="Tìm kiếm sản phẩm..."
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-[#f97316]"
+                                        />
+
+                                        <Search className="absolute right-3 top-2.5 w-5 h-5 text-gray-400" aria-hidden />
+
+                                    </div>
+                                </div>
+
+                                {/* Right Actions */}
+                                <div className="flex items-center gap-6">
+                                    <button className="flex items-center gap-1 text-gray-700 hover:text-orange-500 transition" aria-label="Thông báo">
+                                        <Bell className="w-6 h-6" />
+                                        <span className="text-sm hidden lg:inline">Thông báo</span>
+                                    </button>
+
+
+                                    <button className="flex items-center gap-1 text-gray-700 hover:text-orange-500 transition" aria-label="Yêu thích">
+                                        <Heart className="w-6 h-6" />
+                                        <span className="text-sm hidden lg:inline">Yêu thích</span>
+                                    </button>
+
+                                    <Link href="/cart" className="flex items-center gap-1 text-gray-700 hover:text-orange-500 transition relative">
+
+                                        <ShoppingCart className="w-6 h-6" />
+                                        {cartCount > 0 && (
+                                            <span className="absolute -top-2 -right-2 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold" style={{ backgroundColor: '#ef4444' }}>
+                                                {cartCount}
+                                            </span>
+                                        )}
+                                        <span className="text-sm hidden lg:inline">Giỏ hàng</span>
+                                    </Link>
+
+                                    <Link href={isLoggedIn ? '/profile' : '/login'} className="flex items-center gap-1 text-gray-700 hover:text-orange-500 transition">
+
+                                        <User className="w-6 h-6" />
+                                        <span className="text-sm hidden lg:inline">{isLoggedIn ? 'Tài khoản' : 'Đăng nhập'}</span>
+                                    </Link>
+                                </div>
+                            </div>
+
+                            {/* Mobile Header */}
+                            <div className="md:hidden flex items-center justify-between">
+                                <button onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                                    {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                                </button>
+
+                                <Link href="/" className="flex items-center gap-2">
+                                    <div className="w-8 h-8 rounded flex items-center justify-center text-white font-bold text-sm" style={{ backgroundColor: '#f97316' }}>
+                                        TL
+                                    </div>
+                                    <span className="font-bold" style={{ color: '#1e3a6e' }}>Market</span>
+                                </Link>
+
+                                <div className="flex items-center gap-2">
+                                    <button onClick={() => setIsSearchOpen(!isSearchOpen)} aria-label="Search" title="Search">
+
+                                        <Search className="w-6 h-6 text-gray-700" />
+
+                                    </button>
+                                    <Link href="/cart" className="relative">
+                                        <ShoppingCart className="w-6 h-6 text-gray-700" />
+                                        {cartCount > 0 && (
+                                            <span className="absolute -top-2 -right-2 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center font-bold" style={{ backgroundColor: '#ef4444' }}>
+                                                {cartCount}
+                                            </span>
+                                        )}
+                                    </Link>
+                                </div>
+                            </div>
+
+                            {/* Mobile Search */}
+                            {isSearchOpen && (
+                                <div className="md:hidden mt-3">
+                                    <input
+                                        type="text"
+                                        placeholder="Tìm kiếm..."
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none text-sm focus:border-[#f97316]"
+                                    />
+
+                                </div>
+                            )}
+                        </>
+                    )}
                 </div>
 
-                <button
-                    type="button"
-                    className="inline-flex h-10 w-10 items-center justify-center rounded-md hover:bg-gray-50"
-                    aria-label="Notifications"
-                >
-                    <Bell className="h-5 w-5 text-gray-800" />
-                </button>
-
-                <div className="flex items-center gap-2 rounded-md px-2 py-1 text-sm">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100">
-                        <User className="h-4 w-4 text-gray-700" />
+                {/* Mobile Menu - Regular User Mode */}
+                {!isAdminMode && isMenuOpen && (
+                    <div className="md:hidden border-t border-gray-200 bg-white">
+                        <nav className="px-4 py-3 space-y-2">
+                            <Link href="/" className="block px-3 py-2 rounded hover:bg-gray-100">
+                                Trang chủ
+                            </Link>
+                            <Link href="/products" className="block px-3 py-2 rounded hover:bg-gray-100">
+                                Sản phẩm
+                            </Link>
+                            <Link href="/flash-sale" className="block px-3 py-2 rounded hover:bg-gray-100">
+                                Flash Sale
+                            </Link>
+                            <Link href={isLoggedIn ? '/profile' : '/login'} className="block px-3 py-2 rounded hover:bg-gray-100">
+                                {isLoggedIn ? user?.name : 'Đăng nhập'}
+                            </Link>
+                        </nav>
                     </div>
-                    <div className="hidden min-w-0 flex-col sm:flex">
-                        <div className="truncate text-sm font-semibold text-gray-900">{user?.username ?? "Guest"}</div>
-                        <div className="truncate text-xs text-gray-500">{user?.role ?? "N/A"}</div>
+                )}
+            </header>
+
+            <nav className="hidden md:flex bg-white border-b border-gray-100 sticky top-20 z-30">
+                <div className="max-w-7xl mx-auto px-4 w-full">
+                    <div className="flex items-center gap-8">
+                        <Link href="/" className="py-3 px-0 border-b-2 border-transparent hover:border-gray-300 transition">
+                            Trang chủ
+                        </Link>
+                        <Link href="/products?category=flash-sale" className="py-3 px-0 border-b-2 text-sm font-medium transition" style={{ color: '#f97316', borderColor: '#f97316' }}>
+                            ⚡ Flash Sale
+                        </Link>
+                        <Link href="/products" className="py-3 px-0 border-b-2 border-transparent hover:border-gray-300 transition">
+                            Sản phẩm
+                        </Link>
+                        <Link href="/vouchers" className="py-3 px-0 border-b-2 border-transparent hover:border-gray-300 transition">
+                            Mã giảm giá
+                        </Link>
+                        <Link href="/products?authentic=true" className="py-3 px-0 border-b-2 border-transparent hover:border-gray-300 transition">
+                            Hàng chính hãng
+                        </Link>
                     </div>
-                    <ChevronDown className="h-4 w-4 text-gray-500" />
                 </div>
-
-                {/* === ĐÃ XÓA NÚT LOGOUT === */}
-
-                <div className="sm:hidden">
-                    <Link href="/" className="h-10 w-10" aria-label="Home" />
-                </div>
-            </div>
-        </header>
-    );
+            </nav>
+        </>
+    )
 }

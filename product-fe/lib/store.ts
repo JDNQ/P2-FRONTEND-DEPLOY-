@@ -163,6 +163,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return total + itemPrice * item.quantity;
   }, 0);
 
+  const removeNotification = useCallback((id: string) => {
+    setNotifications((prev) => prev.filter((notif) => notif.id !== id));
+  }, []);
+
   const addNotification = useCallback(
     (
       message: string,
@@ -178,12 +182,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         }, duration);
       }
     },
-    [],
+    [removeNotification],
   );
-
-  const removeNotification = useCallback((id: string) => {
-    setNotifications((prev) => prev.filter((notif) => notif.id !== id));
-  }, []);
 
   const value: AppContextType = {
     user,
