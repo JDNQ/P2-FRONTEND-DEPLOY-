@@ -823,121 +823,123 @@ export default function HomePage() {
         {/* Hero Section - Đã fix layout dư khoảng trắng */}
         <section className="bg-gray-50 py-4">
           <div className="max-w-7xl mx-auto px-4">
-            <div className="flex gap-4">
+            {/* Hero Section - FIXED Layout */}
+            <section className="bg-gray-50 py-4">
+              <div className="max-w-7xl mx-auto px-4">
+                <div className="flex gap-4 items-stretch">   {/* ← Thêm items-stretch */}
 
-              {/* Sidebar Danh mục */}
-              <aside className="hidden md:block w-56 shrink-0">
-                <div className="bg-white border rounded-xl shadow-sm h-full flex flex-col">
-                  <div className="font-bold px-4 py-3 text-gray-700 border-b">Danh mục</div>
-                  <div className="flex-1 overflow-y-auto py-1">
-                    {categories.map((c, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 cursor-pointer mx-1 rounded-lg transition-colors"
-                      >
-                        <span className="text-base">{c.split(" ")[0]}</span>
-                        <span className="line-clamp-2 flex-1">{c.replace(c.split(" ")[0] + " ", "")}</span>
+                  {/* Sidebar Danh mục */}
+                  <aside className="hidden md:block w-56 shrink-0">
+                    <div className="bg-white border rounded-xl shadow-sm h-full flex flex-col">
+                      <div className="font-bold px-4 py-3 text-gray-700 border-b">Danh mục</div>
+                      <div className="flex-1 overflow-y-auto py-1">
+                        {categories.map((c, index) => (
+                          <div
+                            key={index}
+                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 cursor-pointer mx-1 rounded-lg transition-colors"
+                          >
+                            <span className="text-base">{c.split(" ")[0]}</span>
+                            <span className="line-clamp-2 flex-1">{c.replace(c.split(" ")[0] + " ", "")}</span>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                </div>
-              </aside>
-
-              {/* Banner Area - Fixed Height */}
-              <div className="flex-1 relative" style={{ height: "280px" }}>
-                <div className="relative w-full h-full">
-                  {/* Main Banner Container */}
-                  <div className="flex h-full gap-2">
-
-                    {/* Banner lớn bên trái */}
-                    <div
-                      className="flex-1 relative rounded-2xl overflow-hidden cursor-pointer"
-                      onClick={() => router.push("/products")}
-                    >
-                      {[
-                        "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832420/af47a55f-c499-43fa-babb-a8274264bf2f_2_w7yx1e.png",
-                        "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832418/af47a55f-c499-43fa-babb-a8274264bf2f_2_-_Copy_s0zszz.png",
-                        "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_5_-_Copy_tb9aok.png",
-                        "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_8_-_Copy_rrks6a.png",
-                      ].map((url, i) => (
-                        <img
-                          key={i}
-                          src={url}
-                          alt={`Banner ${i + 1}`}
-                          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700"
-                          style={{ opacity: i === bannerSlide ? 1 : 0 }}
-                        />
-                      ))}
                     </div>
+                  </aside>
 
-                    {/* 2 Banner nhỏ bên phải */}
-                    <div className="w-[280px] flex flex-col gap-2 flex-shrink-0">
-                      {[
-                        [
-                          { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_1_-_Copy_1_rs2a03.png", title: "Tech Festival" },
-                          { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_1_ypwnrd.png", title: "Bach Hoa" },
-                        ],
-                        [
-                          { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_3_-_Copy_tkbhrv.png", title: "Summer" },
-                          { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832418/af47a55f-c499-43fa-babb-a8274264bf2f_4_-_Copy_mcqjxi.png", title: "Gaming" },
-                        ],
-                        [
-                          { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_6_-_Copy_dceenr.png", title: "Me Be" },
-                          { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_7_-_Copy_jkravy.png", title: "School" },
-                        ],
-                        [
-                          { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_9_-_Copy_trbcqg.png", title: "Voucher" },
-                          { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_ympuvm.png", title: "TL Plus" },
-                        ],
-                      ][bannerSlide].map((sub, idx) => (
+                  {/* Banner Area */}
+                  <div className="flex-1 relative" style={{ height: "340px" }}>   {/* ← Tăng lên 340px */}
+                    <div className="relative w-full h-full">
+                      <div className="flex h-full gap-2">
+
+                        {/* Banner lớn bên trái */}
                         <div
-                          key={idx}
                           className="flex-1 relative rounded-2xl overflow-hidden cursor-pointer"
-                          style={{ borderRadius: idx === 0 ? "0 16px 0 0" : "0 0 16px 0" }}
                           onClick={() => router.push("/products")}
                         >
-                          <img
-                            src={sub.url}
-                            alt={sub.title}
-                            className="w-full h-full object-cover"
-                          />
+                          {[
+                            "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832420/af47a55f-c499-43fa-babb-a8274264bf2f_2_w7yx1e.png",
+                            "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832418/af47a55f-c499-43fa-babb-a8274264bf2f_2_-_Copy_s0zszz.png",
+                            "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_5_-_Copy_tb9aok.png",
+                            "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_8_-_Copy_rrks6a.png",
+                          ].map((url, i) => (
+                            <img
+                              key={i}
+                              src={url}
+                              alt={`Banner ${i + 1}`}
+                              className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700"
+                              style={{ opacity: i === bannerSlide ? 1 : 0 }}
+                            />
+                          ))}
                         </div>
-                      ))}
-                    </div>
-                  </div>
 
-                  {/* Navigation Buttons */}
-                  <button
-                    type="button"
-                    onClick={() => setBannerSlide((i) => (i - 1 + 4) % 4)}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white w-9 h-9 rounded-full flex items-center justify-center text-2xl shadow-md z-10 transition-all"
-                  >
-                    ‹
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setBannerSlide((i) => (i + 1) % 4)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white w-9 h-9 rounded-full flex items-center justify-center text-2xl shadow-md z-10 transition-all"
-                  >
-                    ›
-                  </button>
+                        {/* 2 Banner nhỏ bên phải */}
+                        <div className="w-[280px] flex flex-col gap-2 flex-shrink-0">
+                          {[
+                            [
+                              { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_1_-_Copy_1_rs2a03.png", title: "Tech Festival" },
+                              { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_1_ypwnrd.png", title: "Bach Hoa" },
+                            ],
+                            [
+                              { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_3_-_Copy_tkbhrv.png", title: "Summer" },
+                              { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832418/af47a55f-c499-43fa-babb-a8274264bf2f_4_-_Copy_mcqjxi.png", title: "Gaming" },
+                            ],
+                            [
+                              { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_6_-_Copy_dceenr.png", title: "Me Be" },
+                              { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_7_-_Copy_jkravy.png", title: "School" },
+                            ],
+                            [
+                              { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_9_-_Copy_trbcqg.png", title: "Voucher" },
+                              { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_ympuvm.png", title: "TL Plus" },
+                            ],
+                          ][bannerSlide].map((sub, idx) => (
+                            <div
+                              key={idx}
+                              className="flex-1 relative rounded-2xl overflow-hidden cursor-pointer"
+                              style={{ borderRadius: idx === 0 ? "0 16px 0 0" : "0 0 16px 0" }}
+                              onClick={() => router.push("/products")}
+                            >
+                              <img
+                                src={sub.url}
+                                alt={sub.title}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
 
-                  {/* Dots Indicator */}
-                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
-                    {[0, 1, 2, 3].map((idx) => (
+                      {/* Navigation Buttons */}
                       <button
-                        key={idx}
-                        onClick={() => setBannerSlide(idx)}
-                        className={`w-3 h-3 rounded-full transition-all ${idx === bannerSlide
-                            ? "bg-orange-500 w-8"
-                            : "bg-white/70 hover:bg-white"
-                          }`}
-                      />
-                    ))}
+                        type="button"
+                        onClick={() => setBannerSlide((i) => (i - 1 + 4) % 4)}
+                        className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white w-9 h-9 rounded-full flex items-center justify-center text-2xl shadow-md z-10 transition-all"
+                      >
+                        ‹
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setBannerSlide((i) => (i + 1) % 4)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white w-9 h-9 rounded-full flex items-center justify-center text-2xl shadow-md z-10 transition-all"
+                      >
+                        ›
+                      </button>
+
+                      {/* Dots */}
+                      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                        {[0, 1, 2, 3].map((idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => setBannerSlide(idx)}
+                            className={`w-3 h-3 rounded-full transition-all ${idx === bannerSlide ? "bg-orange-500 w-8" : "bg-white/70 hover:bg-white"
+                              }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </section>
           </div>
         </section>
 
