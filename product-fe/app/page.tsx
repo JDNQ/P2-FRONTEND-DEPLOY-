@@ -821,55 +821,61 @@ export default function HomePage() {
       <main>
         <section className="bg-gray-50 py-4">
           <div className="max-w-7xl mx-auto px-4">
-            <div className="relative rounded-3xl overflow-hidden" style={{ height: "380px" }}>
+            <div className="relative rounded-3xl overflow-hidden shadow-sm" style={{ height: "380px" }}>
 
               <div className="flex h-full gap-3">
 
-                {/* Banner lớn bên trái - Smart Home */}
+                {/* Banner lớn bên trái */}
                 <div
-                  className="flex-[2] relative rounded-3xl overflow-hidden cursor-pointer shadow-md"
+                  className="flex-[2] relative rounded-3xl overflow-hidden cursor-pointer"
                   onClick={() => router.push("/products")}
                 >
                   {[
                     "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832420/af47a55f-c499-43fa-babb-a8274264bf2f_2_w7yx1e.png",
                     "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832418/af47a55f-c499-43fa-babb-a8274264bf2f_2_-_Copy_s0zszz.png",
+                    "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_5_-_Copy_tb9aok.png",
                   ].map((url, i) => (
                     <img
                       key={i}
                       src={url}
-                      alt="Smart Home Flash Sale"
+                      alt="Flash Sale"
                       className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700"
-                      style={{ opacity: i === bannerSlide ? 1 : 0 }}
+                      style={{ opacity: i === bannerSlide % 3 ? 1 : 0 }}
                     />
                   ))}
                 </div>
 
-                {/* Hai banner nhỏ bên phải */}
+                {/* 2 Banner nhỏ bên phải - Đồng bộ slide */}
                 <div className="flex-1 flex flex-col gap-3">
-
-                  {/* Banner trên */}
-                  <div
-                    className="flex-1 relative rounded-3xl overflow-hidden cursor-pointer shadow-md"
-                    onClick={() => router.push("/products")}
-                  >
-                    <img
-                      src="https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_1_-_Copy_1_rs2a03.png"
-                      alt="Summer Collection"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-
-                  {/* Banner dưới */}
-                  <div
-                    className="flex-1 relative rounded-3xl overflow-hidden cursor-pointer shadow-md"
-                    onClick={() => router.push("/products")}
-                  >
-                    <img
-                      src="https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832418/af47a55f-c499-43fa-babb-a8274264bf2f_4_-_Copy_mcqjxi.png"
-                      alt="Gaming Fest"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+                  {[
+                    // Slide 0
+                    [
+                      { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_1_-_Copy_1_rs2a03.png", title: "Tech Festival" },
+                      { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832418/af47a55f-c499-43fa-babb-a8274264bf2f_4_-_Copy_mcqjxi.png", title: "Gaming Fest" },
+                    ],
+                    // Slide 1
+                    [
+                      { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_3_-_Copy_tkbhrv.png", title: "Summer" },
+                      { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_6_-_Copy_dceenr.png", title: "Mẹ & Bé" },
+                    ],
+                    // Slide 2
+                    [
+                      { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_1_ypwnrd.png", title: "Mẹ & Bé" },
+                      { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_7_-_Copy_jkravy.png", title: "School" },
+                    ],
+                  ][bannerSlide % 3].map((sub, idx) => (
+                    <div
+                      key={idx}
+                      className="flex-1 relative rounded-3xl overflow-hidden cursor-pointer shadow-sm"
+                      onClick={() => router.push("/products")}
+                    >
+                      <img
+                        src={sub.url}
+                        alt={sub.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ))}
                 </div>
               </div>
 
@@ -877,27 +883,25 @@ export default function HomePage() {
               <button
                 type="button"
                 onClick={() => setBannerSlide((i) => (i - 1 + 4) % 4)}
-                className="absolute left-5 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white w-10 h-10 rounded-full flex items-center justify-center text-3xl shadow-lg z-20 transition-all"
+                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white w-10 h-10 rounded-full flex items-center justify-center text-3xl shadow-lg z-20 transition-all"
               >
                 ‹
               </button>
               <button
                 type="button"
                 onClick={() => setBannerSlide((i) => (i + 1) % 4)}
-                className="absolute right-5 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white w-10 h-10 rounded-full flex items-center justify-center text-3xl shadow-lg z-20 transition-all"
+                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white w-10 h-10 rounded-full flex items-center justify-center text-3xl shadow-lg z-20 transition-all"
               >
                 ›
               </button>
 
-              {/* Dots Indicator */}
+              {/* Dots */}
               <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-                {[0, 1, 2, 3].map((idx) => (
+                {[0, 1, 2].map((idx) => (
                   <button
                     key={idx}
                     onClick={() => setBannerSlide(idx)}
-                    className={`w-3 h-3 rounded-full transition-all ${idx === bannerSlide
-                      ? "bg-orange-500 scale-125 w-8"
-                      : "bg-white/80 hover:bg-white"
+                    className={`w-3 h-3 rounded-full transition-all ${idx === bannerSlide % 3 ? "bg-orange-500 w-8" : "bg-white/70 hover:bg-white"
                       }`}
                   />
                 ))}
