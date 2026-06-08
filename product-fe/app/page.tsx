@@ -873,7 +873,7 @@ export default function HomePage() {
       {/* Main */}
       <main>
         {/* Hero */}
-        <section className="bg-gray-50 py-4">
+        <section className="bg-gray-50 py-4 pb-0">
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex gap-4 w-full">
 
@@ -931,7 +931,7 @@ export default function HomePage() {
                     <div style={{ width: "280px", display: "flex", flexDirection: "column", gap: "8px", flexShrink: 0 }}>
                       {[
                         [
-                          { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_1_-Copy_1_rs2a03.png", title: "Tech Festival" },
+                          { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_1_-_Copy_1_rs2a03.png", title: "Tech Festival" },
                           { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_1_ypwnrd.png", title: "Bach Hoa" },
                         ],
                         [
