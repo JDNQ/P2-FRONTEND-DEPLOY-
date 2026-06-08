@@ -237,7 +237,13 @@ export default function HomePage() {
     };
   }
 
-  const mappedProducts = products.length > 0 ? products.map(mapApiProductToCardProps) : mockProducts;
+  const mappedProducts = products.length > 0
+    ? Array.from(
+      new Map(
+        products.map((p) => mapApiProductToCardProps(p)).map(item => [item.id, item])
+      ).values()
+    )
+    : mockProducts;
 
 
 
