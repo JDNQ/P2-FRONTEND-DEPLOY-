@@ -847,11 +847,12 @@ export default function HomePage() {
               {/* Banner Area */}
               {/* Banner Area - Updated theo Flash Sale mới */}
               {/* Banner Area - Sửa lỗi 404 */}
-              <div className="flex-1 relative min-h-[380px]">
+              {/* Banner Area - Fix ảnh quá to */}
+              <div className="flex-1 relative" style={{ height: "380px" }}>
                 <div className="relative w-full h-full">
                   <div className="flex h-full gap-2">
 
-                    {/* Banner lớn Flash Sale (màu cam) */}
+                    {/* Banner lớn bên trái */}
                     <div
                       className="flex-1 relative rounded-2xl overflow-hidden cursor-pointer"
                       onClick={() => router.push("/products")}
@@ -864,7 +865,7 @@ export default function HomePage() {
                         <img
                           key={i}
                           src={url}
-                          alt="Flash Sale"
+                          alt="Beauty Days Flash Sale"
                           className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700"
                           style={{ opacity: i === bannerSlide ? 1 : 0 }}
                         />
@@ -876,15 +877,15 @@ export default function HomePage() {
                       {[
                         [
                           { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_1_-_Copy_1_rs2a03.png", title: "Tech Festival" },
-                          { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_1_ypwnrd.png", title: "Bách Hóa Online" },
+                          { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_1_ypwnrd.png", title: "Mẹ & Bé" },
                         ],
                         [
-                          { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_3_-_Copy_tkbhrv.png", title: "Summer" },
+                          { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_3_-_Copy_tkbhrv.png", title: "Back to School" },
                           { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832418/af47a55f-c499-43fa-babb-a8274264bf2f_4_-_Copy_mcqjxi.png", title: "Gaming" },
                         ],
                         [
                           { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_6_-_Copy_dceenr.png", title: "Mẹ & Bé" },
-                          { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_7_-_Copy_jkravy.png", title: "Back to School" },
+                          { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_7_-_Copy_jkravy.png", title: "School" },
                         ],
                         [
                           { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_9_-_Copy_trbcqg.png", title: "Voucher" },
