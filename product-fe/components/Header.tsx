@@ -13,7 +13,7 @@ export type UserInfo = {
 };
 
 export type HeaderProps = {
-    onToggleSidebar: () => void;
+    onToggleSidebar?: () => void;
     user?: UserInfo;
     onLogout?: () => void;   // vẫn giữ prop này để sau này dùng nếu cần
 };
@@ -26,7 +26,7 @@ export default function Header({ onToggleSidebar, user }: HeaderProps) {
             <div className="flex flex-wrap items-center gap-3 px-4 py-3">
                 <button
                     type="button"
-                    onClick={onToggleSidebar}
+                    onClick={onToggleSidebar || (() => { })}
                     className="inline-flex h-10 w-10 items-center justify-center rounded-md hover:bg-gray-50"
                     aria-label="Toggle sidebar"
                 >

@@ -15,6 +15,9 @@ type ProductCard = {
   discountPercent: number;
   oldPrice: number;
   price: number;
+  image?: string;
+  isFlashSale?: boolean;
+  badge?: string;
 };
 
 function formatVND(amount: number) {
@@ -72,23 +75,33 @@ export default function HomePage() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const raw = localStorage.getItem("user");
-    if (!raw) return;
 
-    try {
-      const parsed = JSON.parse(raw) as { username?: string; role?: string } | null;
-      // compute once, then set
-      const nextUser = parsed?.username && parsed?.role ? { username: parsed.username, role: parsed.role } : null;
-      if (nextUser) {
-        // eslint-disable-next-line react/no-set-state
-        setCurrentUser(nextUser);
+    let cancelled = false;
+
+    const run = () => {
+      const raw = localStorage.getItem("user");
+      if (!raw) return;
+
+      try {
+        const parsed = JSON.parse(raw) as { username?: string; role?: string } | null;
+        const nextUser = parsed?.username && parsed?.role ? { username: parsed.username, role: parsed.role } : null;
+        if (!cancelled && nextUser) {
+          setCurrentUser(nextUser);
+        }
+      } catch {
+        // ignore
       }
+    };
 
-
-    } catch {
-      // ignore
-    }
+    // Defer state update to avoid sync setState-in-effect lint complaints
+    const t = window.setTimeout(run, 0);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(t);
+    };
   }, []);
+
+
 
 
 
@@ -205,293 +218,21 @@ export default function HomePage() {
 
   const featuredTabs = ["Điện thoại", "Laptop", "Điện tử", "Thời trang", "Gia dụng"];
 
-  const featuredProducts: Record<string, ProductCard[]> = useMemo(
-    () => ({
-      "Điện thoại": [
-        {
-          id: "p1",
-          name: "iPhone 15 128GB",
-          rating: 4.8,
-          sold: 420,
-          discountPercent: 12,
-          oldPrice: 28990000,
-          price: 25490000,
-        },
-        {
-          id: "p2",
-          name: "Samsung A55 256GB",
-          rating: 4.6,
-          sold: 305,
-          discountPercent: 9,
-          oldPrice: 13990000,
-          price: 12790000,
-        },
-        {
-          id: "p3",
-          name: "Xiaomi Redmi Note 13 Pro",
-          rating: 4.5,
-          sold: 268,
-          discountPercent: 11,
-          oldPrice: 6990000,
-          price: 6190000,
-        },
-        {
-          id: "p4",
-          name: "OPPO Reno10 Pro",
-          rating: 4.4,
-          sold: 210,
-          discountPercent: 8,
-          oldPrice: 10990000,
-          price: 10190000,
-        },
-        {
-          id: "p5",
-          name: "Realme 12 Pro+",
-          rating: 4.3,
-          sold: 186,
-          discountPercent: 7,
-          oldPrice: 11990000,
-          price: 11190000,
-        },
-        {
-          id: "p6",
-          name: "Vivo V30",
-          rating: 4.6,
-          sold: 159,
-          discountPercent: 10,
-          oldPrice: 12990000,
-          price: 11690000,
-        },
-      ],
-      "Laptop": [
-        {
-          id: "p7",
-          name: "MacBook Air M3 13",
-          rating: 4.9,
-          sold: 188,
-          discountPercent: 14,
-          oldPrice: 34990000,
-          price: 29990000,
-        },
-        {
-          id: "p8",
-          name: "Dell XPS 13",
-          rating: 4.7,
-          sold: 140,
-          discountPercent: 12,
-          oldPrice: 35990000,
-          price: 31690000,
-        },
-        {
-          id: "p9",
-          name: "ASUS Zenbook 14",
-          rating: 4.6,
-          sold: 121,
-          discountPercent: 11,
-          oldPrice: 25990000,
-          price: 23190000,
-        },
-        {
-          id: "p10",
-          name: "Lenovo ThinkPad E14",
-          rating: 4.5,
-          sold: 98,
-          discountPercent: 9,
-          oldPrice: 17990000,
-          price: 16290000,
-        },
-        {
-          id: "p11",
-          name: "HP Pavilion 15",
-          rating: 4.4,
-          sold: 85,
-          discountPercent: 8,
-          oldPrice: 15990000,
-          price: 14790000,
-        },
-        {
-          id: "p12",
-          name: "Acer Aspire 5",
-          rating: 4.3,
-          sold: 73,
-          discountPercent: 7,
-          oldPrice: 13990000,
-          price: 12990000,
-        },
-      ],
-      "Điện tử": [
-        {
-          id: "p13",
-          name: "Tai nghe Bluetooth Pro",
-          rating: 4.7,
-          sold: 520,
-          discountPercent: 20,
-          oldPrice: 1890000,
-          price: 1510000,
-        },
-        {
-          id: "p14",
-          name: "Loa Bluetooth Bass",
-          rating: 4.5,
-          sold: 310,
-          discountPercent: 18,
-          oldPrice: 990000,
-          price: 810000,
-        },
-        {
-          id: "p15",
-          name: "Sạc nhanh 65W",
-          rating: 4.6,
-          sold: 260,
-          discountPercent: 25,
-          oldPrice: 690000,
-          price: 515000,
-        },
-        {
-          id: "p16",
-          name: "Chuột không dây ergonomic",
-          rating: 4.4,
-          sold: 200,
-          discountPercent: 15,
-          oldPrice: 490000,
-          price: 415000,
-        },
-        {
-          id: "p17",
-          name: "Bàn phím cơ Gaming",
-          rating: 4.3,
-          sold: 178,
-          discountPercent: 10,
-          oldPrice: 1290000,
-          price: 1160000,
-        },
-        {
-          id: "p18",
-          name: "Đồng hồ thông minh",
-          rating: 4.6,
-          sold: 144,
-          discountPercent: 17,
-          oldPrice: 2990000,
-          price: 2480000,
-        },
-      ],
-      "Thời trang": [
-        {
-          id: "p19",
-          name: "Áo thun nam form rộng",
-          rating: 4.6,
-          sold: 610,
-          discountPercent: 30,
-          oldPrice: 290000,
-          price: 203000,
-        },
-        {
-          id: "p20",
-          name: "Quần jeans nam ống suông",
-          rating: 4.4,
-          sold: 420,
-          discountPercent: 22,
-          oldPrice: 590000,
-          price: 459000,
-        },
-        {
-          id: "p21",
-          name: "Áo khoác bomber nữ",
-          rating: 4.5,
-          sold: 308,
-          discountPercent: 18,
-          oldPrice: 790000,
-          price: 646000,
-        },
-        {
-          id: "p22",
-          name: "Đầm xòe công sở",
-          rating: 4.3,
-          sold: 265,
-          discountPercent: 16,
-          oldPrice: 990000,
-          price: 832000,
-        },
-        {
-          id: "p23",
-          name: "Giày thể thao sneaker",
-          rating: 4.7,
-          sold: 210,
-          discountPercent: 19,
-          oldPrice: 1690000,
-          price: 1369000,
-        },
-        {
-          id: "p24",
-          name: "Túi tote da bò",
-          rating: 4.2,
-          sold: 188,
-          discountPercent: 14,
-          oldPrice: 1290000,
-          price: 1109000,
-        },
-      ],
-      "Gia dụng": [
-        {
-          id: "p25",
-          name: "Nồi chiên không dầu 5.5L",
-          rating: 4.7,
-          sold: 260,
-          discountPercent: 21,
-          oldPrice: 2490000,
-          price: 1960000,
-        },
-        {
-          id: "p26",
-          name: "Bình lọc nước tiện dụng",
-          rating: 4.4,
-          sold: 180,
-          discountPercent: 16,
-          oldPrice: 990000,
-          price: 830000,
-        },
-        {
-          id: "p27",
-          name: "Máy xay sinh tố 2 cối",
-          rating: 4.5,
-          sold: 152,
-          discountPercent: 14,
-          oldPrice: 1290000,
-          price: 1109000,
-        },
-        {
-          id: "p28",
-          name: "Bộ chén dĩa cao cấp",
-          rating: 4.3,
-          sold: 130,
-          discountPercent: 12,
-          oldPrice: 690000,
-          price: 607000,
-        },
-        {
-          id: "p29",
-          name: "Quạt sạc mini",
-          rating: 4.2,
-          sold: 118,
-          discountPercent: 18,
-          oldPrice: 390000,
-          price: 319000,
-        },
-        {
-          id: "p30",
-          name: "Đèn LED bàn học",
-          rating: 4.6,
-          sold: 106,
-          discountPercent: 10,
-          oldPrice: 490000,
-          price: 441000,
-        },
-      ],
-    }),
-    []
-  );
+  const featured = useMemo(() => {
+    // Không dùng dữ liệu mock nữa: dùng trực tiếp danh sách product lấy từ BE.
+    // Chia nhóm theo tab bằng cách lấy theo “nhóm index” để giữ UI có tab.
+    const list = realProducts;
+    const tabIdx = featuredTabs.findIndex((t) => t === featuredActive);
+    const start = tabIdx >= 0 ? tabIdx : 0;
 
-  const featured = featuredProducts[featuredActive] || [];
+    // Lấy xen kẽ để tab khác nhau có tập sản phẩm khác nhau.
+    const picked: RealProduct[] = [];
+    for (let i = start; i < list.length; i += featuredTabs.length) {
+      picked.push(list[i]);
+      if (picked.length >= 12) break;
+    }
+    return picked;
+  }, [realProducts, featuredActive]);
 
   const brandLogos = [
     { name: "Apple" },
@@ -821,55 +562,61 @@ export default function HomePage() {
       <main>
         <section className="bg-gray-50 py-4">
           <div className="max-w-7xl mx-auto px-4">
-            <div className="relative rounded-3xl overflow-hidden" style={{ height: "380px" }}>
+            <div className="relative rounded-3xl overflow-hidden shadow-sm" style={{ height: "380px" }}>
 
               <div className="flex h-full gap-3">
 
-                {/* Banner lớn bên trái - Smart Home */}
+                {/* Banner lớn bên trái */}
                 <div
-                  className="flex-[2] relative rounded-3xl overflow-hidden cursor-pointer shadow-md"
+                  className="flex-[2] relative rounded-3xl overflow-hidden cursor-pointer"
                   onClick={() => router.push("/products")}
                 >
                   {[
                     "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832420/af47a55f-c499-43fa-babb-a8274264bf2f_2_w7yx1e.png",
                     "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832418/af47a55f-c499-43fa-babb-a8274264bf2f_2_-_Copy_s0zszz.png",
+                    "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_5_-_Copy_tb9aok.png",
                   ].map((url, i) => (
                     <img
                       key={i}
                       src={url}
-                      alt="Smart Home Flash Sale"
+                      alt="Flash Sale"
                       className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700"
-                      style={{ opacity: i === bannerSlide ? 1 : 0 }}
+                      style={{ opacity: i === bannerSlide % 3 ? 1 : 0 }}
                     />
                   ))}
                 </div>
 
-                {/* Hai banner nhỏ bên phải */}
+                {/* 2 Banner nhỏ bên phải - Đồng bộ slide */}
                 <div className="flex-1 flex flex-col gap-3">
-
-                  {/* Banner trên */}
-                  <div
-                    className="flex-1 relative rounded-3xl overflow-hidden cursor-pointer shadow-md"
-                    onClick={() => router.push("/products")}
-                  >
-                    <img
-                      src="https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_1_-_Copy_1_rs2a03.png"
-                      alt="Summer Collection"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-
-                  {/* Banner dưới */}
-                  <div
-                    className="flex-1 relative rounded-3xl overflow-hidden cursor-pointer shadow-md"
-                    onClick={() => router.push("/products")}
-                  >
-                    <img
-                      src="https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832418/af47a55f-c499-43fa-babb-a8274264bf2f_4_-_Copy_mcqjxi.png"
-                      alt="Gaming Fest"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+                  {[
+                    // Slide 0
+                    [
+                      { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_1_-_Copy_1_rs2a03.png", title: "Tech Festival" },
+                      { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832418/af47a55f-c499-43fa-babb-a8274264bf2f_4_-_Copy_mcqjxi.png", title: "Gaming Fest" },
+                    ],
+                    // Slide 1
+                    [
+                      { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_3_-_Copy_tkbhrv.png", title: "Summer" },
+                      { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_6_-_Copy_dceenr.png", title: "Mẹ & Bé" },
+                    ],
+                    // Slide 2
+                    [
+                      { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_1_ypwnrd.png", title: "Mẹ & Bé" },
+                      { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_7_-_Copy_jkravy.png", title: "School" },
+                    ],
+                  ][bannerSlide % 3].map((sub, idx) => (
+                    <div
+                      key={idx}
+                      className="flex-1 relative rounded-3xl overflow-hidden cursor-pointer shadow-sm"
+                      onClick={() => router.push("/products")}
+                    >
+                      <img
+                        src={sub.url}
+                        alt={sub.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ))}
                 </div>
               </div>
 
@@ -877,27 +624,27 @@ export default function HomePage() {
               <button
                 type="button"
                 onClick={() => setBannerSlide((i) => (i - 1 + 4) % 4)}
-                className="absolute left-5 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white w-10 h-10 rounded-full flex items-center justify-center text-3xl shadow-lg z-20 transition-all"
+                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white w-10 h-10 rounded-full flex items-center justify-center text-3xl shadow-lg z-20 transition-all"
               >
                 ‹
               </button>
               <button
                 type="button"
                 onClick={() => setBannerSlide((i) => (i + 1) % 4)}
-                className="absolute right-5 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white w-10 h-10 rounded-full flex items-center justify-center text-3xl shadow-lg z-20 transition-all"
+                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white w-10 h-10 rounded-full flex items-center justify-center text-3xl shadow-lg z-20 transition-all"
               >
                 ›
               </button>
 
-              {/* Dots Indicator */}
+              {/* Dots */}
               <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-                {[0, 1, 2, 3].map((idx) => (
+                {[0, 1, 2].map((idx) => (
                   <button
                     key={idx}
+                    type="button"
+                    aria-label={`Chuyển banner ${idx + 1}`}
                     onClick={() => setBannerSlide(idx)}
-                    className={`w-3 h-3 rounded-full transition-all ${idx === bannerSlide
-                      ? "bg-orange-500 scale-125 w-8"
-                      : "bg-white/80 hover:bg-white"
+                    className={`w-3 h-3 rounded-full transition-all ${idx === bannerSlide % 3 ? "bg-orange-500 w-8" : "bg-white/70 hover:bg-white"
                       }`}
                   />
                 ))}
@@ -1017,7 +764,7 @@ export default function HomePage() {
 
             <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
               {featured.slice(0, 8).map((p, idx) => {
-                const discountPercent = p.discountPercent;
+                const discountPercent = getRandomDiscountPercent(p, idx);
                 const topDeal = idx % 3 === 0;
                 const showRealImage = featuredActive === "Điện thoại";
                 const realP = showRealImage ? realProducts?.[idx] : undefined;
@@ -1031,7 +778,11 @@ export default function HomePage() {
                       {showRealImage && realP ? (
                         resolveImageUrl(realP) ? (
                           // eslint-disable-next-line @next/next/no-img-element
-                          <img src={resolveImageUrl(realP) as string} alt={realP.productName} className="h-48 w-full object-cover" />
+                          <img
+                            src={resolveImageUrl(realP) as string}
+                            alt={realP.productName}
+                            className="h-48 w-full object-cover"
+                          />
                         ) : (
                           <div className="h-48 w-full bg-gradient-to-br from-gray-100 to-gray-200" />
                         )
@@ -1051,32 +802,46 @@ export default function HomePage() {
                           </span>
                         </div>
                       )}
+                      {discountPercent > 0 && (
+                        <div className="absolute top-3 right-3">
+                          <span className="inline-flex items-center rounded bg-red-100 text-red-600 text-xs font-bold px-2 py-1">
+                            -{discountPercent}%
+                          </span>
+                        </div>
+                      )}
                     </div>
 
                     <div className="p-4">
-                      <h3 className="text-sm font-medium line-clamp-2 min-h-[44px]">{p.name}</h3>
+                      <h3 className="text-sm font-medium line-clamp-2 min-h-[44px]">{p.productName}</h3>
+
                       <div className="mt-2 flex items-center justify-between">
-                        <StarRow rating={p.rating} />
-                        <span className="text-xs text-gray-500 font-semibold">{p.sold}</span>
+                        <StarRow rating={p.rating ?? 4.5} />
+                        <span className="text-xs text-gray-500 font-semibold">
+                          Đã bán {p.sold ?? 0}
+                        </span>
                       </div>
 
                       <div className="mt-2 flex items-end justify-between gap-2">
                         <div>
-                          <div className="text-lg font-black text-red-600">{formatVND(p.price)} ₫</div>
-                          <div className="text-xs text-gray-500 line-through">{formatVND(p.oldPrice)} ₫</div>
-                        </div>
-                        <div className="-ml-1">
+                          <div className="text-lg font-black text-red-600">
+                            {formatVND(p.basePrice)} ₫
+                          </div>
                           {discountPercent > 0 && (
-                            <span className="text-xs font-bold bg-red-100 text-red-600 px-2 py-1 rounded-2xl">
-                              -{discountPercent}%
-                            </span>
+                            <div className="text-xs text-gray-500 line-through">
+                              {formatVND(Math.round(p.basePrice * (100 + discountPercent) / 100))} ₫
+                            </div>
                           )}
                         </div>
+                        {discountPercent > 0 && (
+                          <span className="text-xs font-bold bg-red-100 text-red-600 px-2 py-1 rounded-2xl">
+                            -{discountPercent}%
+                          </span>
+                        )}
                       </div>
 
                       <button
                         type="button"
-                        className="bg-white border border-orange-500 text-orange-500 w-full rounded-lg py-2 text-sm font-medium hover:bg-orange-50 mt-2"
+                        className="bg-white border border-orange-500 text-orange-500 w-full rounded-lg py-2 text-sm font-medium hover:bg-orange-50 mt-3"
                       >
                         Thêm giỏ hàng
                       </button>
@@ -1084,12 +849,15 @@ export default function HomePage() {
                   </div>
                 );
               })}
+
+
             </div>
           </div>
-        </section>
+        </section >
 
         {/* Brands */}
-        <section className="bg-white max-w-7xl mx-auto px-4 py-6" style={{ marginTop: 0 }}>
+        < section className="bg-white max-w-7xl mx-auto px-4 py-6" style={{ marginTop: 0 }
+        }>
           <h2 className="text-2xl font-black text-[#1e3a6e] mb-3">Thương hiệu nổi bật</h2>
           <div className="flex overflow-x-auto gap-4 pb-2">
             {brandLogos.map((b) => (
@@ -1102,10 +870,10 @@ export default function HomePage() {
               </div>
             ))}
           </div>
-        </section>
+        </section >
 
         {/* Official stores */}
-        <section id="official" className="max-w-7xl mx-auto px-4 py-10 bg-white">
+        < section id="official" className="max-w-7xl mx-auto px-4 py-10 bg-white" >
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-3xl font-black text-[#1e3a6e]">Gian hàng chính hãng</h2>
             <Link href="/products" className="text-[#f97316] font-bold hover:underline">
@@ -1132,10 +900,10 @@ export default function HomePage() {
               Xem shop
             </Link>
           </div>
-        </section>
+        </section >
 
         {/* Search trends */}
-        <section className="max-w-7xl mx-auto px-4 py-8 bg-gray-50">
+        < section className="max-w-7xl mx-auto px-4 py-8 bg-gray-50" >
           <h2 className="text-2xl font-black text-[#1e3a6e]">Xu hướng tìm kiếm</h2>
           <div className="mt-4 flex flex-wrap gap-3">
             {searchTrends.map((t) => (
@@ -1149,10 +917,10 @@ export default function HomePage() {
               </Link>
             ))}
           </div>
-        </section>
+        </section >
 
         {/* Customer reviews */}
-        <section id="reviews" className="max-w-7xl mx-auto px-4 py-10 bg-white">
+        < section id="reviews" className="max-w-7xl mx-auto px-4 py-10 bg-white" >
           <h2 className="text-3xl font-black text-[#1e3a6e]">Đánh giá khách hàng</h2>
           <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
             {reviews.map((r) => (
@@ -1177,11 +945,11 @@ export default function HomePage() {
               </div>
             ))}
           </div>
-        </section>
-      </main>
+        </section >
+      </main >
 
       {/* Footer */}
-      <footer id="footer" className="border-t bg-white">
+      < footer id="footer" className="border-t bg-white" >
         <div className="max-w-6xl mx-auto px-4 py-12">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8">
             <div className="lg:col-span-4">
@@ -1325,7 +1093,7 @@ export default function HomePage() {
             © {new Date().getFullYear()} TL Market. All rights reserved.
           </div>
         </div>
-      </footer>
-    </div>
+      </footer >
+    </div >
   );
 }
