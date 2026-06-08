@@ -24,7 +24,7 @@ export default function ProductCard({
     badge,
 }: ProductCardProps) {
     const router = useRouter()
-    const discount = Math.round(((price - salePrice) / price) * 100)
+    const discount = price > 0 ? Math.round(((price - salePrice) / price) * 100) : 0
 
     return (
         <div

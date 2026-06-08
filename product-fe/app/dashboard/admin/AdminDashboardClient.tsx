@@ -473,8 +473,8 @@ export default function AdminDashboardClient() {
                                     <UserPlus className="h-6 w-6" />
                                 </div>
                                 <div>
-                                    <h3 className="text-xl font-semibold text-slate-950">{t("createManagerTitle")}</h3>
-                                    <p className="mt-1 text-sm font-medium text-slate-500">{t("createManagerSubtitle")}</p>
+                                    <h3 className="text-xl font-semibold text-slate-950">{t("createNewManager")}</h3>
+                                    <p className="mt-1 text-sm font-medium text-slate-500">{t("createManagerDescription")}</p>
                                 </div>
                             </div>
                             <button type="button" onClick={() => setShowModal(false)} aria-label="Đóng" title="Đóng"
@@ -511,7 +511,7 @@ export default function AdminDashboardClient() {
                                 <button type="submit" disabled={createLoading}
                                     className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-red-500 to-rose-600 px-5 text-sm font-semibold text-white shadow-lg shadow-rose-200 transition hover:-translate-y-0.5 hover:from-red-400 hover:to-rose-500 disabled:cursor-not-allowed disabled:opacity-60">
                                     <Plus className="h-4 w-4" />
-                                    {createLoading ? t("creating") : t("create")}
+                                    {createLoading ? t("creating") : t("createManager")}
                                 </button>
                                 <button type="button" onClick={() => setShowModal(false)}
                                     className="inline-flex h-12 w-full items-center justify-center rounded-2xl border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">

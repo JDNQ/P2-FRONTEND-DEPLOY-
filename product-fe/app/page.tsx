@@ -211,11 +211,9 @@ export default function HomePage() {
     const rating = 4.5 + (seed % 50) / 100;
     const soldCount = 50 + (seed % 350);
 
-    const hasVariants = p.variants && p.variants.length > 0;
     const price = p.basePrice ?? 0;
     const extraPrice = p.variants?.[0]?.extraPrice ?? 0;
     const salePrice = price + extraPrice;
-    const originalPrice = Math.round(salePrice * 1.2);
 
 
     const imgUrl = p.images?.[0]?.url || p.image;
@@ -229,8 +227,8 @@ export default function HomePage() {
     return {
       id: String(p.id),
       name: p.productName || p.name || "Sản phẩm",
-      price: originalPrice,
-      salePrice: salePrice,
+      price: salePrice,
+      salePrice: price,
       rating: Number(rating.toFixed(1)),
       soldCount: soldCount,
       image: fullImgUrl,

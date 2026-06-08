@@ -138,8 +138,8 @@ function ProductsPageInner() {
                                     className="rounded-xl border border-gray-200 bg-white pl-9 pr-3 py-2 text-sm outline-none focus:border-[#1e3a6e]"
                                 >
                                     <option value="default">Mặc định</option>
-                                    <option value="price_asc">Giá thấp  cao</option>
-                                    <option value="price_desc">Giá cao  thấp</option>
+                                    <option value="price_asc">Giá thấp đến cao</option>
+                                    <option value="price_desc">Giá cao đến thấp</option>
                                 </select>
                             </div>
 
@@ -188,9 +188,7 @@ function ProductsPageInner() {
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
                             {filteredAndSorted.map((product) => {
                                 const id = product.id ?? "";
-                                const basePrice = product.basePrice ?? 0;
-                                const originalPrice = Math.round(basePrice * 1.15);
-                                const discountPercent = 13;
+                                const price = product.basePrice ?? 0;
 
                                 // deterministic random seed from id
                                 let seed = 0;
@@ -213,10 +211,6 @@ function ProductsPageInner() {
                                             ) : (
                                                 <div className="h-44 rounded-lg bg-gradient-to-br from-gray-100 to-gray-200" />
                                             )}
-
-                                            <div className="absolute bottom-2 left-2 bg-red-500 text-white text-xs rounded px-1 py-0.5 font-bold">
-                                                -{discountPercent}%
-                                            </div>
                                         </div>
 
                                         <div className="mt-3">
@@ -226,9 +220,8 @@ function ProductsPageInner() {
 
                                             <div className="mt-1 text-xs text-gray-500">⭐ {rating.toFixed(1)} | Đã bán {sold}</div>
 
-                                            <div className="mt-2 flex items-baseline gap-2">
-                                                <div className="text-lg font-black text-red-600">{formatVnd(basePrice)}</div>
-                                                <div className="text-xs line-through text-gray-400">{formatVnd(originalPrice)}</div>
+                                            <div className="mt-2">
+                                                <div className="text-lg font-black text-red-600">{formatVnd(price)}</div>
                                             </div>
                                         </div>
                                     </>

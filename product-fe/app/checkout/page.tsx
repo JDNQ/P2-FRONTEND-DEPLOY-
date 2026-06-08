@@ -32,6 +32,7 @@ function CheckoutPageInner() {
     const [note, setNote] = useState("");
     const voucherCode = voucherCodeFromUrl;
     const [discountAmount, setDiscountAmount] = useState(0);
+    const [voucherError, setVoucherError] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
 
@@ -51,15 +52,12 @@ function CheckoutPageInner() {
     }, []);
 
     useEffect(() => {
-        // Defer to avoid react-hooks/set-state-in-effect lint issues
-        const t = window.setTimeout(() => {
-            loadCart()
-        }, 0)
+        const t = window.setTimeout(() => loadCart(), 0)
         return () => window.clearTimeout(t)
     }, [loadCart]);
 
 
-    const subtotal = items.reduce((sum, item) => {
+    const orderTotal = items.reduce((sum, item) => {
         const unitPrice = (item.product.basePrice ?? 0) + (item.variant.extraPrice ?? 0);
         return sum + unitPrice * item.quantity;
     }, 0);
@@ -67,17 +65,18 @@ function CheckoutPageInner() {
     useEffect(() => {
         if (items.length > 0 && voucherCodeFromUrl) {
             (async () => {
-                try {
-                    const res = await applyVoucher({ code: voucherCodeFromUrl, orderTotal: subtotal });
-                    const data = res as { discountAmount: number };
-                    setDiscountAmount(data.discountAmount ?? 0);
-                } catch {
-                    // ignore voucher error on checkout load
-                }
+                    try {
+                        const res = await applyVoucher({ code: voucherCodeFromUrl, orderTotal });
+                        const data = res as { discountAmount: number };
+                        setDiscountAmount(data.discountAmount ?? 0);
+                    } catch {
+                        setVoucherError("Không thể áp dụng mã giảm giá");
+                    }
             })();
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [items.length, voucherCodeFromUrl]);
+    }, [items.length, voucherCodeFromUrl, orderTotal]);
+
+    const subtotal = orderTotal;
 
     const formatVND = (value: number) => `${Math.round(value).toLocaleString("vi-VN")} ₫`;
 
@@ -239,6 +238,9 @@ function CheckoutPageInner() {
                                         Mã: {voucherCode} - Giảm {formatVND(discountAmount)}
                                     </span>
                                 </div>
+                            )}
+                            {voucherError && (
+                                <p className="text-red-500 text-xs mt-2">{voucherError}</p>
                             )}
 
                             <div className="border-t my-3" />

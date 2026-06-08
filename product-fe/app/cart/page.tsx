@@ -50,10 +50,7 @@ export default function CartPage() {
     }, []);
 
     useEffect(() => {
-        // Defer to avoid react-hooks/set-state-in-effect lint issues
-        const t = window.setTimeout(() => {
-            loadCart()
-        }, 0)
+        const t = window.setTimeout(() => loadCart(), 0)
         return () => window.clearTimeout(t)
     }, [loadCart]);
 

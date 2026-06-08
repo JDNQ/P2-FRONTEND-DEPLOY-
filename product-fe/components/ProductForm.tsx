@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { FormProvider, useFieldArray, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { ProductFormData } from "@/lib/schema";
@@ -46,14 +46,7 @@ export function ProductForm({
     initialImages = []
 }: ProductFormProps) {
 
-    const [productImages, setProductImages] = useState<Array<{ url: string; isPrimary: boolean }>>(initialImages ?? []);
-
-    useEffect(() => {
-        if (initialImages && initialImages.length > 0) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
-            setProductImages(initialImages);
-        }
-    }, [initialImages]);
+    const [productImages, setProductImages] = useState<Array<{ url: string; isPrimary: boolean }>>(() => initialImages ?? []);
     const [uploadingImages, setUploadingImages] = useState(false);
     const [variantImages, setVariantImages] = useState<string[]>([]);
     const apiBase = process.env.NEXT_PUBLIC_API_URL ?? "";
@@ -79,7 +72,7 @@ export function ProductForm({
     const variantsWatch = useWatch({ control, name: "variants" });
     const totalVariants = variantsWatch?.length ?? 0;
     const totalStock = (variantsWatch ?? []).reduce((sum, v) => sum + (Number(v?.stock) || 0), 0);
-    const productNameValue = (useWatch({ control, name: "productName" }) as string) ?? "";
+    const productNameValue = (useWatch({ control, name: "productName" }) as string | undefined) ?? "";
 
     const handleProductImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;

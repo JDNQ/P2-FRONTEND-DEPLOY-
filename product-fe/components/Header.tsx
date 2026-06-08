@@ -136,7 +136,7 @@ export default function Header({ onToggleSidebar, user: adminUser, onLogout }: H
                                         <span className="text-sm hidden lg:inline">Giỏ hàng</span>
                                     </Link>
 
-                                    <Link href={isLoggedIn ? '/profile' : '/login'} className="flex items-center gap-1 text-gray-700 hover:text-orange-500 transition">
+                                    <Link href={isLoggedIn ? '/orders' : '/login'} className="flex items-center gap-1 text-gray-700 hover:text-orange-500 transition">
 
                                         <User className="w-6 h-6" />
                                         <span className="text-sm hidden lg:inline">{isLoggedIn ? 'Tài khoản' : 'Đăng nhập'}</span>
@@ -205,7 +205,7 @@ export default function Header({ onToggleSidebar, user: adminUser, onLogout }: H
                             <Link href="/flash-sale" className="block px-3 py-2 rounded hover:bg-gray-100">
                                 Flash Sale
                             </Link>
-                            <Link href={isLoggedIn ? '/profile' : '/login'} className="block px-3 py-2 rounded hover:bg-gray-100">
+                            <Link href={isLoggedIn ? '/orders' : '/login'} className="block px-3 py-2 rounded hover:bg-gray-100">
                                 {isLoggedIn ? user?.name : 'Đăng nhập'}
                             </Link>
                         </nav>
@@ -213,7 +213,7 @@ export default function Header({ onToggleSidebar, user: adminUser, onLogout }: H
                 )}
             </header>
 
-            <nav className="hidden md:flex bg-white border-b border-gray-100 sticky top-20 z-30">
+            <nav className="hidden md:flex bg-white border-b border-gray-100 z-30">
                 <div className="max-w-7xl mx-auto px-4 w-full">
                     <div className="flex items-center gap-8">
                         <Link href="/" className="py-3 px-0 border-b-2 border-transparent hover:border-gray-300 transition">
@@ -225,9 +225,9 @@ export default function Header({ onToggleSidebar, user: adminUser, onLogout }: H
                         <Link href="/products" className="py-3 px-0 border-b-2 border-transparent hover:border-gray-300 transition">
                             Sản phẩm
                         </Link>
-                        <Link href="/vouchers" className="py-3 px-0 border-b-2 border-transparent hover:border-gray-300 transition">
-                            Mã giảm giá
-                        </Link>
+                                        <Link href="/products?voucher=true" className="py-3 px-0 border-b-2 border-transparent hover:border-gray-300 transition">
+                                            Mã giảm giá
+                                        </Link>
                         <Link href="/products?authentic=true" className="py-3 px-0 border-b-2 border-transparent hover:border-gray-300 transition">
                             Hàng chính hãng
                         </Link>

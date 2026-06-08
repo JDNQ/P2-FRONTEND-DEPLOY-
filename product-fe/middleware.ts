@@ -53,13 +53,10 @@ export function middleware(request: NextRequest) {
     (pathname.startsWith("/products/") && pathname.endsWith("/checkout"));
 
   if (isRoot) {
-    if (token && role && role !== "USER" && role !== undefined) {
+    if (token && role && role !== "USER") {
       return NextResponse.redirect(new URL(roleRedirect(role), request.url));
     }
-    if (token && role === "USER") {
-      return NextResponse.next();
-    }
-    return NextResponse.next(); // Cho vào home mà không cần login
+    return NextResponse.next();
   }
 
   if ((isLoginPage || isRegisterPage) && token && role) {
@@ -76,7 +73,13 @@ export function middleware(request: NextRequest) {
     );
   }
 
-  if (isDashboardRoute && role) {
+  if (isDashboardRoute) {
+    if (!role) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+    if (role === "USER") {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
     if (pathname.startsWith("/dashboard/admin") && role !== "ADMIN") {
       return NextResponse.redirect(new URL(roleRedirect(role), request.url));
     }

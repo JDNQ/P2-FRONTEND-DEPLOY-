@@ -81,14 +81,15 @@ api.interceptors.response.use(
 
 // FIXED: New extractData function to properly unwrap backend response
 function extractData<T>(res: { data: unknown }): T {
-  const body = res.data as Record<string, unknown>;
+  const body = res.data;
   if (
     body !== null &&
     typeof body === "object" &&
+    !Array.isArray(body) &&
     "success" in body &&
-    "data" in body
+    "data" in (body as Record<string, unknown>)
   ) {
-    return body.data as T;
+    return (body as Record<string, unknown>).data as T;
   }
   return body as T;
 }

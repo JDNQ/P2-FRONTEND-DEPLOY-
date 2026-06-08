@@ -116,8 +116,12 @@ export default function ProductDetailPage() {
         const ok = window.confirm("Bạn có chắc chắn muốn xoá sản phẩm này không?");
         if (!ok) return;
 
-        await api.delete(`/products/${id}`);
-        router.push("/products");
+        try {
+            await api.delete(`/products/${id}`);
+            router.push("/products");
+        } catch (e: unknown) {
+            alert(e instanceof Error ? e.message : "Xóa thất bại");
+        }
     };
 
     if (loading) {
@@ -152,8 +156,6 @@ export default function ProductDetailPage() {
     ];
     const displayImg = getUrl(allThumbs[activeImg]?.url);
     const salePrice = (data?.basePrice ?? 0) + (currentVariant?.extraPrice ?? 0);
-    const originalPrice = Math.round(salePrice * 1.2);
-    const discountPercent = Math.round(((originalPrice - salePrice) / Math.max(1, originalPrice)) * 100);
     const stock = currentVariant?.stock ?? 0;
 
     // deterministic from id
@@ -234,11 +236,6 @@ export default function ProductDetailPage() {
 
                             <div>
                                 <div className="text-3xl font-black text-red-600">{formatVnd(salePrice)}</div>
-                                <div className="text-sm line-through text-gray-400">{formatVnd(originalPrice)}</div>
-
-                                <div className="mt-2 inline-flex bg-red-500 text-white rounded px-2 py-0.5 text-xs font-bold">
-                                    -{discountPercent >= 0 ? discountPercent : 0}%
-                                </div>
                             </div>
 
                             <div className="my-4 border-t border-gray-200" />
@@ -333,7 +330,7 @@ export default function ProductDetailPage() {
                             </div>
 
                             {/* Admin controls */}
-                            {userRole !== "USER" && userRole !== null ? (
+                            {userRole === "ADMIN" || userRole === "MANAGER" ? (
                                 <div className="mt-3 flex items-center gap-4 text-sm">
                                     <button
                                         type="button"

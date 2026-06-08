@@ -6,6 +6,7 @@ import React, {
   useState,
   useCallback,
   useEffect,
+  useMemo,
 } from "react";
 
 export interface User {
@@ -68,12 +69,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   // Load from localStorage on mount
   useEffect(() => {
-    let cancelled = false;
-
-    // Defer to avoid react-hooks/set-state-in-effect issues
     const t = window.setTimeout(() => {
-      if (cancelled) return;
-
       const savedUser = localStorage.getItem("user");
       if (savedUser) {
         try {
@@ -82,12 +78,17 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           // ignore
         }
       }
-    }, 0);
 
-    return () => {
-      cancelled = true;
-      window.clearTimeout(t);
-    };
+      const savedCart = localStorage.getItem("cart");
+      if (savedCart) {
+        try {
+          setCart(JSON.parse(savedCart));
+        } catch {
+          // ignore
+        }
+      }
+    }, 0);
+    return () => window.clearTimeout(t);
   }, []);
 
   // Save cart to localStorage
@@ -116,7 +117,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       const existingItem = prevCart.find(
         (cartItem) =>
           cartItem.productId === item.productId &&
-          JSON.stringify(cartItem.variants) === JSON.stringify(item.variants),
+          Object.entries(cartItem.variants ?? {}).sort().toString() ===
+          Object.entries(item.variants ?? {}).sort().toString(),
       );
 
       if (existingItem) {
@@ -158,10 +160,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setCart([]);
   }, []);
 
-  const cartTotal = cart.reduce((total, item) => {
+  const cartTotal = useMemo(() => cart.reduce((total, item) => {
     const itemPrice = item.salePrice || item.price;
     return total + itemPrice * item.quantity;
-  }, 0);
+  }, 0), [cart]);
 
   const removeNotification = useCallback((id: string) => {
     setNotifications((prev) => prev.filter((notif) => notif.id !== id));

@@ -5,21 +5,9 @@ import { useApp } from '@/lib/store'
 import { X, CheckCircle, AlertCircle, Info } from 'lucide-react'
 
 
-import { useEffect, useState } from 'react'
-
-
 export default function Toast() {
     const { notifications, removeNotification } = useApp()
-    const [mounted, setMounted] = useState(false)
-
-    useEffect(() => {
-        // Defer to avoid react-hooks/set-state-in-effect lint issues
-        const t = window.setTimeout(() => setMounted(true), 0)
-        return () => window.clearTimeout(t)
-    }, [])
-
-
-    if (!mounted) return null
+    if (notifications.length === 0) return null
 
     const getIcon = (type: string) => {
         switch (type) {

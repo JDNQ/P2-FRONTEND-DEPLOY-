@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useFormContext, useWatch } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import type { ProductFormData } from "@/lib/schema";
 import { api } from "@/lib/api";
 
@@ -21,11 +21,6 @@ export function VariantRow({ index, onRemove, canRemove, variantImage, onImageUp
     } = useFormContext<ProductFormData>();
 
     const [uploading, setUploading] = useState(false);
-
-    // watch values to ensure UI can respond if needed (not required by spec, but fine)
-    const variant = useWatch({
-        name: `variants.${index}` as const,
-    });
 
     const variantErrors = errors.variants?.[index];
 
@@ -161,8 +156,6 @@ export function VariantRow({ index, onRemove, canRemove, variantImage, onImageUp
                 </button>
             </div>
 
-            {/* keep lint quiet about unused watch */}
-            <div className="hidden">{variant?.variantName}</div>
         </div>
     );
 }
