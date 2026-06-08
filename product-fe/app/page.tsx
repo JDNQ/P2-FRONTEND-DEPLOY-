@@ -845,25 +845,24 @@ export default function HomePage() {
               </aside>
 
               {/* Banner Area */}
+              {/* Banner Area - Updated theo Flash Sale mới */}
               <div className="flex-1 relative min-h-[380px]">
                 <div className="relative w-full h-full">
                   <div className="flex h-full gap-2">
 
-                    {/* Banner lớn bên trái */}
+                    {/* Banner lớn Flash Sale (Orange) */}
                     <div
                       className="flex-1 relative rounded-2xl overflow-hidden cursor-pointer"
                       onClick={() => router.push("/products")}
                     >
                       {[
-                        "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832420/af47a55f-c499-43fa-babb-a8274264bf2f_2_w7yx1e.png",
-                        "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832418/af47a55f-c499-43fa-babb-a8274264bf2f_2_-_Copy_s0zszz.png",
-                        "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_5_-_Copy_tb9aok.png",
-                        "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_8_-_Copy_rrks6a.png",
+                        "https://res.cloudinary.com/dy2gieleq/image/upload/v1780832420/flash-sale-orange-laptop.jpg", // Bạn thay bằng link thật nếu có
+                        // Hoặc dùng link tạm từ ảnh hiện tại nếu chưa có ảnh mới
                       ].map((url, i) => (
                         <img
                           key={i}
                           src={url}
-                          alt={`Banner ${i + 1}`}
+                          alt="Flash Sale"
                           className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700"
                           style={{ opacity: i === bannerSlide ? 1 : 0 }}
                         />
@@ -873,10 +872,18 @@ export default function HomePage() {
                     {/* 2 Banner nhỏ bên phải */}
                     <div className="w-[280px] flex flex-col gap-2 flex-shrink-0">
                       {[
+                        // Banner 1: Tech Festival (Blue)
                         [
-                          { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_1_-_Copy_1_rs2a03.png", title: "Tech Festival" },
-                          { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_1_ypwnrd.png", title: "Bach Hoa" },
+                          {
+                            url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/tech-festival-blue.jpg",
+                            title: "Tech Festival"
+                          },
+                          {
+                            url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/bach-hoa-online-green.jpg",
+                            title: "Bách Hóa Online"
+                          },
                         ],
+                        // Banner 2, 3, 4 (bạn có thể thêm sau)
                         [
                           { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_3_-_Copy_tkbhrv.png", title: "Summer" },
                           { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832418/af47a55f-c499-43fa-babb-a8274264bf2f_4_-_Copy_mcqjxi.png", title: "Gaming" },
@@ -922,7 +929,7 @@ export default function HomePage() {
                     ›
                   </button>
 
-                  {/* Dots Indicator */}
+                  {/* Dots */}
                   <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
                     {[0, 1, 2, 3].map((idx) => (
                       <button
