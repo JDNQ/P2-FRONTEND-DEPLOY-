@@ -41,9 +41,7 @@ export default function RootLayout({
     <html lang="vi" className={`${geistSans.variable} ${geistMono.variable} scroll-smooth`}>
       <body className="font-sans antialiased">
         <AppProvider>
-          <Header />
           <main className="min-h-screen">{children}</main>
-          <Footer />
           <Toast />
           {process.env.NODE_ENV === "production" && <Analytics />}
         </AppProvider>
