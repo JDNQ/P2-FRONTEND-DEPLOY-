@@ -764,7 +764,7 @@ export default function HomePage() {
 
             <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
               {featured.slice(0, 8).map((p, idx) => {
-                const discountPercent = p.discountPercent;
+                const discountPercent = getRandomDiscountPercent(p, idx);
                 const topDeal = idx % 3 === 0;
                 const showRealImage = featuredActive === "Điện thoại";
                 const realP = showRealImage ? realProducts?.[idx] : undefined;
@@ -778,7 +778,11 @@ export default function HomePage() {
                       {showRealImage && realP ? (
                         resolveImageUrl(realP) ? (
                           // eslint-disable-next-line @next/next/no-img-element
-                          <img src={resolveImageUrl(realP) as string} alt={realP.productName} className="h-48 w-full object-cover" />
+                          <img
+                            src={resolveImageUrl(realP) as string}
+                            alt={realP.productName}
+                            className="h-48 w-full object-cover"
+                          />
                         ) : (
                           <div className="h-48 w-full bg-gradient-to-br from-gray-100 to-gray-200" />
                         )
@@ -798,32 +802,46 @@ export default function HomePage() {
                           </span>
                         </div>
                       )}
+                      {discountPercent > 0 && (
+                        <div className="absolute top-3 right-3">
+                          <span className="inline-flex items-center rounded bg-red-100 text-red-600 text-xs font-bold px-2 py-1">
+                            -{discountPercent}%
+                          </span>
+                        </div>
+                      )}
                     </div>
 
                     <div className="p-4">
-                      <h3 className="text-sm font-medium line-clamp-2 min-h-[44px]">{p.name}</h3>
+                      <h3 className="text-sm font-medium line-clamp-2 min-h-[44px]">{p.productName}</h3>
+
                       <div className="mt-2 flex items-center justify-between">
-                        <StarRow rating={p.rating} />
-                        <span className="text-xs text-gray-500 font-semibold">{p.sold}</span>
+                        <StarRow rating={p.rating ?? 4.5} />
+                        <span className="text-xs text-gray-500 font-semibold">
+                          Đã bán {p.sold ?? 0}
+                        </span>
                       </div>
 
                       <div className="mt-2 flex items-end justify-between gap-2">
                         <div>
-                          <div className="text-lg font-black text-red-600">{formatVND(p.price)} ₫</div>
-                          <div className="text-xs text-gray-500 line-through">{formatVND(p.oldPrice)} ₫</div>
-                        </div>
-                        <div className="-ml-1">
+                          <div className="text-lg font-black text-red-600">
+                            {formatVND(p.basePrice)} ₫
+                          </div>
                           {discountPercent > 0 && (
-                            <span className="text-xs font-bold bg-red-100 text-red-600 px-2 py-1 rounded-2xl">
-                              -{discountPercent}%
-                            </span>
+                            <div className="text-xs text-gray-500 line-through">
+                              {formatVND(Math.round(p.basePrice * (100 + discountPercent) / 100))} ₫
+                            </div>
                           )}
                         </div>
+                        {discountPercent > 0 && (
+                          <span className="text-xs font-bold bg-red-100 text-red-600 px-2 py-1 rounded-2xl">
+                            -{discountPercent}%
+                          </span>
+                        )}
                       </div>
 
                       <button
                         type="button"
-                        className="bg-white border border-orange-500 text-orange-500 w-full rounded-lg py-2 text-sm font-medium hover:bg-orange-50 mt-2"
+                        className="bg-white border border-orange-500 text-orange-500 w-full rounded-lg py-2 text-sm font-medium hover:bg-orange-50 mt-3"
                       >
                         Thêm giỏ hàng
                       </button>
@@ -831,12 +849,15 @@ export default function HomePage() {
                   </div>
                 );
               })}
+
+
             </div>
           </div>
-        </section>
+        </section >
 
         {/* Brands */}
-        <section className="bg-white max-w-7xl mx-auto px-4 py-6" style={{ marginTop: 0 }}>
+        < section className="bg-white max-w-7xl mx-auto px-4 py-6" style={{ marginTop: 0 }
+        }>
           <h2 className="text-2xl font-black text-[#1e3a6e] mb-3">Thương hiệu nổi bật</h2>
           <div className="flex overflow-x-auto gap-4 pb-2">
             {brandLogos.map((b) => (
@@ -849,10 +870,10 @@ export default function HomePage() {
               </div>
             ))}
           </div>
-        </section>
+        </section >
 
         {/* Official stores */}
-        <section id="official" className="max-w-7xl mx-auto px-4 py-10 bg-white">
+        < section id="official" className="max-w-7xl mx-auto px-4 py-10 bg-white" >
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-3xl font-black text-[#1e3a6e]">Gian hàng chính hãng</h2>
             <Link href="/products" className="text-[#f97316] font-bold hover:underline">
@@ -879,10 +900,10 @@ export default function HomePage() {
               Xem shop
             </Link>
           </div>
-        </section>
+        </section >
 
         {/* Search trends */}
-        <section className="max-w-7xl mx-auto px-4 py-8 bg-gray-50">
+        < section className="max-w-7xl mx-auto px-4 py-8 bg-gray-50" >
           <h2 className="text-2xl font-black text-[#1e3a6e]">Xu hướng tìm kiếm</h2>
           <div className="mt-4 flex flex-wrap gap-3">
             {searchTrends.map((t) => (
@@ -896,10 +917,10 @@ export default function HomePage() {
               </Link>
             ))}
           </div>
-        </section>
+        </section >
 
         {/* Customer reviews */}
-        <section id="reviews" className="max-w-7xl mx-auto px-4 py-10 bg-white">
+        < section id="reviews" className="max-w-7xl mx-auto px-4 py-10 bg-white" >
           <h2 className="text-3xl font-black text-[#1e3a6e]">Đánh giá khách hàng</h2>
           <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
             {reviews.map((r) => (
@@ -924,11 +945,11 @@ export default function HomePage() {
               </div>
             ))}
           </div>
-        </section>
-      </main>
+        </section >
+      </main >
 
       {/* Footer */}
-      <footer id="footer" className="border-t bg-white">
+      < footer id="footer" className="border-t bg-white" >
         <div className="max-w-6xl mx-auto px-4 py-12">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8">
             <div className="lg:col-span-4">
@@ -1072,7 +1093,7 @@ export default function HomePage() {
             © {new Date().getFullYear()} TL Market. All rights reserved.
           </div>
         </div>
-      </footer>
-    </div>
+      </footer >
+    </div >
   );
 }
