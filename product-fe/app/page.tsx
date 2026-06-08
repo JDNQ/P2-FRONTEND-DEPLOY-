@@ -5,8 +5,8 @@ import Link from 'next/link'
 import ProductCard from '@/components/ProductCard'
 import { SkeletonGrid } from '@/components/Skeleton'
 
-import { ChevronLeft, ChevronRight, Clock } from 'lucide-react'
-import Image from 'next/image'
+import { Clock } from 'lucide-react'
+
 
 // Mock data - replace with API calls in production
 const mockProducts = [
@@ -139,75 +139,155 @@ const categories = [
   { id: 8, name: 'Smart Home', icon: '🏠' },
 ]
 
-const heroImages = ['/hero-1.png', '/hero-2.png', '/hero-1.png']
-
 export default function HomePage() {
-  const [currentHeroIndex, setCurrentHeroIndex] = useState(0)
+  const [bannerSlide, setBannerSlide] = useState(0)
+  const mainBanners = [
+    "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832420/af47a55f-c499-43fa-babb-a8274264bf2f_2_w7yx1e.png",
+    "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832418/af47a55f-c499-43fa-babb-a8274264bf2f_2_-Copy_s0zszz.png",
+    "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_5-Copy_tb9aok.png",
+    "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_8-_Copy_rrks6a.png",
+  ]
+  const subBanners = [
+    [
+      "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_1_-Copy_1_rs2a03.png",
+      "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_1_ypwnrd.png",
+    ],
+    [
+      "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_3-Copy_tkbhrv.png",
+      "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832418/af47a55f-c499-43fa-babb-a8274264bf2f_4-Copy_mcqjxi.png",
+    ],
+    [
+      "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_6-Copy_dceenr.png",
+      "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_7-Copy_jkravy.png",
+    ],
+    [
+      "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_9-_Copy_trbcqg.png",
+      "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_ympuvm.png",
+    ],
+  ]
+
   const [isLoading] = useState(false)
 
 
+
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentHeroIndex((prev) => (prev + 1) % heroImages.length)
-    }, 5000)
-    return () => clearInterval(interval)
+    const t = setInterval(() => setBannerSlide((i) => (i + 1) % 4), 4000)
+    return () => clearInterval(t)
   }, [])
 
-  const nextHero = () => {
-    setCurrentHeroIndex((prev) => (prev + 1) % heroImages.length)
-  }
-
-  const prevHero = () => {
-    setCurrentHeroIndex((prev) => (prev - 1 + heroImages.length) % heroImages.length)
-  }
 
   return (
     <div className="bg-gray-50">
-      {/* Hero Slider */}
-      <div className="relative h-80 md:h-96 bg-white overflow-hidden">
-        <div className="flex transition-transform duration-500" style={{ transform: `translateX(-${currentHeroIndex * 100}%)` }}>
-          {heroImages.map((img, idx) => (
-            <div key={idx} className="w-full h-full flex-shrink-0 relative">
-              <Image
-                src={img}
-                alt={`Hero ${idx}`}
-                fill
-                className="object-cover"
-                priority={idx === 0}
-              />
+      {/* Hero Banner kiểu Tiki */}
+      <div className="bg-gray-50 py-4">
+        <div className="max-w-7xl mx-auto px-4">
+          <div style={{ position: "relative", height: "280px" }}>
+            <div style={{ display: "flex", gap: "8px", height: "100%" }}>
+              <div style={{ position: "relative", flex: 1, borderRadius: "16px 0 0 16px", overflow: "hidden", cursor: "pointer" }}>
+                {mainBanners.map((url, i) => (
+                  <img
+                    key={i}
+                    src={url}
+                    alt={`Banner ${i + 1}`}
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      opacity: i === bannerSlide ? 1 : 0,
+                      transition: "opacity 0.7s ease",
+                    }}
+                  />
+                ))}
+              </div>
+              <div style={{ width: "280px", display: "flex", flexDirection: "column", gap: "8px", flexShrink: 0 }}>
+                {subBanners[bannerSlide].map((url, idx) => (
+                  <div
+                    key={idx}
+                    style={{
+                      position: "relative",
+                      flex: 1,
+                      overflow: "hidden",
+                      cursor: "pointer",
+                      borderRadius: idx === 0 ? "0 16px 0 0" : "0 0 16px 0",
+                    }}
+                  >
+                    <img src={url} alt={`Sub banner ${idx + 1}`} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
-        </div>
-
-        {/* Navigation Arrows */}
-        <button
-          onClick={prevHero}
-          aria-label="Prev"
-          className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full transition z-10"
-        >
-
-          <ChevronLeft className="w-6 h-6 text-primary-500" />
-        </button>
-        <button
-          onClick={nextHero}
-          aria-label="Next"
-          className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full transition z-10"
-        >
-
-          <ChevronRight className="w-6 h-6 text-primary-500" />
-        </button>
-
-        {/* Dots */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
-          {heroImages.map((_, idx) => (
             <button
-              key={idx}
-              aria-label={`Slide ${idx + 1}`}
-              onClick={() => setCurrentHeroIndex(idx)}
-              className={`w-3 h-3 rounded-full transition ${idx === currentHeroIndex ? 'bg-accent-400' : 'bg-white/50'}`}
-            />
-
-          ))}
+              type="button"
+              aria-label="Prev"
+              style={{
+                position: "absolute",
+                left: "12px",
+                top: "50%",
+                transform: "translateY(-50%)",
+                zIndex: 10,
+                background: "rgba(255,255,255,0.8)",
+                border: "none",
+                borderRadius: "50%",
+                width: "32px",
+                height: "32px",
+                cursor: "pointer",
+                fontSize: "20px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              onClick={() => setBannerSlide((i) => (i - 1 + 4) % 4)}
+            >
+              &#8249;
+            </button>
+            <button
+              type="button"
+              aria-label="Next"
+              style={{
+                position: "absolute",
+                right: "12px",
+                top: "50%",
+                transform: "translateY(-50%)",
+                zIndex: 10,
+                background: "rgba(255,255,255,0.8)",
+                border: "none",
+                borderRadius: "50%",
+                width: "32px",
+                height: "32px",
+                cursor: "pointer",
+                fontSize: "20px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              onClick={() => setBannerSlide((i) => (i + 1) % 4)}
+            >
+              &#8250;
+            </button>
+            <div style={{ position: "absolute", bottom: "8px", left: "50%", transform: "translateX(-50%)", display: "flex", gap: "6px" }}>
+              {[0, 1, 2, 3].map((idx) => (
+                <button
+                  type="button"
+                  key={idx}
+                  aria-label={`Slide ${idx + 1}`}
+                  onClick={() => setBannerSlide(idx)}
+                  style={{
+                    border: "none",
+                    cursor: "pointer",
+                    borderRadius: "9999px",
+                    transition: "all 0.3s",
+                    background: idx === bannerSlide ? "#f97316" : "rgba(255,255,255,0.7)",
+                    width: idx === bannerSlide ? "24px" : "8px",
+                    height: "8px",
+                    padding: 0,
+                  }}
+                />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
