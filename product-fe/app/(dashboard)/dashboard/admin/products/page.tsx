@@ -4,176 +4,142 @@ import { formatPrice } from '@/lib/utils/formatPrice'
 import { useState } from 'react'
 import Link from 'next/link'
 
-function getStatus(stock: number): { label: string; variant: 'success' | 'gold' | 'error' } {
-  if (stock === 0) return { label: 'Hết hàng', variant: 'error' }
-  if (stock <= 10) return { label: 'Sắp hết', variant: 'gold' }
-  return { label: 'Đang bán', variant: 'success' }
-}
+const PAGE_SIZE = 10
 
-const STATUS_CLASS = {
-  success: 'bg-success/10 text-success',
-  gold: 'bg-gold/10 text-gold',
-  error: 'bg-error/10 text-error',
+function getRowStatus(stock: number): { label: string; bg: string; text: string; dot: string; pulse?: boolean } {
+  if (stock === 0) return { label: 'Out of Stock', bg: 'bg-[#ffdad6]', text: 'text-[#ba1a1a]', dot: '' }
+  if (stock <= 10) return { label: `Low Stock (${stock})`, bg: 'bg-[#e1dfff]', text: 'text-[#3432c8]', dot: '' }
+  return { label: `In Stock (${stock})`, bg: 'bg-[#dee1ff]', text: 'text-[#0035d1]', dot: 'bg-[#0035d1]', pulse: true }
 }
-
-const STATUS_DOT = {
-  success: 'bg-success',
-  gold: 'bg-gold',
-  error: 'bg-error',
-}
-
-const PAGE_SIZE = 4
 
 export default function AdminProductsPage() {
   const { data: products, isLoading } = useProducts()
   const deleteProduct = useDeleteProduct()
   const [currentPage, setCurrentPage] = useState(1)
-  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set())
 
   const list = products || []
-  const totalStock = list.reduce((s, p) => s + p.variants.reduce((ss, v) => ss + v.stock, 0), 0)
-  const outOfStock = list.filter((p) => p.variants.reduce((ss, v) => ss + v.stock, 0) === 0).length
+  const totalUnits = list.reduce((s, p) => s + p.variants.reduce((ss, v) => ss + v.stock, 0), 0)
+  const inStockCount = list.filter((p) => p.variants.reduce((ss, v) => ss + v.stock, 0) > 10).length
+  const lowStockCount = list.filter((p) => {
+    const t = p.variants.reduce((ss, v) => ss + v.stock, 0)
+    return t > 0 && t <= 10
+  }).length
+  const outOfStockCount = list.filter((p) => p.variants.reduce((ss, v) => ss + v.stock, 0) === 0).length
 
   const totalPages = Math.max(1, Math.ceil(list.length / PAGE_SIZE))
   const paged = list.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
 
-  const toggleSelect = (id: number) => {
-    setSelectedIds((prev) => {
-      const next = new Set(prev)
-      if (next.has(id)) next.delete(id); else next.add(id)
-      return next
-    })
-  }
-
-  const toggleAll = () => {
-    if (selectedIds.size === paged.length) {
-      setSelectedIds(new Set())
+  const getPageNumbers = () => {
+    const pages: (number | 'ellipsis')[] = []
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i)
     } else {
-      setSelectedIds(new Set(paged.map((p) => p.id)))
+      pages.push(1)
+      if (currentPage > 3) pages.push('ellipsis')
+      const start = Math.max(2, currentPage - 1)
+      const end = Math.min(totalPages - 1, currentPage + 1)
+      for (let i = start; i <= end; i++) pages.push(i)
+      if (currentPage < totalPages - 2) pages.push('ellipsis')
+      pages.push(totalPages)
     }
+    return pages
   }
-
-  const allSelected = paged.length > 0 && selectedIds.size === paged.length
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
-      <div>
-        <h2 className="text-2xl font-bold text-m3-on-surface">Inventory Management</h2>
-        <p className="text-sm text-m3-on-surface-variant">Manage your product catalog and stock levels.</p>
-      </div>
-
-      {/* Action Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex items-center gap-2">
-          <button className="flex items-center gap-2 px-4 py-2 bg-surface-card border border-outline-variant rounded-lg font-label-md text-sm hover:bg-surface-variant transition-colors">
-            <span className="material-symbols-outlined">filter_list</span> Lọc
-          </button>
-          <button className="flex items-center gap-2 px-4 py-2 bg-surface-card border border-outline-variant rounded-lg font-label-md text-sm hover:bg-surface-variant transition-colors">
-            <span className="material-symbols-outlined">sort</span> Sắp xếp
-          </button>
-        </div>
-        <Link
-          href="/dashboard/admin/products/new"
-          className="flex items-center gap-2 px-6 py-2.5 text-white font-bold text-sm rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
-          style={{
-            background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
-            boxShadow: '0 4px 14px 0 rgba(249, 115, 22, 0.3)'
-          }}
-        >
-          <span className="material-symbols-outlined">add</span> Thêm sản phẩm mới
-        </Link>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="p-4 bg-surface-card rounded-xl shadow-sm border border-outline-variant flex items-center gap-4">
-          <div className="w-12 h-12 rounded-lg bg-info/10 text-info flex items-center justify-center">
-            <span className="material-symbols-outlined">inventory_2</span>
-          </div>
-          <div>
-            <p className="text-xs text-m3-on-surface-variant">Tổng sản phẩm</p>
-            <h3 className="text-xl font-bold text-m3-on-surface">{list.length}</h3>
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="p-6 rounded-xl shadow-sm border border-[#c4c5d9]/30 flex flex-col gap-2" style={{ backgroundColor: '#ffffff' }}>
+          <p className="text-[12px] leading-[16px] text-[#747688] uppercase font-bold">Total Items</p>
+          <p className="text-[28px] font-extrabold leading-[1.2]">{list.length}</p>
+          <div className="flex items-center gap-1 text-green-600 text-[12px] leading-[16px] font-bold">
+            <span className="material-symbols-outlined text-[16px]">trending_up</span>
+            +12% vs last month
           </div>
         </div>
-        <div className="p-4 bg-surface-card rounded-xl shadow-sm border border-outline-variant flex items-center gap-4">
-          <div className="w-12 h-12 rounded-lg bg-success/10 text-success flex items-center justify-center">
-            <span className="material-symbols-outlined">trending_up</span>
-          </div>
-          <div>
-            <p className="text-xs text-m3-on-surface-variant">Tồn kho</p>
-            <h3 className="text-xl font-bold text-m3-on-surface">{totalStock}</h3>
+        <div className="p-6 rounded-xl shadow-sm border border-[#c4c5d9]/30 flex flex-col gap-2" style={{ backgroundColor: '#ffffff' }}>
+          <p className="text-[12px] leading-[16px] text-[#747688] uppercase font-bold">In Stock</p>
+          <p className="text-[28px] font-extrabold leading-[1.2]" style={{ color: '#0035d1' }}>{inStockCount}</p>
+          <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: '#eeecff' }}>
+            <div className="h-full rounded-full" style={{ width: `${list.length ? (inStockCount / list.length) * 100 : 0}%`, backgroundColor: '#0035d1' }} />
           </div>
         </div>
-        <div className="p-4 bg-surface-card rounded-xl shadow-sm border border-outline-variant flex items-center gap-4">
-          <div className="w-12 h-12 rounded-lg bg-error/10 text-error flex items-center justify-center">
-            <span className="material-symbols-outlined">warning</span>
+        <div className="p-6 rounded-xl shadow-sm border border-[#c4c5d9]/30 flex flex-col gap-2" style={{ backgroundColor: '#ffffff' }}>
+          <p className="text-[12px] leading-[16px] text-[#747688] uppercase font-bold">Low Stock</p>
+          <p className="text-[28px] font-extrabold leading-[1.2]" style={{ color: '#3432c8' }}>{lowStockCount}</p>
+          <div className="flex items-center gap-1 text-[12px] leading-[16px] font-bold" style={{ color: '#3432c8' }}>
+            <span className="material-symbols-outlined text-[16px]">warning</span>
+            Requires attention
           </div>
-          <div>
-            <p className="text-xs text-m3-on-surface-variant">Hết hàng</p>
-            <h3 className="text-xl font-bold text-m3-on-surface">{outOfStock}</h3>
+        </div>
+        <div className="p-6 rounded-xl shadow-sm border border-[#c4c5d9]/30 flex flex-col gap-2" style={{ backgroundColor: '#ffffff' }}>
+          <p className="text-[12px] leading-[16px] text-[#747688] uppercase font-bold">Out of Stock</p>
+          <p className="text-[28px] font-extrabold leading-[1.2]" style={{ color: '#ba1a1a' }}>{outOfStockCount}</p>
+          <div className="flex items-center gap-1 text-[12px] leading-[16px] font-bold" style={{ color: '#ba1a1a' }}>
+            <span className="material-symbols-outlined text-[16px]">error</span>
+            Inactive listings
           </div>
         </div>
       </div>
 
-      {/* Data Table */}
-      <div className="bg-surface-card rounded-2xl shadow-sm border border-outline-variant overflow-hidden">
+      {/* Table */}
+      <div className="rounded-xl shadow-sm border border-[#c4c5d9]/50 overflow-hidden" style={{ backgroundColor: '#ffffff' }}>
+        {/* Header Actions */}
+        <div className="px-6 py-4 border-b border-[#c4c5d9]/30 flex justify-between items-center" style={{ backgroundColor: '#f5f2ff' }}>
+          <div className="flex gap-2">
+            <button className="px-4 py-2 rounded-lg border border-[#c4c5d9] hover:bg-[#e1dfff] transition-colors flex items-center gap-2 text-[14px] leading-[20px] font-medium text-[#444656]" style={{ backgroundColor: '#fcf8ff' }}>
+              <span className="material-symbols-outlined text-[18px]">filter_alt</span>
+              Filters
+            </button>
+            <button className="px-4 py-2 rounded-lg border border-[#c4c5d9] hover:bg-[#e1dfff] transition-colors flex items-center gap-2 text-[14px] leading-[20px] font-medium text-[#444656]" style={{ backgroundColor: '#fcf8ff' }}>
+              <span className="material-symbols-outlined text-[18px]">download</span>
+              Export
+            </button>
+          </div>
+          <p className="text-[12px] leading-[16px] text-[#747688]">
+            Showing {Math.min((currentPage - 1) * PAGE_SIZE + 1, list.length)}-{Math.min(currentPage * PAGE_SIZE, list.length)} of {list.length} products
+          </p>
+        </div>
+
         {isLoading ? (
           <div className="space-y-4 p-6">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-16 bg-neutral-200 rounded-xl animate-pulse" />
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="h-16 rounded-xl animate-pulse" style={{ backgroundColor: '#eeecff' }} />
             ))}
           </div>
         ) : list.length === 0 ? (
           <div className="text-center py-16">
-            <span className="material-symbols-outlined text-6xl text-m3-outline-variant">inventory_2</span>
-            <p className="text-m3-on-surface-variant mt-4">No products yet</p>
+            <span className="material-symbols-outlined text-6xl text-[#c4c5d9]">inventory_2</span>
+            <p className="text-[#444656] mt-4 text-sm">No products yet</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="w-full overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-surface-container-low border-b border-outline-variant text-xs text-m3-on-surface-variant uppercase tracking-wider">
-                  <th className="px-6 py-4 font-bold">
-                    <input
-                      type="checkbox"
-                      checked={allSelected}
-                      onChange={toggleAll}
-                      className="rounded text-primary focus:ring-primary-container border-outline-variant"
-                    />
+                <tr className="text-[12px] leading-[16px] text-[#444656] uppercase font-bold tracking-wider" style={{ backgroundColor: '#f5f2ff' }}>
+                  <th className="px-6 py-4 font-medium">
+                    <span className="flex items-center gap-2 cursor-pointer hover:text-[#0035d1]">
+                      Product Name
+                      <span className="material-symbols-outlined text-[16px]">swap_vert</span>
+                    </span>
                   </th>
-                  <th className="px-6 py-4 font-bold">Sản phẩm</th>
-                  <th className="px-6 py-4 font-bold">SKU</th>
-                  <th className="px-6 py-4 font-bold">Tình trạng</th>
-                  <th className="px-6 py-4 font-bold">Tồn kho</th>
-                  <th className="px-6 py-4 font-bold">Giá</th>
-                  <th className="px-6 py-4 font-bold text-right">Thao tác</th>
+                  <th className="px-6 py-4 font-medium">SKU</th>
+                  <th className="px-6 py-4 font-medium">Stock Status</th>
+                  <th className="px-6 py-4 font-medium">Price</th>
+                  <th className="px-6 py-4 font-medium text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-outline-variant">
+              <tbody className="divide-y divide-[#c4c5d9]/20">
                 {paged.map((product) => {
                   const totalStock = product.variants.reduce((s, v) => s + v.stock, 0)
-                  const status = getStatus(totalStock)
-                  const maxBar = 100
-                  const barPercent = Math.min(totalStock, maxBar)
+                  const status = getRowStatus(totalStock)
                   const primaryImage = product.images?.find((img) => img.isPrimary)?.url || product.images?.[0]?.url
 
                   return (
-                    <tr
-                      key={product.id}
-                      className="hover:bg-surface-container-low/50 transition-colors group"
-                    >
+                    <tr key={product.id} className="hover:bg-[#dee1ff]/10 transition-colors group">
                       <td className="px-6 py-4">
-                        <input
-                          type="checkbox"
-                          checked={selectedIds.has(product.id)}
-                          onChange={() => toggleSelect(product.id)}
-                          className="rounded text-primary focus:ring-primary-container border-outline-variant"
-                        />
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 rounded-lg bg-surface-container overflow-hidden flex-shrink-0">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 border border-[#c4c5d9]/20" style={{ backgroundColor: '#e1dfff' }}>
                             {primaryImage ? (
                               <img
                                 src={primaryImage}
@@ -182,51 +148,42 @@ export default function AdminProductsPage() {
                                 onError={(e) => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/48?text=Product' }}
                               />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center text-m3-on-surface-variant">
+                              <div className="w-full h-full flex items-center justify-center text-[#747688]">
                                 <span className="material-symbols-outlined text-[24px]">inventory_2</span>
                               </div>
                             )}
                           </div>
                           <div>
-                            <p className="font-bold text-sm text-m3-on-surface">{product.productName}</p>
-                            <p className="text-xs text-m3-on-surface-variant">
+                            <p className="text-[14px] leading-[20px] font-bold">{product.productName}</p>
+                            <p className="text-[12px] leading-[16px] text-[#747688]">
                               {product.description
                                 ? (product.description.length > 30 ? product.description.slice(0, 30) + '...' : product.description)
-                                : `${product.variants.length} phân loại`}
+                                : `${product.variants.length} variants`}
                             </p>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-sm text-m3-on-surface-variant">TL-{product.id.toString().padStart(6, '0')}</td>
+                      <td className="px-6 py-4 text-[16px] leading-[24px] text-[#444656]">TL-{product.id.toString().padStart(6, '0')}</td>
                       <td className="px-6 py-4">
-                        <span className={`px-2.5 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1 ${STATUS_CLASS[status.variant]}`}>
-                          <span className={`w-1.5 h-1.5 rounded-full ${STATUS_DOT[status.variant]}`}></span>
+                        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[12px] font-bold ${status.bg} ${status.text}`}>
+                          {status.dot && <span className={`w-1.5 h-1.5 rounded-full ${status.dot} ${status.pulse ? 'animate-pulse' : ''}`} />}
                           {status.label}
                         </span>
                       </td>
-                      <td className="px-6 py-4">
-                        <p className="font-bold text-sm">{totalStock} đơn vị</p>
-                        <div className="w-24 h-1.5 bg-surface-container rounded-full mt-1 overflow-hidden">
-                          <div
-                            className={`h-full rounded-full ${status.variant === 'success' ? 'bg-success' : status.variant === 'gold' ? 'bg-gold' : 'bg-error'}`}
-                            style={{ width: `${Math.min(barPercent, 100)}%` }}
-                          ></div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 font-bold text-lg text-m3-on-surface">{formatPrice(product.basePrice)}</td>
+                      <td className="px-6 py-4 text-[20px] font-bold leading-[1]">{formatPrice(product.basePrice)}</td>
                       <td className="px-6 py-4 text-right">
-                        <div className="flex items-center justify-end gap-2">
+                        <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                           <Link
                             href={`/dashboard/admin/products/${product.id}/edit`}
-                            className="w-8 h-8 rounded-full flex items-center justify-center text-m3-on-surface-variant hover:bg-surface-variant hover:text-primary transition-all"
+                            className="p-2 hover:bg-[#1e4cfd] hover:text-white rounded-lg transition-all text-[#444656]"
                           >
-                            <span className="material-symbols-outlined text-[20px]">edit</span>
+                            <span className="material-symbols-outlined">edit</span>
                           </Link>
                           <button
-                            onClick={() => { if (confirm('Xóa sản phẩm này?')) deleteProduct.mutate(product.id) }}
-                            className="w-8 h-8 rounded-full flex items-center justify-center text-m3-on-surface-variant hover:bg-error/10 hover:text-error transition-all"
+                            onClick={() => { if (confirm('Delete this product?')) deleteProduct.mutate(product.id) }}
+                            className="p-2 hover:bg-[#ffdad6] hover:text-[#93000a] rounded-lg transition-all text-[#444656]"
                           >
-                            <span className="material-symbols-outlined text-[20px]">delete</span>
+                            <span className="material-symbols-outlined">delete</span>
                           </button>
                         </div>
                       </td>
@@ -240,40 +197,46 @@ export default function AdminProductsPage() {
 
         {/* Pagination Footer */}
         {list.length > 0 && (
-          <div className="px-6 py-4 bg-surface-container-low flex items-center justify-between border-t border-outline-variant">
-            <p className="text-xs text-m3-on-surface-variant">
-              Hiển thị {(currentPage - 1) * PAGE_SIZE + 1} - {Math.min(currentPage * PAGE_SIZE, list.length)} của {list.length} sản phẩm
-            </p>
+          <div className="px-6 py-4 border-t border-[#c4c5d9]/30 flex justify-between items-center" style={{ backgroundColor: '#f5f2ff' }}>
+            <div className="flex items-center gap-4">
+              <p className="text-[12px] leading-[16px] text-[#747688]">Rows per page:</p>
+              <select className="bg-transparent border-none focus:ring-0 text-[14px] leading-[20px] font-bold cursor-pointer outline-none">
+                <option>10</option>
+                <option>25</option>
+                <option>50</option>
+              </select>
+            </div>
             <div className="flex items-center gap-1">
               <button
                 onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
-                className="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant bg-surface-card text-m3-on-surface-variant hover:bg-surface-variant disabled:opacity-50 transition-colors"
+                className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-[#e1dfff] text-[#747688] disabled:opacity-30 transition-colors"
               >
-                <span className="material-symbols-outlined text-[18px]">chevron_left</span>
+                <span className="material-symbols-outlined">chevron_left</span>
               </button>
-              {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => i + 1).map((page) => (
-                <button
-                  key={page}
-                  onClick={() => setCurrentPage(page)}
-                  className={`w-8 h-8 flex items-center justify-center rounded-lg font-bold text-sm transition-colors ${
-                    currentPage === page
-                      ? 'bg-primary text-white'
-                      : 'border border-outline-variant bg-surface-card text-m3-on-surface-variant hover:bg-surface-variant'
-                  }`}
-                >
-                  {page}
-                </button>
-              ))}
-              {totalPages > 5 && (
-                <span className="px-1 text-m3-on-surface-variant">...</span>
+              {getPageNumbers().map((page, idx) =>
+                page === 'ellipsis' ? (
+                  <span key={`e${idx}`} className="px-2 text-[#747688]">...</span>
+                ) : (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`w-10 h-10 flex items-center justify-center rounded-lg font-bold shadow-sm transition-colors ${
+                      currentPage === page
+                        ? 'bg-[#1e4cfd] text-white'
+                        : 'hover:bg-[#e1dfff] text-[#444656]'
+                    }`}
+                  >
+                    {page}
+                  </button>
+                )
               )}
               <button
                 onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                 disabled={currentPage === totalPages}
-                className="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant bg-surface-card text-m3-on-surface-variant hover:bg-surface-variant disabled:opacity-50 transition-colors"
+                className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-[#e1dfff] text-[#747688] disabled:opacity-30 transition-colors"
               >
-                <span className="material-symbols-outlined text-[18px]">chevron_right</span>
+                <span className="material-symbols-outlined">chevron_right</span>
               </button>
             </div>
           </div>

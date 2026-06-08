@@ -5,58 +5,136 @@ import Link from 'next/link'
 
 export default function CheckoutSuccessPage() {
   useEffect(() => {
-    // Fire confetti
     confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 },
+      particleCount: 150,
+      spread: 80,
+      origin: { y: 0.5 },
+      colors: ['#0035d1', '#1246f8', '#22c55e', '#f97316', '#4958a9'],
     })
   }, [])
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center px-4">
-      <div className="text-center max-w-md">
-        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <svg
-            className="w-8 h-8 text-green-600"
-            fill="currentColor"
-            viewBox="0 0 20 20"
+    <div className="min-h-screen flex items-center justify-center px-4 py-16 relative overflow-hidden" style={{ backgroundColor: '#fcf8ff', color: '#08006c' }}>
+      {/* Ambient Blurs */}
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full blur-[120px] pointer-events-none" style={{ backgroundColor: 'rgba(0, 53, 209, 0.1)' }} />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full blur-[120px] pointer-events-none" style={{ backgroundColor: 'rgba(73, 88, 169, 0.1)' }} />
+
+      <div className="max-w-2xl w-full text-center space-y-6 z-20">
+        {/* Success Icon */}
+        <div className="flex justify-center mb-4">
+          <div
+            className="w-24 h-24 md:w-32 md:h-32 rounded-full flex items-center justify-center border-4 animate-check"
+            style={{
+              backgroundColor: 'rgba(34, 197, 94, 0.1)',
+              borderColor: 'rgba(34, 197, 94, 0.2)',
+              boxShadow: '0 0 40px rgba(34, 197, 94, 0.3)',
+            }}
           >
-            <path
-              fillRule="evenodd"
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-              clipRule="evenodd"
-            />
-          </svg>
+            <span
+              className="material-symbols-outlined text-[48px] md:text-[64px]"
+              style={{ color: '#22c55e', fontVariationSettings: "'FILL' 1, 'wght' 600" }}
+            >
+              check_circle
+            </span>
+          </div>
         </div>
 
-        <h1 className="font-heading text-3xl font-bold text-neutral-900 mb-2">
-          Đặt hàng thành công!
-        </h1>
-        <p className="text-neutral-500 mb-8">
-          Cảm ơn bạn đã mua sắm tại TL Market. Đơn hàng của bạn đang được xử lý.
-        </p>
-
-        <div className="bg-neutral-50 rounded-xl p-6 mb-6">
-          <p className="text-sm text-neutral-600 mb-2">Bạn sẽ nhận được email xác nhận trong vài phút</p>
-          <p className="text-sm text-neutral-600">Theo dõi đơn hàng của bạn tại trang Đơn hàng của tôi</p>
+        {/* Headlines */}
+        <div className="space-y-2">
+          <h1 className="text-[32px] md:text-[48px] font-extrabold leading-tight tracking-tight" style={{ fontFamily: 'Sora, sans-serif' }}>
+            Order Successful!
+          </h1>
+          <p className="text-[18px] leading-[28px] text-[#444656] max-w-md mx-auto">
+            Thank you for your purchase. We&apos;ve received your order and we&apos;re getting it ready for shipment.
+          </p>
         </div>
 
-        <div className="space-y-3">
+        {/* Info Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-10">
+          <div
+            className="p-6 rounded-xl text-left shadow-sm"
+            style={{
+              background: 'rgba(255, 255, 255, 0.8)',
+              backdropFilter: 'blur(12px)',
+              border: '1px solid rgba(225, 223, 255, 0.4)',
+            }}
+          >
+            <span className="text-[14px] leading-[20px] font-medium text-[#747688] mb-1 block uppercase tracking-wider">Order ID</span>
+            <div className="flex items-center justify-between">
+              <span className="text-[20px] font-semibold leading-[28px]">#TLM-8829410</span>
+              <button
+                className="p-2 hover:bg-[#e1dfff] rounded-lg transition-colors"
+                title="Copy Order ID"
+                onClick={() => navigator.clipboard.writeText('TLM-8829410')}
+              >
+                <span className="material-symbols-outlined text-[#0035d1] text-[20px]">content_copy</span>
+              </button>
+            </div>
+          </div>
+          <div
+            className="p-6 rounded-xl text-left shadow-sm"
+            style={{
+              background: 'rgba(255, 255, 255, 0.8)',
+              backdropFilter: 'blur(12px)',
+              border: '1px solid rgba(225, 223, 255, 0.4)',
+            }}
+          >
+            <span className="text-[14px] leading-[20px] font-medium text-[#747688] mb-1 block uppercase tracking-wider">Estimated Delivery</span>
+            <div className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-[20px]" style={{ color: '#4958a9' }}>local_shipping</span>
+              <span className="text-[20px] font-semibold leading-[28px]">3-5 business days</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
           <Link
             href="/orders"
-            className="block py-3 bg-primary-600 text-white font-semibold rounded-xl hover:bg-primary-700 transition"
+            className="w-full sm:w-auto px-10 py-4 text-white rounded-xl font-bold text-[16px] leading-[24px] shadow-[0_10px_20px_-5px_rgba(249,115,22,0.3)] hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center gap-2"
+            style={{ backgroundColor: '#f97316' }}
           >
-            Xem đơn hàng của tôi
+            View My Orders
+            <span className="material-symbols-outlined">arrow_forward</span>
           </Link>
           <Link
             href="/products"
-            className="block py-3 text-neutral-600 border border-neutral-200 rounded-xl hover:bg-neutral-50 transition"
+            className="w-full sm:w-auto px-10 py-4 border-2 rounded-xl font-bold text-[16px] leading-[24px] transition-all duration-200 flex items-center justify-center gap-2"
+            style={{
+              borderColor: '#c4c5d9',
+              color: '#08006c',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#e1dfff'
+              e.currentTarget.style.borderColor = 'transparent'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent'
+              e.currentTarget.style.borderColor = '#c4c5d9'
+            }}
           >
-            Tiếp tục mua sắm
+            <span className="material-symbols-outlined">shopping_bag</span>
+            Back to Shopping
           </Link>
         </div>
+
+        {/* Footer Note */}
+        <div className="pt-12 opacity-60">
+          <div className="h-1 w-24 mx-auto rounded-full mb-8" style={{ backgroundColor: '#c4c5d9' }} />
+          <p className="text-[12px] leading-[16px] text-[#747688]">A confirmation email has been sent to your registered address.</p>
+        </div>
       </div>
+
+      <style>{`
+        @keyframes check-bounce {
+          0% { transform: scale(0.8); opacity: 0; }
+          50% { transform: scale(1.1); }
+          100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-check {
+          animation: check-bounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+      `}</style>
     </div>
   )
 }
