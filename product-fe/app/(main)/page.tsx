@@ -1,5 +1,7 @@
 'use client'
 import { useProducts } from '@/lib/hooks/useProducts'
+import { useAuthStore } from '@/lib/stores/authStore'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { formatPrice } from '@/lib/utils/formatPrice'
 import { useState, useEffect } from 'react'
@@ -47,7 +49,16 @@ const TRUST_ITEMS = [
 ]
 
 export default function HomePage() {
+  const { isAuthenticated, user } = useAuthStore()
+  const router = useRouter()
   const { data: products, isLoading } = useProducts()
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      if (user?.role === 'ADMIN') router.replace('/dashboard/admin')
+      else if (user?.role === 'MANAGER') router.replace('/dashboard/manager')
+    }
+  }, [isAuthenticated, user, router])
 
   return (
     <>

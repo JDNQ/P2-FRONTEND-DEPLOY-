@@ -1,11 +1,17 @@
 'use client'
 import { useProducts } from '@/lib/hooks/useProducts'
+import { useAddToCart } from '@/lib/hooks/useCart'
+import { useAuthStore } from '@/lib/stores/authStore'
+import { useRouter } from 'next/navigation'
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { formatPrice } from '@/lib/utils/formatPrice'
 
 export default function ProductsPage() {
   const { data: products, isLoading } = useProducts()
+  const { isAuthenticated } = useAuthStore()
+  const { mutate: addToCart } = useAddToCart()
+  const router = useRouter()
   const [searchTerm, setSearchTerm] = useState('')
   const [sortBy, setSortBy] = useState('newest')
   const [minPrice, setMinPrice] = useState(0)
@@ -166,12 +172,10 @@ export default function ProductsPage() {
                         }}
                         onClick={(e) => {
                           e.preventDefault()
+                          if (!isAuthenticated) { router.push('/login?from=/products'); return }
                           const firstVariant = product.variants[0]
                           if (firstVariant) {
-                            import('@/lib/hooks/useCart').then(({ useAddToCart }) => {
-                              const { mutate } = useAddToCart()
-                              mutate({ productId: product.id, variantId: firstVariant.id, quantity: 1 })
-                            })
+                            addToCart({ productId: product.id, variantId: firstVariant.id, quantity: 1 })
                           }
                         }}
                       >
