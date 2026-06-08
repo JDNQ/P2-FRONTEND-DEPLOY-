@@ -136,7 +136,7 @@ export default function Header({ onToggleSidebar, user: adminUser, onLogout }: H
                                         <span className="text-sm hidden lg:inline">Giỏ hàng</span>
                                     </Link>
 
-                                    <Link href={isLoggedIn ? '/orders' : '/login'} className="flex items-center gap-1 text-gray-700 hover:text-orange-500 transition">
+                                    <Link href={isLoggedIn ? '/' : '/login'} className="flex items-center gap-1 text-gray-700 hover:text-orange-500 transition">
 
                                         <User className="w-6 h-6" />
                                         <span className="text-sm hidden lg:inline">{isLoggedIn ? 'Tài khoản' : 'Đăng nhập'}</span>
@@ -202,10 +202,10 @@ export default function Header({ onToggleSidebar, user: adminUser, onLogout }: H
                             <Link href="/products" className="block px-3 py-2 rounded hover:bg-gray-100">
                                 Sản phẩm
                             </Link>
-                            <Link href="/flash-sale" className="block px-3 py-2 rounded hover:bg-gray-100">
+                            <Link href="/products?category=flash-sale" className="block px-3 py-2 rounded hover:bg-gray-100">
                                 Flash Sale
                             </Link>
-                            <Link href={isLoggedIn ? '/orders' : '/login'} className="block px-3 py-2 rounded hover:bg-gray-100">
+                            <Link href={isLoggedIn ? '/' : '/login'} className="block px-3 py-2 rounded hover:bg-gray-100">
                                 {isLoggedIn ? user?.name : 'Đăng nhập'}
                             </Link>
                         </nav>
