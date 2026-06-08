@@ -15,6 +15,9 @@ type ProductCard = {
   discountPercent: number;
   oldPrice: number;
   price: number;
+  image?: string;
+  isFlashSale?: boolean;
+  badge?: string;
 };
 
 function formatVND(amount: number) {
@@ -72,23 +75,33 @@ export default function HomePage() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const raw = localStorage.getItem("user");
-    if (!raw) return;
 
-    try {
-      const parsed = JSON.parse(raw) as { username?: string; role?: string } | null;
-      // compute once, then set
-      const nextUser = parsed?.username && parsed?.role ? { username: parsed.username, role: parsed.role } : null;
-      if (nextUser) {
-        // eslint-disable-next-line react/no-set-state
-        setCurrentUser(nextUser);
+    let cancelled = false;
+
+    const run = () => {
+      const raw = localStorage.getItem("user");
+      if (!raw) return;
+
+      try {
+        const parsed = JSON.parse(raw) as { username?: string; role?: string } | null;
+        const nextUser = parsed?.username && parsed?.role ? { username: parsed.username, role: parsed.role } : null;
+        if (!cancelled && nextUser) {
+          setCurrentUser(nextUser);
+        }
+      } catch {
+        // ignore
       }
+    };
 
-
-    } catch {
-      // ignore
-    }
+    // Defer state update to avoid sync setState-in-effect lint complaints
+    const t = window.setTimeout(run, 0);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(t);
+    };
   }, []);
+
+
 
 
 
@@ -205,293 +218,21 @@ export default function HomePage() {
 
   const featuredTabs = ["Điện thoại", "Laptop", "Điện tử", "Thời trang", "Gia dụng"];
 
-  const featuredProducts: Record<string, ProductCard[]> = useMemo(
-    () => ({
-      "Điện thoại": [
-        {
-          id: "p1",
-          name: "iPhone 15 128GB",
-          rating: 4.8,
-          sold: 420,
-          discountPercent: 12,
-          oldPrice: 28990000,
-          price: 25490000,
-        },
-        {
-          id: "p2",
-          name: "Samsung A55 256GB",
-          rating: 4.6,
-          sold: 305,
-          discountPercent: 9,
-          oldPrice: 13990000,
-          price: 12790000,
-        },
-        {
-          id: "p3",
-          name: "Xiaomi Redmi Note 13 Pro",
-          rating: 4.5,
-          sold: 268,
-          discountPercent: 11,
-          oldPrice: 6990000,
-          price: 6190000,
-        },
-        {
-          id: "p4",
-          name: "OPPO Reno10 Pro",
-          rating: 4.4,
-          sold: 210,
-          discountPercent: 8,
-          oldPrice: 10990000,
-          price: 10190000,
-        },
-        {
-          id: "p5",
-          name: "Realme 12 Pro+",
-          rating: 4.3,
-          sold: 186,
-          discountPercent: 7,
-          oldPrice: 11990000,
-          price: 11190000,
-        },
-        {
-          id: "p6",
-          name: "Vivo V30",
-          rating: 4.6,
-          sold: 159,
-          discountPercent: 10,
-          oldPrice: 12990000,
-          price: 11690000,
-        },
-      ],
-      "Laptop": [
-        {
-          id: "p7",
-          name: "MacBook Air M3 13",
-          rating: 4.9,
-          sold: 188,
-          discountPercent: 14,
-          oldPrice: 34990000,
-          price: 29990000,
-        },
-        {
-          id: "p8",
-          name: "Dell XPS 13",
-          rating: 4.7,
-          sold: 140,
-          discountPercent: 12,
-          oldPrice: 35990000,
-          price: 31690000,
-        },
-        {
-          id: "p9",
-          name: "ASUS Zenbook 14",
-          rating: 4.6,
-          sold: 121,
-          discountPercent: 11,
-          oldPrice: 25990000,
-          price: 23190000,
-        },
-        {
-          id: "p10",
-          name: "Lenovo ThinkPad E14",
-          rating: 4.5,
-          sold: 98,
-          discountPercent: 9,
-          oldPrice: 17990000,
-          price: 16290000,
-        },
-        {
-          id: "p11",
-          name: "HP Pavilion 15",
-          rating: 4.4,
-          sold: 85,
-          discountPercent: 8,
-          oldPrice: 15990000,
-          price: 14790000,
-        },
-        {
-          id: "p12",
-          name: "Acer Aspire 5",
-          rating: 4.3,
-          sold: 73,
-          discountPercent: 7,
-          oldPrice: 13990000,
-          price: 12990000,
-        },
-      ],
-      "Điện tử": [
-        {
-          id: "p13",
-          name: "Tai nghe Bluetooth Pro",
-          rating: 4.7,
-          sold: 520,
-          discountPercent: 20,
-          oldPrice: 1890000,
-          price: 1510000,
-        },
-        {
-          id: "p14",
-          name: "Loa Bluetooth Bass",
-          rating: 4.5,
-          sold: 310,
-          discountPercent: 18,
-          oldPrice: 990000,
-          price: 810000,
-        },
-        {
-          id: "p15",
-          name: "Sạc nhanh 65W",
-          rating: 4.6,
-          sold: 260,
-          discountPercent: 25,
-          oldPrice: 690000,
-          price: 515000,
-        },
-        {
-          id: "p16",
-          name: "Chuột không dây ergonomic",
-          rating: 4.4,
-          sold: 200,
-          discountPercent: 15,
-          oldPrice: 490000,
-          price: 415000,
-        },
-        {
-          id: "p17",
-          name: "Bàn phím cơ Gaming",
-          rating: 4.3,
-          sold: 178,
-          discountPercent: 10,
-          oldPrice: 1290000,
-          price: 1160000,
-        },
-        {
-          id: "p18",
-          name: "Đồng hồ thông minh",
-          rating: 4.6,
-          sold: 144,
-          discountPercent: 17,
-          oldPrice: 2990000,
-          price: 2480000,
-        },
-      ],
-      "Thời trang": [
-        {
-          id: "p19",
-          name: "Áo thun nam form rộng",
-          rating: 4.6,
-          sold: 610,
-          discountPercent: 30,
-          oldPrice: 290000,
-          price: 203000,
-        },
-        {
-          id: "p20",
-          name: "Quần jeans nam ống suông",
-          rating: 4.4,
-          sold: 420,
-          discountPercent: 22,
-          oldPrice: 590000,
-          price: 459000,
-        },
-        {
-          id: "p21",
-          name: "Áo khoác bomber nữ",
-          rating: 4.5,
-          sold: 308,
-          discountPercent: 18,
-          oldPrice: 790000,
-          price: 646000,
-        },
-        {
-          id: "p22",
-          name: "Đầm xòe công sở",
-          rating: 4.3,
-          sold: 265,
-          discountPercent: 16,
-          oldPrice: 990000,
-          price: 832000,
-        },
-        {
-          id: "p23",
-          name: "Giày thể thao sneaker",
-          rating: 4.7,
-          sold: 210,
-          discountPercent: 19,
-          oldPrice: 1690000,
-          price: 1369000,
-        },
-        {
-          id: "p24",
-          name: "Túi tote da bò",
-          rating: 4.2,
-          sold: 188,
-          discountPercent: 14,
-          oldPrice: 1290000,
-          price: 1109000,
-        },
-      ],
-      "Gia dụng": [
-        {
-          id: "p25",
-          name: "Nồi chiên không dầu 5.5L",
-          rating: 4.7,
-          sold: 260,
-          discountPercent: 21,
-          oldPrice: 2490000,
-          price: 1960000,
-        },
-        {
-          id: "p26",
-          name: "Bình lọc nước tiện dụng",
-          rating: 4.4,
-          sold: 180,
-          discountPercent: 16,
-          oldPrice: 990000,
-          price: 830000,
-        },
-        {
-          id: "p27",
-          name: "Máy xay sinh tố 2 cối",
-          rating: 4.5,
-          sold: 152,
-          discountPercent: 14,
-          oldPrice: 1290000,
-          price: 1109000,
-        },
-        {
-          id: "p28",
-          name: "Bộ chén dĩa cao cấp",
-          rating: 4.3,
-          sold: 130,
-          discountPercent: 12,
-          oldPrice: 690000,
-          price: 607000,
-        },
-        {
-          id: "p29",
-          name: "Quạt sạc mini",
-          rating: 4.2,
-          sold: 118,
-          discountPercent: 18,
-          oldPrice: 390000,
-          price: 319000,
-        },
-        {
-          id: "p30",
-          name: "Đèn LED bàn học",
-          rating: 4.6,
-          sold: 106,
-          discountPercent: 10,
-          oldPrice: 490000,
-          price: 441000,
-        },
-      ],
-    }),
-    []
-  );
+  const featured = useMemo(() => {
+    // Không dùng dữ liệu mock nữa: dùng trực tiếp danh sách product lấy từ BE.
+    // Chia nhóm theo tab bằng cách lấy theo “nhóm index” để giữ UI có tab.
+    const list = realProducts;
+    const tabIdx = featuredTabs.findIndex((t) => t === featuredActive);
+    const start = tabIdx >= 0 ? tabIdx : 0;
 
-  const featured = featuredProducts[featuredActive] || [];
+    // Lấy xen kẽ để tab khác nhau có tập sản phẩm khác nhau.
+    const picked: RealProduct[] = [];
+    for (let i = start; i < list.length; i += featuredTabs.length) {
+      picked.push(list[i]);
+      if (picked.length >= 12) break;
+    }
+    return picked;
+  }, [realProducts, featuredActive]);
 
   const brandLogos = [
     { name: "Apple" },
@@ -900,6 +641,8 @@ export default function HomePage() {
                 {[0, 1, 2].map((idx) => (
                   <button
                     key={idx}
+                    type="button"
+                    aria-label={`Chuyển banner ${idx + 1}`}
                     onClick={() => setBannerSlide(idx)}
                     className={`w-3 h-3 rounded-full transition-all ${idx === bannerSlide % 3 ? "bg-orange-500 w-8" : "bg-white/70 hover:bg-white"
                       }`}
