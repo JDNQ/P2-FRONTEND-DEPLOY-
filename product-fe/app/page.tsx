@@ -143,27 +143,28 @@ const categories = [
 export default function HomePage() {
   const [bannerSlide, setBannerSlide] = useState(0)
   const mainBanners = [
-    "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832420/af47a55f-c499-43fa-babb-a8274264bf2f_2_w7yx1e.png",
-    "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832418/af47a55f-c499-43fa-babb-a8274264bf2f_2_-Copy_s0zszz.png",
-    "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_5-Copy_tb9aok.png",
-    "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_8-_Copy_rrks6a.png",
+    "https://res.cloudinary.com/dy2gieleq/image/upload/v1780832420/af47a55f-c499-43fa-babb-a8274264bf2f_2_w7yx1e.png",
+    "https://res.cloudinary.com/dy2gieleq/image/upload/v1780832418/af47a55f-c499-43fa-babb-a8274264bf2f_2_-_Copy_s0zszz.png",
+    "https://res.cloudinary.com/dy2gieleq/image/upload/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_5_-_Copy_tb9aok.png",
+    "https://res.cloudinary.com/dy2gieleq/image/upload/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_8_-_Copy_rrks6a.png",
   ]
+
   const subBanners = [
     [
-      "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_1_-Copy_1_rs2a03.png",
-      "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_1_ypwnrd.png",
+      "https://res.cloudinary.com/dy2gieleq/image/upload/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_1_-_Copy_1_rs2a03.png",
+      "https://res.cloudinary.com/dy2gieleq/image/upload/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_1_ypwnrd.png",
     ],
     [
-      "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_3-Copy_tkbhrv.png",
-      "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832418/af47a55f-c499-43fa-babb-a8274264bf2f_4-Copy_mcqjxi.png",
+      "https://res.cloudinary.com/dy2gieleq/image/upload/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_3_-_Copy_tkbhrv.png",
+      "https://res.cloudinary.com/dy2gieleq/image/upload/v1780832418/af47a55f-c499-43fa-babb-a8274264bf2f_4_-_Copy_mcqjxi.png",
     ],
     [
-      "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_6-Copy_dceenr.png",
-      "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_7-Copy_jkravy.png",
+      "https://res.cloudinary.com/dy2gieleq/image/upload/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_6_-_Copy_dceenr.png",
+      "https://res.cloudinary.com/dy2gieleq/image/upload/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_7_-_Copy_jkravy.png",
     ],
     [
-      "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_9-_Copy_trbcqg.png",
-      "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_ympuvm.png",
+      "https://res.cloudinary.com/dy2gieleq/image/upload/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_9_-_Copy_trbcqg.png",
+      "https://res.cloudinary.com/dy2gieleq/image/upload/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_ympuvm.png",
     ],
   ]
 
