@@ -26,20 +26,23 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       ]
     : [
         { href: '/dashboard/admin', label: 'Dashboard', icon: 'dashboard' },
-        { href: '/dashboard/admin/products', label: 'Products', icon: 'inventory_2' },
         { href: '/dashboard/admin/orders', label: 'Orders', icon: 'package' },
-        { href: '/dashboard/admin/vouchers', label: 'Vouchers', icon: 'monetization_on' },
+        { href: '/dashboard/admin/products', label: 'Inventory', icon: 'inventory_2' },
+        { href: '/dashboard/admin/vouchers', label: 'Discounts', icon: 'monetization_on' },
       ]
 
   return (
-    <div className="flex min-h-screen bg-surface-page font-body-md text-on-surface">
+    <div className="flex h-screen overflow-hidden" style={{ backgroundColor: '#fcf8ff', color: '#08006c' }}>
       {/* Sidebar */}
-      <aside className="hidden md:flex flex-col h-screen w-64 border-r border-outline-variant bg-surface-container p-4 sticky top-0">
-        <div className="mb-6 px-2">
+      <aside className="hidden md:flex flex-col h-full w-64 border-r border-[#c4c5d9] p-4 shrink-0" style={{ backgroundColor: '#f5f2ff' }}>
+        <div className="flex items-center gap-3 mb-6 px-2">
           <Link href="/">
-            <img src="/logo-removebg-preview.png" alt="TL Market" className="h-8 w-auto" />
+            <img src="/logo-removebg-preview.png" alt="TL Market" className="h-10 w-auto" />
           </Link>
-          <p className="text-sm text-m3-on-surface-variant opacity-70">Manage your store</p>
+          <div>
+            <h1 className="text-[20px] font-semibold leading-[28px] font-bold">Admin Panel</h1>
+            <p className="text-[12px] leading-[16px] text-[#444656]">Manage your store</p>
+          </div>
         </div>
 
         <nav className="flex-1 space-y-1">
@@ -51,83 +54,82 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 href={item.href}
                 className={`flex items-center gap-3 px-3 py-2 rounded-lg font-bold transition-all text-sm ${
                   isActive
-                    ? 'bg-m3-primary-container text-on-primary-container'
-                    : 'text-m3-on-surface-variant hover:bg-m3-surface-variant'
+                    ? 'bg-[#1e4cfd] text-white translate-x-1'
+                    : 'text-[#444656] hover:bg-[#e1dfff] hover:translate-x-1'
                 }`}
               >
                 <span className="material-symbols-outlined">{item.icon}</span>
-                <span>{item.label}</span>
+                <span className="text-[14px] leading-[20px] font-medium">{item.label}</span>
               </Link>
             )
           })}
         </nav>
 
-        <div className="mt-auto pt-4 space-y-1">
-          <button className="w-full py-2.5 px-4 rounded-xl text-white font-bold flex items-center justify-center gap-2 mb-4 text-sm"
+        <div className="mt-auto space-y-1 pt-4 border-t border-[#c4c5d9]">
+          <Link
+            href="/dashboard/admin/products/new"
+            className="w-full flex items-center justify-center gap-2 mb-4 py-2.5 rounded-xl font-bold transition-transform active:scale-[0.98]"
             style={{
-              background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
-              boxShadow: '0 4px 14px 0 rgba(249, 115, 22, 0.3)'
+              background: 'linear-gradient(135deg, #0035d1 0%, #3432c8 100%)',
+              boxShadow: '0 4px 14px 0 rgba(30, 76, 253, 0.25)'
             }}
           >
-            <span className="material-symbols-outlined">add_circle</span>
-            <span>Add Product</span>
-          </button>
-          <Link href="/profile" className="flex items-center gap-3 px-3 py-2 text-m3-on-surface-variant hover:bg-m3-surface-variant rounded-lg transition-all text-sm">
-            <span className="material-symbols-outlined">settings</span>
-            <span>Settings</span>
+            <span className="material-symbols-outlined text-white">add</span>
+            <span className="text-white">Add Product</span>
           </Link>
-          <Link href="/" className="flex items-center gap-3 px-3 py-2 text-m3-on-surface-variant hover:bg-m3-surface-variant rounded-lg transition-all text-sm">
-            <span className="material-symbols-outlined">logout</span>
-            <span>Back to Store</span>
+          <Link href="/profile" className="flex items-center gap-3 px-3 py-2 text-[#444656] hover:bg-[#e1dfff] rounded-lg transition-all text-sm">
+            <span className="material-symbols-outlined">settings</span>
+            <span className="text-[14px] leading-[20px] font-medium">Settings</span>
+          </Link>
+          <Link href="/" className="flex items-center gap-3 px-3 py-2 text-[#444656] hover:bg-[#e1dfff] rounded-lg transition-all text-sm">
+            <span className="material-symbols-outlined">help</span>
+            <span className="text-[14px] leading-[20px] font-medium">Support</span>
           </Link>
         </div>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col min-w-0">
+      <main className="flex-1 flex flex-col h-full overflow-y-auto" style={{ backgroundColor: '#fcf8ff' }}>
         {/* Top Bar */}
-        <header className="bg-surface sticky top-0 z-20 shadow-sm">
-          <div className="flex justify-between items-center px-4 py-4 w-full max-w-[1280px] mx-auto">
-            <div className="flex items-center gap-6">
-              <button className="md:hidden text-m3-primary">
-                <span className="material-symbols-outlined">menu</span>
-              </button>
-              <h2 className="text-xl font-bold text-m3-primary">Overview</h2>
+        <header className="sticky top-0 z-30 px-6 py-4 flex items-center justify-between shadow-sm" style={{ backgroundColor: 'rgba(252, 248, 255, 0.8)', backdropFilter: 'blur(12px)' }}>
+          <div className="flex flex-col">
+            <h2 className="text-[24px] font-bold leading-[32px]" style={{ color: '#0035d1' }}>Overview</h2>
+            <p className="text-[#444656] text-[14px] leading-[20px] font-medium">Welcome back, {user?.username || 'Admin'}</p>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="relative hidden sm:block">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#747688] material-symbols-outlined">search</span>
+              <input
+                type="text"
+                placeholder="Search data..."
+                className="pl-10 pr-4 py-2 border-none rounded-xl text-[14px] leading-[20px] font-medium focus:ring-2 focus:ring-[#0035d1]/20 w-64 transition-all outline-none"
+                style={{ backgroundColor: '#e8e6ff' }}
+              />
             </div>
-            <div className="flex items-center gap-4">
-              <div className="relative hidden sm:block">
-                <input
-                  type="text"
-                  placeholder="Search orders..."
-                  className="pl-10 pr-4 py-2 bg-m3-surface-container-low border-none rounded-xl text-sm focus:ring-2 focus:ring-m3-primary/20 w-64 transition-all"
-                />
-                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-m3-on-surface-variant/50">search</span>
-              </div>
-              <button className="relative p-2 text-m3-on-surface-variant hover:bg-m3-surface-variant rounded-full transition-colors">
+            <div className="flex items-center gap-2">
+              <button className="relative p-2 hover:bg-[#e1dfff] rounded-full text-[#444656] transition-colors">
                 <span className="material-symbols-outlined">notifications</span>
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full ring-2 ring-surface"></span>
+                <span className="absolute top-2 right-2 w-2 h-2 rounded-full" style={{ backgroundColor: '#ba1a1a' }}></span>
               </button>
-              <div className="flex items-center gap-2 pl-2 border-l border-outline-variant">
-                <div className="w-10 h-10 rounded-full bg-m3-primary-fixed flex items-center justify-center text-m3-primary font-bold text-sm ring-2 ring-m3-primary-fixed">
-                  {user?.username?.charAt(0).toUpperCase() || 'A'}
-                </div>
-                <div className="hidden lg:block">
-                  <p className="text-sm font-bold leading-tight">{user?.username}</p>
-                  <p className="text-xs text-m3-on-surface-variant opacity-70">{role}</p>
-                </div>
+              <div className="w-10 h-10 rounded-full flex items-center justify-center font-bold border-2" style={{ backgroundColor: '#9aa8ff', color: '#2a3a8a', borderColor: '#fcf8ff' }}>
+                {user?.username?.charAt(0).toUpperCase() || 'A'}
+                {user?.username?.charAt(1)?.toUpperCase() || ''}
               </div>
             </div>
           </div>
         </header>
 
-        <div className="p-4 md:p-6 max-w-[1280px] mx-auto w-full space-y-6">
+        <div className="p-6 max-w-[1280px] mx-auto w-full space-y-6">
           {children}
         </div>
 
         {/* Footer */}
-        <footer className="bg-m3-surface-container-highest border-t border-outline-variant mt-12">
-          <div className="px-4 py-6 max-w-[1280px] mx-auto text-center text-xs text-m3-on-surface-variant">
-            © 2024 TL Market. All rights reserved.
+        <footer className="mt-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center text-[12px] leading-[16px] text-[#444656] border-t border-[#c4c5d9]/30">
+          <p>© 2024 TL Market. All rights reserved.</p>
+          <div className="flex gap-6 mt-2 md:mt-0">
+            <a className="hover:text-[#0035d1] transition-colors" href="#">Privacy Policy</a>
+            <a className="hover:text-[#0035d1] transition-colors" href="#">Terms of Service</a>
+            <a className="hover:text-[#0035d1] transition-colors" href="#">System Status</a>
           </div>
         </footer>
       </main>

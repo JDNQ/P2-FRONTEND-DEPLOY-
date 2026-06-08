@@ -5,7 +5,7 @@ import { toast } from 'sonner'
 
 export const CART_KEY = ['cart']
 
-export function useCart() {
+export function useCart(enabled?: boolean) {
   const setCount = useCartStore((s) => s.setCount)
   return useQuery({
     queryKey: CART_KEY,
@@ -15,6 +15,7 @@ export function useCart() {
       setCount(total)
       return data.data
     },
+    enabled,
   })
 }
 

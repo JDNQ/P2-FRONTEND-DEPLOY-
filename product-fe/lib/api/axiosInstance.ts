@@ -21,11 +21,11 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (res) => res,
   (error) => {
-    if (error.response?.status === 401) {
-      if (typeof window !== 'undefined') {
+    if (error.response?.status === 401 && typeof window !== 'undefined') {
+      const token = localStorage.getItem('tl_access_token')
+      if (token) {
         localStorage.removeItem('tl_access_token')
         localStorage.removeItem('tl_user')
-        window.location.href = '/login'
       }
     }
     return Promise.reject(error)

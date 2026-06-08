@@ -38,169 +38,226 @@ export default function ProductsPage() {
     return result
   }, [products, searchTerm, sortBy, minPrice, maxPrice])
 
+  const [currentPage, setCurrentPage] = useState(1)
+  const pageSize = 8
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / pageSize))
+  const paged = filteredProducts.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+
   return (
-    <div className="min-h-screen bg-surface-page pb-20 md:pb-0">
+    <div className="min-h-screen bg-background text-on-background pb-20 md:pb-0">
       {/* Breadcrumb */}
       <div className="max-w-[1280px] mx-auto px-4 py-4">
-        <nav className="flex items-center gap-2">
-          <Link href="/" className="text-xs text-m3-on-surface-variant hover:text-m3-primary">Trang chủ</Link>
-          <span className="material-symbols-outlined text-xs text-m3-outline-variant">chevron_right</span>
-          <span className="text-xs text-m3-primary font-bold">Sản phẩm</span>
+        <nav className="flex items-center gap-2 text-sm">
+          <Link href="/" className="text-m3-on-surface-variant hover:text-primary">Trang chủ</Link>
+          <span className="material-symbols-outlined text-outline-variant text-[16px]">chevron_right</span>
+          <span className="text-primary font-bold">Sản phẩm</span>
         </nav>
       </div>
 
-      <div className="max-w-[1280px] mx-auto px-4 grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="max-w-[1280px] mx-auto px-4 grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-10">
         {/* Sidebar Filter */}
-        <aside className="lg:col-span-3 space-y-6">
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-m3-outline-variant">
-            <h2 className="font-bold text-lg mb-4 flex items-center gap-2">
-              <span className="material-symbols-outlined text-m3-primary">filter_list</span>
-              Bộ lọc
-            </h2>
+        <aside className="space-y-8">
+          <div>
+            <h3 className="text-xl font-bold mb-4">Categories</h3>
+            <ul className="space-y-3">
+              {['Electronics', 'Fashion & Lifestyle', 'Home Appliances', 'Sports & Outdoors'].map((cat) => (
+                <li key={cat}>
+                  <label className="flex items-center gap-3 cursor-pointer group">
+                    <input type="checkbox" className="rounded border-outline-variant text-primary focus:ring-primary" />
+                    <span className="text-sm text-m3-on-surface-variant group-hover:text-primary transition-colors">{cat}</span>
+                  </label>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-            {/* Price Range */}
-            <div className="mb-6">
-              <h3 className="font-semibold text-sm mb-3 text-m3-on-surface">Khoảng giá</h3>
+          <div>
+            <h3 className="text-xl font-bold mb-4">Price Range</h3>
+            <div className="px-2">
               <input
                 type="range"
                 min="0"
                 max="50"
                 value={maxPrice === Infinity ? 50 : Math.round(maxPrice / 1000000)}
                 onChange={(e) => setMaxPrice(Number(e.target.value) * 1000000)}
-                className="w-full h-2 bg-m3-surface-container-high rounded-lg appearance-none cursor-pointer accent-m3-primary"
+                className="w-full h-1.5 bg-surface-container-highest rounded-lg appearance-none cursor-pointer"
+                style={{ accentColor: '#1e4cfd' }}
               />
-              <div className="flex items-center justify-between text-xs text-m3-on-surface-variant mt-2">
-                <span>0đ</span>
-                <span className="text-m3-primary font-bold">{maxPrice === Infinity ? '50tr+' : `${maxPrice / 1000000}tr`}</span>
-                <span>50tr</span>
+              <div className="flex justify-between mt-4">
+                <div className="px-3 py-1 bg-surface-container-low border border-outline-variant rounded-lg text-sm">$0</div>
+                <div className="px-3 py-1 bg-surface-container-low border border-outline-variant rounded-lg text-sm">
+                  ${maxPrice === Infinity ? '1000' : (maxPrice / 1000).toFixed(0)}k
+                </div>
               </div>
             </div>
+          </div>
 
-            <button
-              onClick={() => { setMinPrice(0); setMaxPrice(Infinity); setSearchTerm(''); setSortBy('newest') }}
-              className="w-full py-2 rounded-lg border-2 border-m3-primary text-m3-primary font-bold hover:bg-m3-primary-fixed transition-colors text-sm"
-            >
-              Xoá tất cả
-            </button>
+          <div>
+            <h3 className="text-xl font-bold mb-4">Brands</h3>
+            <div className="grid grid-cols-2 gap-2">
+              {['TL Tech', 'LuxeLine', 'Swift', 'Omni'].map((brand) => (
+                <button
+                  key={brand}
+                  className="px-3 py-2 border border-outline-variant rounded-xl text-sm hover:border-primary hover:text-primary transition-all"
+                >
+                  {brand}
+                </button>
+              ))}
+            </div>
           </div>
         </aside>
 
-        {/* Main Content */}
-        <div className="lg:col-span-9">
-          {/* Toolbar */}
-          <div className="bg-white p-4 rounded-xl shadow-sm border border-m3-outline-variant mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div className="relative flex-1 max-w-md">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-m3-on-surface-variant text-[20px]">search</span>
-              <input
-                type="text"
-                placeholder="Tìm kiếm sản phẩm..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-m3-surface-container-low border border-m3-outline-variant rounded-lg focus:ring-m3-primary focus:border-m3-primary text-sm"
-              />
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="text-sm text-m3-on-surface-variant whitespace-nowrap">Sắp xếp:</span>
+        {/* Product Display Area */}
+        <div>
+          {/* Sort & Header */}
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+            <h1 className="text-2xl md:text-3xl font-bold">
+              Sản phẩm{' '}
+              <span className="text-base text-outline font-normal ml-2">
+                ({filteredProducts.length} items)
+              </span>
+            </h1>
+            <div className="flex items-center gap-4">
+              <span className="text-sm text-m3-on-surface-variant">Sort by:</span>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="bg-white border border-m3-outline-variant rounded-lg text-sm px-3 py-2 focus:ring-m3-primary"
+                className="bg-surface border border-outline-variant rounded-xl text-sm py-2 pl-4 pr-10 focus:ring-primary focus:border-primary cursor-pointer"
               >
-                <option value="newest">Mới nhất</option>
-                <option value="price-asc">Giá tăng dần</option>
-                <option value="price-desc">Giá giảm dần</option>
+                <option value="newest">Newest Arrivals</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
               </select>
             </div>
           </div>
 
           {/* Product Grid */}
           {isLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="bg-white rounded-xl border border-m3-outline-variant overflow-hidden animate-pulse">
-                  <div className="h-64 bg-neutral-200" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+              {[...Array(8)].map((_, i) => (
+                <div key={i} className="bg-white rounded-2xl overflow-hidden animate-pulse border border-outline-variant/30">
+                  <div className="aspect-[4/5] bg-neutral-200" />
                   <div className="p-4 space-y-3">
+                    <div className="h-3 bg-neutral-200 rounded w-1/3" />
                     <div className="h-4 bg-neutral-200 rounded w-3/4" />
                     <div className="h-4 bg-neutral-200 rounded w-1/2" />
-                    <div className="h-10 bg-neutral-200 rounded-lg" />
                   </div>
                 </div>
               ))}
             </div>
           ) : filteredProducts.length > 0 ? (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredProducts.map((product) => (
-                  <div
-                    key={product.id}
-                    className="group relative bg-white rounded-xl border border-m3-outline-variant overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-                  >
-                    <Link href={`/products/${product.id}`}>
-                      <div className="relative h-64 overflow-hidden bg-m3-surface-container-lowest">
-                        {product.images[0] ? (
-                          <img
-                            src={product.images[0].url}
-                            alt={product.productName}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            onError={(e) => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400?text=Product' }}
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-m3-outline">
-                            <span className="material-symbols-outlined text-5xl">image</span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+                {paged.map((product) => {
+                  const minP = product.variants.length > 0
+                    ? Math.min(...product.variants.map((v) => product.basePrice + v.extraPrice))
+                    : product.basePrice
+                  return (
+                    <div
+                      key={product.id}
+                      className="group relative bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden border border-outline-variant/30"
+                    >
+                      <Link href={`/products/${product.id}`}>
+                        <div className="aspect-[4/5] relative bg-surface-container-low overflow-hidden">
+                          {product.images[0] ? (
+                            <img
+                              src={product.images[0].url}
+                              alt={product.productName}
+                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                              onError={(e) => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400?text=Product' }}
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-m3-outline">
+                              <span className="material-symbols-outlined text-5xl">image</span>
+                            </div>
+                          )}
+                          <div className="absolute top-3 right-3 space-y-2">
+                            <button className="opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100 w-10 h-10 rounded-full bg-white text-primary flex items-center justify-center shadow-md transition-all duration-300 hover:text-error">
+                              <span className="material-symbols-outlined">favorite</span>
+                            </button>
                           </div>
-                        )}
-                        <div className="absolute top-3 right-3 p-2 bg-white/80 backdrop-blur-sm rounded-full text-m3-on-surface hover:text-error transition-colors opacity-0 group-hover:opacity-100">
-                          <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 0" }}>favorite</span>
+                          <div className="absolute top-3 left-3">
+                            <span className="bg-tertiary-container/10 text-tertiary-fixed text-xs px-3 py-1 rounded-full font-bold backdrop-blur-md"
+                              style={{ background: 'rgba(78, 79, 224, 0.1)', color: '#e1dfff' }}
+                            >
+                              Trending
+                            </span>
+                          </div>
                         </div>
-                      </div>
-
+                      </Link>
                       <div className="p-4">
-                        <h3 className="font-semibold text-sm text-m3-on-surface mb-1 truncate">
-                          {product.productName}
-                        </h3>
-                        <div className="text-lg font-bold text-m3-primary">
-                          {formatPrice(product.basePrice)}
+                        <p className="text-xs text-outline font-bold uppercase tracking-wider mb-1">TL Market</p>
+                        <Link href={`/products/${product.id}`}>
+                          <h3 className="text-lg font-bold text-m3-on-surface truncate mb-2 group-hover:text-primary transition-colors">
+                            {product.productName}
+                          </h3>
+                        </Link>
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-xl text-primary">{formatPrice(minP)}</span>
+                          <div className="flex items-center gap-1">
+                            <span className="material-symbols-outlined text-amber-400 text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                            <span className="text-sm font-bold">4.8</span>
+                          </div>
                         </div>
                       </div>
-                    </Link>
-
-                    <div className="px-4 pb-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button className="w-full py-2.5 rounded-lg font-bold text-white flex items-center justify-center gap-2 text-sm"
-                        style={{
-                          background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
-                          boxShadow: '0 4px 14px 0 rgba(249, 115, 22, 0.3)'
-                        }}
-                        onClick={(e) => {
-                          e.preventDefault()
-                          if (!isAuthenticated) { router.push('/login?from=/products'); return }
-                          const firstVariant = product.variants[0]
-                          if (firstVariant) {
-                            addToCart({ productId: product.id, variantId: firstVariant.id, quantity: 1 })
-                          }
-                        }}
-                      >
-                        <span className="material-symbols-outlined text-[18px]">shopping_bag</span>
-                        Thêm vào giỏ
-                      </button>
+                      <div className="px-4 pb-4">
+                        <button
+                          className="w-full py-3 rounded-xl font-bold text-white transition-all active:scale-95 flex items-center justify-center gap-2 text-sm opacity-0 translate-y-full group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300"
+                          style={{
+                            background: 'linear-gradient(135deg, #0035d1 0%, #4958a9 100%)',
+                            boxShadow: '0 10px 15px -3px rgba(30, 76, 253, 0.25)'
+                          }}
+                          onClick={(e) => {
+                            e.preventDefault()
+                            if (!isAuthenticated) { router.push('/login?from=/products'); return }
+                            const firstVariant = product.variants[0]
+                            if (firstVariant) {
+                              addToCart({ productId: product.id, variantId: firstVariant.id, quantity: 1 })
+                            }
+                          }}
+                        >
+                          <span className="material-symbols-outlined text-[20px]">shopping_cart</span>
+                          Quick Add
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
 
               {/* Pagination */}
-              <div className="mt-16 flex justify-center items-center gap-2">
-                <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-m3-outline-variant text-m3-on-surface-variant hover:bg-m3-primary hover:text-white transition-all">
-                  <span className="material-symbols-outlined text-[20px]">chevron_left</span>
-                </button>
-                <button className="w-10 h-10 flex items-center justify-center rounded-lg bg-m3-primary text-white font-bold text-sm">1</button>
-                <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-m3-outline-variant text-m3-on-surface-variant hover:bg-m3-surface-container transition-all text-sm">2</button>
-                <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-m3-outline-variant text-m3-on-surface-variant hover:bg-m3-surface-container transition-all text-sm">3</button>
-                <span className="px-1 text-m3-outline-variant text-sm">...</span>
-                <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-m3-outline-variant text-m3-on-surface-variant hover:bg-m3-surface-container transition-all text-sm">10</button>
-                <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-m3-outline-variant text-m3-on-surface-variant hover:bg-m3-primary hover:text-white transition-all">
-                  <span className="material-symbols-outlined text-[20px]">chevron_right</span>
-                </button>
-              </div>
+              {totalPages > 1 && (
+                <div className="mt-16 flex items-center justify-center gap-2">
+                  <button
+                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                    disabled={currentPage === 1}
+                    className="w-10 h-10 flex items-center justify-center rounded-xl border border-outline-variant text-m3-on-surface-variant hover:border-primary hover:text-primary transition-all disabled:opacity-50"
+                  >
+                    <span className="material-symbols-outlined">chevron_left</span>
+                  </button>
+                  {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => i + 1).map((page) => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`w-10 h-10 flex items-center justify-center rounded-xl font-bold transition-all ${
+                        currentPage === page
+                          ? 'bg-primary text-white shadow-md'
+                          : 'border border-outline-variant text-m3-on-surface-variant hover:border-primary hover:text-primary'
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                  {totalPages > 5 && <span className="px-2 text-outline-variant">...</span>}
+                  <button
+                    onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                    disabled={currentPage === totalPages}
+                    className="w-10 h-10 flex items-center justify-center rounded-xl border border-outline-variant text-m3-on-surface-variant hover:border-primary hover:text-primary transition-all disabled:opacity-50"
+                  >
+                    <span className="material-symbols-outlined">chevron_right</span>
+                  </button>
+                </div>
+              )}
             </>
           ) : (
             <div className="text-center py-20">
@@ -210,26 +267,6 @@ export default function ProductsPage() {
           )}
         </div>
       </div>
-
-      {/* Mobile Bottom Nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.05)] flex items-center justify-around py-2 z-50">
-        <Link href="/" className="flex flex-col items-center text-m3-primary font-bold">
-          <span className="material-symbols-outlined">home</span>
-          <span className="text-[10px]">Trang chủ</span>
-        </Link>
-        <Link href="/products" className="flex flex-col items-center text-m3-primary font-bold">
-          <span className="material-symbols-outlined">grid_view</span>
-          <span className="text-[10px]">Danh mục</span>
-        </Link>
-        <Link href="/cart" className="flex flex-col items-center text-m3-on-surface-variant">
-          <span className="material-symbols-outlined">shopping_cart</span>
-          <span className="text-[10px]">Giỏ hàng</span>
-        </Link>
-        <Link href="/profile" className="flex flex-col items-center text-m3-on-surface-variant">
-          <span className="material-symbols-outlined">person</span>
-          <span className="text-[10px]">Cá nhân</span>
-        </Link>
-      </nav>
     </div>
   )
 }
