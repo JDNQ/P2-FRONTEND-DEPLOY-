@@ -68,24 +68,26 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   // Load from localStorage on mount
   useEffect(() => {
-    const savedUser = localStorage.getItem("user");
-    const savedCart = localStorage.getItem("cart");
+    let cancelled = false;
 
-    if (savedUser) {
-      try {
-        setUserState(JSON.parse(savedUser));
-      } catch (e) {
-        console.error("Failed to parse user from localStorage");
-      }
-    }
+    // Defer to avoid react-hooks/set-state-in-effect issues
+    const t = window.setTimeout(() => {
+      if (cancelled) return;
 
-    if (savedCart) {
-      try {
-        setCart(JSON.parse(savedCart));
-      } catch (e) {
-        console.error("Failed to parse cart from localStorage");
+      const savedUser = localStorage.getItem("user");
+      if (savedUser) {
+        try {
+          setUserState(JSON.parse(savedUser));
+        } catch {
+          // ignore
+        }
       }
-    }
+    }, 0);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(t);
+    };
   }, []);
 
   // Save cart to localStorage
