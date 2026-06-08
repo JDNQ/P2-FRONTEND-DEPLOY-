@@ -875,9 +875,11 @@ export default function HomePage() {
         {/* Hero */}
         <section className="bg-gray-50 py-4">
           <div className="max-w-7xl mx-auto px-4">
-            <div className="flex gap-4">
+            <div className="flex gap-4 w-full">
+
               {/* Sidebar danh mục bên trái (giữ nguyên) */}
-              <aside className="hidden md:block md:w-56 w-56 shrink-0">
+              <aside className="hidden md:block w-56 shrink-0">
+
                 <div className="bg-white border rounded-xl shadow-sm py-2">
                   <div className="font-bold px-4 py-2 text-gray-700">Danh mục</div>
                   <div>
@@ -894,7 +896,8 @@ export default function HomePage() {
                 </div>
               </aside>
 
-              <div className="flex-1 flex flex-col gap-3">
+              <div className="flex-1 min-w-0 flex flex-col gap-3">
+
                 {/* Banner slideshow kiểu Tiki */}
                 <div className="relative" style={{ height: "280px" }}>
                   <div style={{ display: "flex", gap: "8px", height: "100%" }}>
