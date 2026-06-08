@@ -105,60 +105,7 @@ export default function HomePage() {
   const [featuredActive, setFeaturedActive] = useState<string>("Điện thoại");
   const [bannerSlide, setBannerSlide] = useState(0);
   useEffect(() => { const t = setInterval(() => setBannerSlide((i) => (i + 1) % 4), 4000); return () => clearInterval(t); }, []);
-  const bannerSets = [
 
-    {
-      main: {
-        url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832420/af47a55f-c499-43fa-babb-a8274264bf2f_2_w7yx1e.png",
-        title: "FLASH SALE",
-        href: "/products",
-      },
-      subs: [
-        {
-          url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_1_-Copy_1_rs2a03.png",
-          title: "Tech Festival",
-        },
-        {
-          url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_1_ypwnrd.png",
-          title: "Bách Hóa Online",
-        },
-      ],
-    },
-    {
-      main: {
-        url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_1_-_Copy_1_rs2a03.png",
-        title: "Tech Festival",
-        href: "/products",
-      },
-      subs: [
-        {
-          url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832420/af47a55f-c499-43fa-babb-a8274264bf2f_2_w7yx1e.png",
-          title: "FLASH SALE",
-        },
-        {
-          url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_1_ypwnrd.png",
-          title: "Bách Hóa Online",
-        },
-      ],
-    },
-    {
-      main: {
-        url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_1_ypwnrd.png",
-        title: "Bách Hóa Online",
-        href: "/products",
-      },
-      subs: [
-        {
-          url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_1_-_Copy_1_rs2a03.png",
-          title: "Tech Festival",
-        },
-        {
-          url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832420/af47a55f-c499-43fa-babb-a8274264bf2f_2_w7yx1e.png",
-          title: "FLASH SALE",
-        },
-      ],
-    },
-  ];
 
   useEffect(() => {
     const t = window.setInterval(() => {
