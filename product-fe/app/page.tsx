@@ -846,18 +846,20 @@ export default function HomePage() {
 
               {/* Banner Area */}
               {/* Banner Area - Updated theo Flash Sale mới */}
+              {/* Banner Area - Sửa lỗi 404 */}
               <div className="flex-1 relative min-h-[380px]">
                 <div className="relative w-full h-full">
                   <div className="flex h-full gap-2">
 
-                    {/* Banner lớn Flash Sale (Orange) */}
+                    {/* Banner lớn Flash Sale (màu cam) */}
                     <div
                       className="flex-1 relative rounded-2xl overflow-hidden cursor-pointer"
                       onClick={() => router.push("/products")}
                     >
                       {[
-                        "https://res.cloudinary.com/dy2gieleq/image/upload/v1780832420/flash-sale-orange-laptop.jpg", // Bạn thay bằng link thật nếu có
-                        // Hoặc dùng link tạm từ ảnh hiện tại nếu chưa có ảnh mới
+                        "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832420/af47a55f-c499-43fa-babb-a8274264bf2f_2_w7yx1e.png",
+                        "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832418/af47a55f-c499-43fa-babb-a8274264bf2f_2_-_Copy_s0zszz.png",
+                        "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_5_-_Copy_tb9aok.png",
                       ].map((url, i) => (
                         <img
                           key={i}
@@ -872,25 +874,17 @@ export default function HomePage() {
                     {/* 2 Banner nhỏ bên phải */}
                     <div className="w-[280px] flex flex-col gap-2 flex-shrink-0">
                       {[
-                        // Banner 1: Tech Festival (Blue)
                         [
-                          {
-                            url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/tech-festival-blue.jpg",
-                            title: "Tech Festival"
-                          },
-                          {
-                            url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/bach-hoa-online-green.jpg",
-                            title: "Bách Hóa Online"
-                          },
+                          { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_1_-_Copy_1_rs2a03.png", title: "Tech Festival" },
+                          { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_1_ypwnrd.png", title: "Bách Hóa Online" },
                         ],
-                        // Banner 2, 3, 4 (bạn có thể thêm sau)
                         [
                           { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_3_-_Copy_tkbhrv.png", title: "Summer" },
                           { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832418/af47a55f-c499-43fa-babb-a8274264bf2f_4_-_Copy_mcqjxi.png", title: "Gaming" },
                         ],
                         [
-                          { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_6_-_Copy_dceenr.png", title: "Me Be" },
-                          { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_7_-_Copy_jkravy.png", title: "School" },
+                          { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_6_-_Copy_dceenr.png", title: "Mẹ & Bé" },
+                          { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_7_-_Copy_jkravy.png", title: "Back to School" },
                         ],
                         [
                           { url: "https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_9_-_Copy_trbcqg.png", title: "Voucher" },
