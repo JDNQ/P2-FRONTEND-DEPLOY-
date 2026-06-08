@@ -33,7 +33,16 @@ export default function ProductCard({
         >
             <div className="relative">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={image} alt={name} className="w-full h-40 object-cover rounded-t-xl" />
+                <img
+                    src={image}
+                    alt={name}
+                    className="w-full h-40 object-cover rounded-t-xl"
+                    onError={(e) => {
+                        // If backend image URL is deleted/broken, fall back to default image.
+                        ; (e.currentTarget as HTMLImageElement).src =
+                            "https://images.unsplash.com/photo-1592286927505-1fed5016107c?w=400&h=400&fit=crop"
+                    }}
+                />
                 {badge && (
                     <span className="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded font-bold">
                         {badge}

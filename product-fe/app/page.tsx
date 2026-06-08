@@ -223,6 +223,9 @@ export default function HomePage() {
       ? (imgUrl.startsWith("http") ? imgUrl : `${apiBase}${imgUrl}`)
       : "https://images.unsplash.com/photo-1592286927505-1fed5016107c?w=400&h=400&fit=crop";
 
+    // Fallback if backend returns a deleted/broken image URL
+    // (ProductCard can still render; the browser will trigger its own load/error handling if implemented there.)
+
     return {
       id: String(p.id),
       name: p.productName || p.name || "Sản phẩm",
