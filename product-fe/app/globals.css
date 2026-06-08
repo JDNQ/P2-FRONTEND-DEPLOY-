@@ -1,3 +1,16 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
+
+/* Material Design 3 Auth Page Styles */
+.cta-gradient {
+  background: linear-gradient(135deg, #1e4cfd 0%, #3432c8 100%);
+}
+
+.brand-gradient {
+  background: linear-gradient(135deg, #fcf8ff 0%, #eeecff 100%);
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}

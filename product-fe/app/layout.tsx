@@ -31,6 +31,12 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="vi" suppressHydrationWarning className="bg-white">
+      <head>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body className={`${beVietnamPro.variable} ${sora.variable} font-body antialiased`}>
         <Providers>{children}</Providers>
       </body>
