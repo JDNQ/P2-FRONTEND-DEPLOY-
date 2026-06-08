@@ -1,105 +1,45 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 
-function parseJwt(token: string) {
-  const parts = token.split(".");
-  if (parts.length !== 3) {
-    throw new Error("Invalid JWT");
-  }
-  const payload = parts[1].replace(/-/g, "+").replace(/_/g, "/");
-  const padded = payload.padEnd(
-    payload.length + ((4 - (payload.length % 4)) % 4),
-    "=",
-  );
-  const decoded = atob(padded);
-  return JSON.parse(decoded);
-}
-
-function roleRedirect(role?: string) {
-  switch (role) {
-    case "ADMIN":
-      return "/dashboard/admin";
-    case "MANAGER":
-      return "/dashboard/manager";
-    case "USER":
-      return "/products";
-    default:
-      return "/login";
-  }
-}
+const PROTECTED = ['/cart', '/checkout', '/orders', '/profile', '/wishlist', '/notifications']
+const ADMIN_ONLY = ['/dashboard/admin']
+const MANAGER_ONLY = ['/dashboard/manager']
+const AUTH_PAGES = ['/login', '/register', '/forgot-password']
 
 export function middleware(request: NextRequest) {
-  const token = request.cookies.get("token")?.value;
-  const { pathname } = request.nextUrl;
-  let role: string | undefined;
+  const { pathname } = request.nextUrl
+  const token = request.cookies.get('tl_token')?.value
+  const role = request.cookies.get('tl_role')?.value
 
-  if (token) {
-    try {
-      role = (parseJwt(token) as { role?: string }).role;
-    } catch {
-      role = undefined;
+  // If logged in, don't go to auth pages
+  if (token && AUTH_PAGES.some((p) => pathname.startsWith(p))) {
+    return NextResponse.redirect(new URL('/', request.url))
+  }
+
+  // If not logged in, don't go to protected pages
+  if (!token && PROTECTED.some((p) => pathname.startsWith(p))) {
+    const url = new URL('/login', request.url)
+    url.searchParams.set('from', pathname)
+    return NextResponse.redirect(url)
+  }
+
+  // Role guard - dashboard/admin
+  if (ADMIN_ONLY.some((p) => pathname.startsWith(p))) {
+    if (!token || !['ADMIN', 'MANAGER'].includes(role || '')) {
+      return NextResponse.redirect(new URL('/', request.url))
     }
   }
 
-  const isRoot = pathname === "/";
-  const isLoginPage = pathname === "/login";
-  const isRegisterPage = pathname === "/register";
-  const isDashboardRoute = pathname.startsWith("/dashboard");
-  const isProtected =
-    isDashboardRoute ||
-    pathname === "/cart" ||
-    pathname === "/checkout" ||
-    pathname === "/orders" ||
-    (pathname.startsWith("/products/") && pathname.endsWith("/checkout"));
-
-  if (isRoot) {
-    if (token && role && role !== "USER") {
-      return NextResponse.redirect(new URL(roleRedirect(role), request.url));
-    }
-    return NextResponse.next();
-  }
-
-  if ((isLoginPage || isRegisterPage) && token && role) {
-    return NextResponse.redirect(new URL(roleRedirect(role), request.url));
-  }
-
-  if (isProtected && !token) {
-    const redirectPath = request.nextUrl.pathname + request.nextUrl.search;
-    return NextResponse.redirect(
-      new URL(
-        `/login?redirect=${encodeURIComponent(redirectPath)}`,
-        request.url,
-      ),
-    );
-  }
-
-  if (isDashboardRoute) {
-    if (!role) {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
-    if (role === "USER") {
-      return NextResponse.redirect(new URL("/", request.url));
-    }
-    if (pathname.startsWith("/dashboard/admin") && role !== "ADMIN") {
-      return NextResponse.redirect(new URL(roleRedirect(role), request.url));
-    }
-    if (pathname.startsWith("/dashboard/manager") && role !== "MANAGER") {
-      return NextResponse.redirect(new URL(roleRedirect(role), request.url));
+  // Role guard - dashboard/manager
+  if (MANAGER_ONLY.some((p) => pathname.startsWith(p))) {
+    if (!token || role !== 'MANAGER') {
+      return NextResponse.redirect(new URL('/', request.url))
     }
   }
 
-  return NextResponse.next();
+  return NextResponse.next()
 }
 
 export const config = {
-  matcher: [
-    "/",
-    "/login",
-    "/register",
-    "/dashboard/:path*",
-    "/products/:path*",
-    "/cart",
-    "/checkout",
-    "/orders",
-  ],
-};
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)'],
+}
