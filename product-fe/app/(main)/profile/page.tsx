@@ -2,10 +2,11 @@
 import { useAuthStore } from '@/lib/stores/authStore'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { toast } from 'sonner'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import api from '@/lib/api/axiosInstance'
 
 const SIDEBAR = [
   { href: '/profile', label: 'Hồ sơ', icon: 'person' },
@@ -15,16 +16,63 @@ const SIDEBAR = [
 ]
 
 export default function ProfilePage() {
-  const { user, isAuthenticated } = useAuthStore()
+  const { user, isAuthenticated, setAuth } = useAuthStore()
   const router = useRouter()
   const pathname = usePathname()
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const [isSaving, setIsSaving] = useState(false)
+  const [uploading, setUploading] = useState(false)
   const [formData, setFormData] = useState({
     username: user?.username || '',
     email: user?.email || '',
     phone: '',
     bio: 'Tech enthusiast and frequent shopper at TL Market.',
   })
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validate file
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+    if (!allowedTypes.includes(file.type)) {
+      toast.error('Chỉ hỗ trợ định dạng JPG, PNG, WEBP, GIF')
+      return
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Ảnh không được vượt quá 5MB')
+      return
+    }
+
+    setUploading(true)
+    try {
+      const form = new FormData()
+      form.append('file', file)
+
+      const { data } = await api.post('/files/upload', form, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+
+      // data.url hoặc data.data.url tùy backend response
+      const avatarUrl = data.url || data.data?.url
+
+      // Gọi API cập nhật user
+      const { data: userData } = await api.patch('/auth/profile', { avatarUrl })
+      const updatedUser = userData.data || userData
+
+      // Cập nhật lại store với token hiện tại
+      const token = localStorage.getItem('tl_access_token') || ''
+      setAuth(updatedUser, token)
+
+      toast.success('Cập nhật ảnh đại diện thành công!')
+    } catch {
+      toast.error('Tải ảnh thất bại, vui lòng thử lại')
+    } finally {
+      setUploading(false)
+      // Reset input để có thể upload lại cùng file
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    }
+  }
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -71,8 +119,12 @@ export default function ProfilePage() {
           <aside className="lg:col-span-3">
             <div className="rounded-xl p-stack-md sticky top-24 border border-neutral-50 bg-white shadow-sm">
               <div className="flex items-center gap-4 mb-stack-lg px-2">
-                <div className="w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg bg-primary-container text-primary">
-                  {user.username.charAt(0).toUpperCase()}
+                <div className="w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg bg-primary-container text-primary overflow-hidden">
+                  {user.avatarUrl ? (
+                    <img src={user.avatarUrl} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    <span>{user.username.charAt(0).toUpperCase()}</span>
+                  )}
                 </div>
                 <div>
                   <h2 className="font-heading text-headline-sm text-on-surface">{user.username}</h2>
@@ -111,16 +163,38 @@ export default function ProfilePage() {
           <div className="lg:col-span-9">
             <div className="rounded-xl shadow-sm border border-neutral-50 p-stack-lg lg:p-12 bg-white">
               <div className="flex flex-col md:flex-row items-center gap-6 mb-section-gap">
+                {/* Avatar with Upload */}
                 <div className="relative group">
                   <div className="w-32 h-32 rounded-full p-1 bg-gradient-to-tr from-primary to-secondary shadow-primary-container/25 shadow-[0_10px_15px_-3px]">
-                    <div className="w-full h-full rounded-full border-4 border-white overflow-hidden bg-primary-container">
-                      <div className="w-full h-full flex items-center justify-center text-4xl font-bold text-primary">
-                        {user.username.charAt(0).toUpperCase()}
-                      </div>
+                    <div className="w-full h-full rounded-full border-4 border-white overflow-hidden bg-primary-container flex items-center justify-center">
+                      {user.avatarUrl ? (
+                        <img src={user.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="text-4xl font-bold text-primary">
+                          {user.username.charAt(0).toUpperCase()}
+                        </span>
+                      )}
                     </div>
                   </div>
-                  <button className="absolute bottom-0 right-0 w-10 h-10 rounded-full flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition-all bg-primary text-on-primary">
-                    <span className="material-symbols-outlined text-[20px]">edit</span>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp,image/gif"
+                    className="hidden"
+                    onChange={handleAvatarUpload}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploading}
+                    className="absolute bottom-0 right-0 w-10 h-10 rounded-full flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition-all bg-primary text-on-primary disabled:opacity-50"
+                    title="Thay đổi ảnh đại diện"
+                  >
+                    {uploading ? (
+                      <span className="animate-spin h-4 w-4 border-2 border-white/30 border-t-white rounded-full" />
+                    ) : (
+                      <span className="material-symbols-outlined text-[20px]">edit</span>
+                    )}
                   </button>
                 </div>
                 <div className="text-center md:text-left">
