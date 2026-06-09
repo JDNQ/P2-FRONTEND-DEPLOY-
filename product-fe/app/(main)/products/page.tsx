@@ -92,12 +92,12 @@ export default function ProductsPage() {
             {isLoading ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-stack-lg">
                 {[...Array(9)].map((_, i) => (
-                  <div key={i} className="bg-white rounded-xl animate-pulse overflow-hidden border border-outline-variant/20">
-                    <div className="aspect-square bg-neutral-200" />
+                  <div key={i} className="bg-surface rounded-xl animate-pulse overflow-hidden border border-outline-variant/20">
+                    <div className="aspect-square bg-surface-container-high" />
                     <div className="p-stack-md space-y-3">
-                      <div className="h-3 bg-neutral-200 rounded w-1/3" />
-                      <div className="h-4 bg-neutral-200 rounded w-3/4" />
-                      <div className="h-4 bg-neutral-200 rounded w-1/2" />
+                      <div className="h-3 bg-surface-container-high rounded w-1/3" />
+                      <div className="h-4 bg-surface-container-high rounded w-3/4" />
+                      <div className="h-4 bg-surface-container-high rounded w-1/2" />
                     </div>
                   </div>
                 ))}

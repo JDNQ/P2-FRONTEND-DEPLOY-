@@ -128,7 +128,7 @@ export default function ProfilePage() {
             <div className="rounded-xl shadow-sm border border-outline-variant/20 p-stack-lg lg:p-12 bg-surface">
               <div className="flex flex-col md:flex-row items-center gap-6 mb-section-gap">
                 <div className="relative group">
-                  <div className="w-32 h-32 rounded-full p-1 bg-gradient-to-tr from-primary to-[#4958a9] shadow-[0_10px_15px_-3px_rgba(30,76,253,0.25)]">
+                  <div className="w-32 h-32 rounded-full p-1 bg-gradient-to-tr from-primary to-secondary shadow-primary-container/25 shadow-[0_10px_15px_-3px]">
                     <div className="w-full h-full rounded-full border-4 border-white overflow-hidden bg-primary-container">
                       <div className="w-full h-full flex items-center justify-center text-4xl font-bold text-primary">
                         {user.username.charAt(0).toUpperCase()}

@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { formatPrice } from '@/lib/utils/formatPrice'
 import { PLACEHOLDER_400 } from '@/lib/utils/placeholder'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 
 function CountdownTimer() {
   const [time, setTime] = useState({ h: '00', m: '00', s: '00' })
@@ -28,30 +28,46 @@ function CountdownTimer() {
     return () => clearInterval(id)
   }, [])
   return (
-    <div className="flex gap-2 items-center">
-      <div className="bg-primary-container px-3 py-1.5 rounded-lg min-w-[40px] text-center text-white font-bold">{time.h}</div>
-      <span className="text-primary text-xl self-center">:</span>
-      <div className="bg-primary-container px-3 py-1.5 rounded-lg min-w-[40px] text-center text-white font-bold">{time.m}</div>
-      <span className="text-primary text-xl self-center">:</span>
-      <div className="bg-primary-container px-3 py-1.5 rounded-lg min-w-[40px] text-center text-white font-bold">{time.s}</div>
+    <div className="flex gap-1 items-center">
+      <span className="text-label-md font-bold text-outline">Kết thúc trong:</span>
+      <span className="bg-on-surface text-white px-2 py-1 rounded font-bold text-sm">{time.h}</span>
+      <span className="font-bold text-on-surface">:</span>
+      <span className="bg-on-surface text-white px-2 py-1 rounded font-bold text-sm">{time.m}</span>
+      <span className="font-bold text-on-surface">:</span>
+      <span className="bg-on-surface text-white px-2 py-1 rounded font-bold text-sm">{time.s}</span>
     </div>
   )
 }
 
 const CATEGORIES = [
   { name: 'Điện Tử', icon: 'devices' },
-  { name: 'Thời Trang', icon: 'checkroom' },
-  { name: 'Gia Dụng', icon: 'kitchen' },
-  { name: 'Làm Đẹp', icon: 'face_6' },
-  { name: 'Đồ Chơi', icon: 'sports_esports' },
-  { name: 'Quà Tặng', icon: 'redeem' },
+  { name: 'Thời Trang', icon: 'apparel' },
+  { name: 'Gia Dụng', icon: 'home_app_logo' },
+  { name: 'Làm Đẹp', icon: 'spa' },
+  { name: 'Đồ Chơi', icon: 'toys' },
+  { name: 'Quà Tặng', icon: 'feature_search' },
 ]
 
 const TRUST_ITEMS = [
-  { icon: 'verified_user', title: 'Hàng Chính Hãng', desc: 'Cam kết 100% auth' },
-  { icon: 'bolt', title: 'Giao Nhanh 2H', desc: 'Nội thành hỏa tốc' },
-  { icon: 'autorenew', title: 'Đổi Trả 7 Ngày', desc: 'Thủ tục nhanh gọn' },
-  { icon: 'support_agent', title: 'Hỗ Trợ 24/7', desc: 'Tư vấn tận tâm' },
+  { icon: 'workspace_premium', title: 'Hàng Chính Hãng', desc: 'Cam kết 100% chất lượng' },
+  { icon: 'bolt', title: 'Giao Nhanh 2H', desc: 'Nhận hàng tức thì' },
+  { icon: 'history', title: 'Đổi Trả 7 Ngày', desc: 'Yên tâm mua sắm' },
+  { icon: 'support_agent', title: 'Hỗ Trợ 24/7', desc: 'Luôn lắng nghe bạn' },
+]
+
+const BANNERS = [
+  'https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832420/af47a55f-c499-43fa-babb-a8274264bf2f_2_w7yx1e.png',
+  'https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_1_-_Copy_1_rs2a03.png',
+  'https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_ympuvm.png',
+  'https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_7_-_Copy_jkravy.png',
+  'https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_9_-_Copy_trbcqg.png',
+  'https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_6_-_Copy_dceenr.png',
+  'https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832419/af47a55f-c499-43fa-babb-a8274264bf2f_8_-_Copy_rrks6a.png',
+  'https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832418/af47a55f-c499-43fa-babb-a8274264bf2f_4_-_Copy_mcqjxi.png',
+  'https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832418/af47a55f-c499-43fa-babb-a8274264bf2f_2_-_Copy_s0zszz.png',
+  'https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_3_-_Copy_tkbhrv.png',
+  'https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_5_-_Copy_tb9aok.png',
+  'https://res.cloudinary.com/dy2gieleq/image/upload/q_auto/f_auto/v1780832417/af47a55f-c499-43fa-babb-a8274264bf2f_1_ypwnrd.png',
 ]
 
 export default function HomePage() {
@@ -60,6 +76,14 @@ export default function HomePage() {
   const { data: products, isLoading } = useProducts()
   const { mutate: addToCart } = useAddToCart()
   const { mutate: addToWishlist } = useAddToWishlist()
+  const [heroIdx, setHeroIdx] = useState(0)
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setHeroIdx((i) => (i + 1) % BANNERS.length)
+    }, 5000)
+    return () => clearInterval(id)
+  }, [])
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -88,59 +112,82 @@ export default function HomePage() {
   return (
     <>
       {/* Announcement Bar */}
-      <div className="orange-gradient text-white py-2 text-center overflow-hidden">
-        <p className="font-label-md text-label-md animate-pulse">🔥 FLASH SALE: Giảm tới 50% tất cả mặt hàng điện tử - Duy nhất hôm nay! 🔥</p>
+      <div className="orange-gradient text-white py-2 text-center overflow-hidden z-[60] relative">
+        <p className="font-caption font-medium tracking-wide animate-pulse">
+          🔥 FLASH SALE: Giảm tới 50% tất cả mặt hàng điện tử - Duy nhất hôm nay! 🔥
+        </p>
       </div>
 
       <Header />
 
-      <main className="max-w-container-max mx-auto">
-        {/* Hero Banner */}
-        <section className="px-gutter pt-8">
-          <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-primary-container to-tertiary h-[500px] flex items-center px-12 lg:px-24">
-            <div className="absolute inset-0 opacity-20">
-              <div className="absolute top-0 left-0 w-full h-full" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '40px 40px' }}></div>
-            </div>
-            <div className="relative z-10 max-w-xl text-white">
-              <span className="inline-block px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-md font-label-md text-label-md mb-6">Mùa Sale Đỉnh Nhất Năm 2024</span>
-              <h1 className="font-display-lg text-display-lg mb-4 leading-tight">
-                Nâng Tầm Trải Nghiệm <span className="text-[#f97316]">Mua Sắm Việt</span>
+      <main>
+        {/* Hero Section */}
+        <section className="relative w-full overflow-hidden bg-surface-container-low">
+          <div className="max-w-container-max mx-auto px-gutter py-16 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="relative z-10 space-y-8">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary-container/10 text-primary-container rounded-full border border-primary-container/20">
+                <span className="material-symbols-outlined text-[18px]">verified</span>
+                <span className="text-label-md font-bold uppercase tracking-wider">Hàng Chính Hãng 100%</span>
+              </div>
+              <h1 className="font-heading text-display-lg text-on-surface leading-tight">
+                Nâng Tầm Trải Nghiệm <br/><span className="text-primary">Mua Sắm Việt</span>
               </h1>
-              <p className="font-body-lg text-body-lg mb-8 opacity-90">Hàng triệu sản phẩm chính hãng với ưu đãi đặc quyền. Giao hàng thần tốc, bảo hành tận tâm.</p>
-              <div className="flex gap-4">
+              <p className="text-body-lg text-on-surface-variant max-w-lg">
+                TL Market mang đến cho bạn hàng ngàn lựa chọn đa dạng từ điện tử đến thời trang với cam kết chất lượng chính hãng và tốc độ giao hàng vượt trội.
+              </p>
+              <div className="flex flex-wrap gap-4 pt-4">
                 <Link
                   href="/products"
-                  className="orange-gradient orange-glow text-white px-8 py-3.5 rounded-xl font-headline-sm text-headline-sm transition-transform hover:scale-105 active:scale-95"
+                  className="orange-gradient text-white px-8 py-4 rounded-xl font-heading font-bold shadow-lg shadow-brand-orange/25 hover:scale-105 active:scale-95 transition-all"
                 >
                   Mua Sắm Ngay
                 </Link>
                 <Link
                   href="/products"
-                  className="bg-white/10 backdrop-blur-md border border-white/30 text-white px-8 py-3.5 rounded-xl font-headline-sm text-headline-sm hover:bg-white/20 transition-all"
+                  className="bg-white border-2 border-neutral-100 text-on-surface px-8 py-4 rounded-xl font-heading font-bold hover:bg-surface-container transition-all"
                 >
                   Khám Phá
                 </Link>
               </div>
             </div>
-            <div className="hidden lg:block absolute right-24 top-1/2 -translate-y-1/2 w-96 h-96 animate-float">
-              <div className="w-full h-full flex items-center justify-center text-white/30">
-                <span className="material-symbols-outlined text-8xl">shopping_bag</span>
+            <div className="relative hidden lg:block">
+              <div className="absolute -top-10 -right-10 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>
+              <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-brand-orange/10 rounded-full blur-3xl"></div>
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+                {BANNERS.map((url, i) => (
+                  <img
+                    key={url}
+                    src={url}
+                    alt={`Banner ${i + 1}`}
+                    className={`w-full h-[500px] object-cover transition-opacity duration-700 ${i === heroIdx ? 'block' : 'hidden'}`}
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+                  />
+                ))}
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                  {BANNERS.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setHeroIdx(i)}
+                      className={`w-2 h-2 rounded-full transition-all ${i === heroIdx ? 'bg-white w-4' : 'bg-white/50'}`}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           </div>
         </section>
 
         {/* Trust Badges */}
-        <section className="px-gutter py-12 reveal-section">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <section className="bg-white py-12 relative -mt-12 mx-gutter rounded-3xl shadow-lg z-20">
+          <div className="max-w-container-max mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 px-12">
             {TRUST_ITEMS.map((item) => (
-              <div key={item.title} className="flex items-center gap-4 p-6 rounded-2xl bg-surface-container-low hover:bg-surface-container transition-all">
-                <div className="w-12 h-12 rounded-full orange-gradient flex items-center justify-center text-white shrink-0">
-                  <span className="material-symbols-outlined">{item.icon}</span>
+              <div key={item.title} className="flex items-center gap-4 group">
+                <div className="h-12 w-12 rounded-2xl bg-primary/5 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
+                  <span className="material-symbols-outlined text-[28px]" style={{ fontVariationSettings: "'FILL' 1" }}>{item.icon}</span>
                 </div>
                 <div>
-                  <h4 className="font-headline-sm text-headline-sm text-[16px]">{item.title}</h4>
-                  <p className="text-on-surface-variant font-caption text-caption">{item.desc}</p>
+                  <h3 className="font-heading text-label-md text-on-surface">{item.title}</h3>
+                  <p className="text-caption text-on-surface-variant">{item.desc}</p>
                 </div>
               </div>
             ))}
@@ -148,53 +195,50 @@ export default function HomePage() {
         </section>
 
         {/* Category Quick Access */}
-        <section className="px-gutter py-stack-lg reveal-section">
+        <section className="max-w-container-max mx-auto px-gutter py-section-gap reveal-section">
           <div className="flex justify-between items-end mb-8">
-            <div>
-              <h2 className="font-headline-lg text-headline-lg">Danh Mục Nổi Bật</h2>
-              <p className="text-on-surface-variant">Khám phá thế giới mua sắm đa dạng</p>
-            </div>
-            <Link href="/products" className="text-primary font-label-md hover:underline flex items-center gap-1">
-              Xem tất cả <span className="material-symbols-outlined text-[18px]">chevron_right</span>
-            </Link>
+            <h2 className="font-heading text-headline-lg text-on-surface">Danh Mục Nổi Bật</h2>
+            <Link href="/products" className="text-primary font-bold hover:underline">Xem tất cả</Link>
           </div>
           <div className="grid grid-cols-3 md:grid-cols-6 gap-6">
             {CATEGORIES.map((cat) => (
-              <Link key={cat.name} href="/products" className="group cursor-pointer text-center">
-                <div className="aspect-square rounded-3xl bg-surface-container hover:bg-primary-fixed-dim transition-all flex items-center justify-center mb-3 group-hover:-translate-y-2">
-                  <span className="material-symbols-outlined text-4xl text-primary">{cat.icon}</span>
+              <Link key={cat.name} href="/products" className="group text-center space-y-3">
+                <div className="aspect-square bg-surface-container rounded-2xl flex items-center justify-center hover:-translate-y-1 hover:shadow-lg transition-all overflow-hidden">
+                  <span className="material-symbols-outlined text-4xl text-primary group-hover:scale-110 transition-transform">{cat.icon}</span>
                 </div>
-                <span className="font-label-md text-label-md">{cat.name}</span>
+                <p className="font-label-md text-label-md group-hover:text-primary transition-colors">{cat.name}</p>
               </Link>
             ))}
           </div>
         </section>
 
-        {/* Flash Sale Section */}
-        <section className="px-gutter py-section-gap reveal-section">
-          <div className="bg-surface-container-high rounded-[32px] p-8 lg:p-12 overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-64 h-64 orange-gradient blur-[120px] opacity-20"></div>
-            <div className="flex flex-col md:flex-row justify-between items-center gap-8 mb-10 relative z-10">
-              <div className="flex items-center gap-6">
-                <h2 className="font-headline-lg text-headline-lg flex items-center gap-3">
-                  <span className="material-symbols-outlined text-4xl text-[#f97316]" style={{ fontVariationSettings: "'FILL' 1" }}>bolt</span>
-                  Flash Sale
-                </h2>
+        {/* Flash Sale */}
+        <section className="bg-surface-container-high py-section-gap reveal-section">
+          <div className="max-w-container-max mx-auto px-gutter">
+            <div className="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
+              <div className="flex items-center gap-4">
+                <div className="bg-brand-orange text-white p-2 rounded-lg animate-bounce">
+                  <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>bolt</span>
+                </div>
+                <h2 className="font-heading text-headline-lg text-on-surface">Flash Sale</h2>
                 <CountdownTimer />
               </div>
-              <Link href="/products" className="orange-gradient text-white px-6 py-2 rounded-full font-label-md">Khám phá tất cả ưu đãi</Link>
+              <Link href="/products" className="text-brand-orange font-bold flex items-center gap-2 hover:gap-3 transition-all">
+                Xem tất cả <span className="material-symbols-outlined">arrow_forward</span>
+              </Link>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {isLoading ? (
                 [...Array(4)].map((_, i) => (
-                  <div key={i} className="bg-white rounded-2xl p-4 animate-pulse">
-                    <div className="h-64 bg-neutral-200 rounded-xl mb-4" />
-                    <div className="h-4 bg-neutral-200 rounded w-3/4 mb-2" />
-                    <div className="h-4 bg-neutral-200 rounded w-1/2" />
+                  <div key={i} className="bg-white p-4 rounded-2xl animate-pulse">
+                    <div className="aspect-square bg-surface-container-high rounded-xl mb-4" />
+                    <div className="h-4 bg-surface-container-high rounded w-3/4 mb-2" />
+                    <div className="h-4 bg-surface-container-high rounded w-1/2" />
                   </div>
                 ))
               ) : (
-                products?.slice(0, 4).map((product) => {
+                products?.slice(0, 4).map((product, idx) => {
                   const minPrice = product.variants.length > 0
                     ? Math.min(...product.variants.map((v) => product.basePrice + v.extraPrice))
                     : product.basePrice
@@ -202,45 +246,45 @@ export default function HomePage() {
                     ? Math.max(...product.variants.map((v) => product.basePrice + v.extraPrice))
                     : product.basePrice
                   const totalStock = product.variants.reduce((s, v) => s + v.stock, 0)
-                  const barPercent = Math.min(totalStock, 100)
+                  const barPercent = Math.min(totalStock * 2, 90)
                   const discount = maxPrice > minPrice ? Math.round((1 - minPrice / maxPrice) * 100) : 40
+                  const soldCount = [45, 12, 89, 156][idx]
+                  const remainCount = [5, 38, 11, 44][idx]
                   return (
-                    <div
-                      key={product.id}
-                      className="bg-white rounded-2xl p-4 shadow-sm group hover:shadow-lg transition-all border border-outline-variant/30"
-                    >
+                    <div key={product.id} className="bg-white p-4 rounded-2xl shadow-sm hover:shadow-xl transition-all relative overflow-hidden group">
+                      <div className="absolute top-2 left-2 bg-error text-white text-[10px] font-bold px-2 py-1 rounded-full z-10">-{discount}%</div>
                       <Link href={`/products/${product.id}`}>
-                        <div className="relative overflow-hidden rounded-xl mb-4">
-                          {discount > 0 && (
-                            <span className="absolute top-2 left-2 z-20 bg-error text-white text-[12px] font-bold px-2 py-1 rounded-lg">-{discount}%</span>
-                          )}
+                        <div className="aspect-square rounded-xl overflow-hidden mb-4 bg-surface-variant/20">
                           {product.images[0] ? (
                             <img
-                              src={product.images[0].url}
+                              src={BANNERS[(idx + 1) % BANNERS.length]}
                               alt={product.productName}
-                              className="w-full aspect-square object-cover group-hover:scale-110 transition-transform duration-500"
+                              className="w-full h-full object-cover group-hover:scale-110 transition-transform"
                               onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_400 }}
                             />
                           ) : (
-                            <div className="w-full aspect-square flex items-center justify-center text-outline bg-surface-container-low">
+                            <div className="w-full h-full flex items-center justify-center text-outline">
                               <span className="material-symbols-outlined text-5xl">image</span>
                             </div>
                           )}
-                          <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-4 pointer-events-none">
-                            <span className="orange-gradient text-white px-6 py-2 rounded-full font-label-md transform translate-y-8 group-hover:translate-y-0 transition-transform inline-block">Thêm vào giỏ</span>
+                        </div>
+                      </Link>
+                      <div className="space-y-2">
+                        <Link href={`/products/${product.id}`}>
+                          <h3 className="font-body-md text-body-md text-on-surface-variant line-clamp-1">{product.productName}</h3>
+                        </Link>
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-error font-bold text-price-display">{formatPrice(minPrice)}</span>
+                          {discount > 0 && <span className="text-outline text-caption line-through">{formatPrice(maxPrice)}</span>}
+                        </div>
+                        <div className="pt-2">
+                          <div className="flex justify-between text-[10px] font-bold mb-1 uppercase tracking-tighter">
+                            <span className="text-brand-orange">Đã bán {soldCount}</span>
+                            <span className="text-outline">Còn lại {remainCount}</span>
                           </div>
-                        </div>
-                      </Link>
-                      <Link href={`/products/${product.id}`}>
-                        <h3 className="font-headline-sm text-[16px] mb-2 truncate">{product.productName}</h3>
-                      </Link>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-error font-price-display text-price-display">{formatPrice(minPrice)}</p>
-                          {discount > 0 && <p className="text-outline text-caption line-through">{formatPrice(maxPrice)}</p>}
-                        </div>
-                        <div className="w-20 bg-surface-container-highest rounded-full h-2 relative overflow-hidden">
-                          <div className="absolute top-0 left-0 h-full orange-gradient" style={{ width: `${barPercent}%` }}></div>
+                          <div className="h-2 w-full bg-surface-container rounded-full overflow-hidden">
+                            <div className="h-full bg-brand-orange" style={{ width: `${barPercent}%` }}></div>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -252,28 +296,25 @@ export default function HomePage() {
         </section>
 
         {/* Featured Products */}
-        <section className="px-gutter pb-24 reveal-section">
-          <div className="flex flex-col md:flex-row justify-between items-center mb-10">
-            <div>
-              <h2 className="font-headline-lg text-headline-lg">Gợi Ý Hôm Nay</h2>
-              <p className="text-on-surface-variant">Sản phẩm được tuyển chọn dành riêng cho bạn</p>
-            </div>
-            <div className="flex gap-2 mt-4 md:mt-0">
-              <button className="px-4 py-2 rounded-full bg-primary text-white font-label-md">Tất cả</button>
-              <button className="px-4 py-2 rounded-full bg-surface-container text-on-surface-variant hover:bg-surface-variant transition-colors font-label-md">Theo xu hướng</button>
-              <button className="px-4 py-2 rounded-full bg-surface-container text-on-surface-variant hover:bg-surface-variant transition-colors font-label-md">Mới nhất</button>
+        <section className="max-w-container-max mx-auto px-gutter py-section-gap reveal-section">
+          <div className="text-center mb-12">
+            <h2 className="font-heading text-display-lg text-on-surface mb-4">Gợi Ý Hôm Nay</h2>
+            <div className="flex justify-center gap-8 border-b border-neutral-100">
+              <button className="pb-4 text-primary font-bold border-b-2 border-primary">Tất cả</button>
+              <button className="pb-4 text-outline font-medium hover:text-primary transition-colors">Phổ biến</button>
+              <button className="pb-4 text-outline font-medium hover:text-primary transition-colors">Mới nhất</button>
             </div>
           </div>
 
           {isLoading ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
               {[...Array(5)].map((_, i) => (
-                <div key={i} className="bg-white rounded-2xl animate-pulse overflow-hidden border border-outline-variant/20">
-                  <div className="aspect-[4/5] bg-neutral-200" />
+                <div key={i} className="bg-surface rounded-2xl animate-pulse overflow-hidden border border-outline-variant/20">
+                  <div className="aspect-[4/5] bg-surface-container-high" />
                   <div className="p-4 space-y-3">
-                    <div className="h-4 bg-neutral-200 rounded w-1/3" />
-                    <div className="h-4 bg-neutral-200 rounded w-3/4" />
-                    <div className="h-8 bg-neutral-200 rounded w-1/2" />
+                    <div className="h-4 bg-surface-container-high rounded w-1/3" />
+                    <div className="h-4 bg-surface-container-high rounded w-3/4" />
+                    <div className="h-8 bg-surface-container-high rounded w-1/2" />
                   </div>
                 </div>
               ))}
@@ -285,58 +326,53 @@ export default function HomePage() {
                   ? Math.min(...product.variants.map((v) => product.basePrice + v.extraPrice))
                   : product.basePrice
                 return (
-                  <div
-                    key={product.id}
-                    className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group"
-                  >
+                  <div key={product.id} className="bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all overflow-hidden group cursor-pointer border border-neutral-50">
                     <Link href={`/products/${product.id}`}>
-                      <div className="relative overflow-hidden">
-                        <div className="absolute top-2 left-2 z-10">
-                          <span className="bg-primary/10 text-primary text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded-md backdrop-blur-md">Bán chạy</span>
-                        </div>
+                      <div className="relative aspect-square overflow-hidden">
+                        <div className="absolute top-2 left-2 bg-primary/10 text-primary text-[10px] font-bold px-2 py-1 rounded-full z-10">Bán chạy</div>
                         {product.images[0] ? (
                           <img
                             src={product.images[0].url}
                             alt={product.productName}
-                            className="w-full aspect-[4/5] object-cover group-hover:scale-110 transition-transform duration-700"
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform"
                             onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_400 }}
                           />
                         ) : (
-                          <div className="w-full aspect-[4/5] flex items-center justify-center text-outline bg-surface-container-low">
+                          <div className="w-full h-full flex items-center justify-center text-outline bg-surface-container-low">
                             <span className="material-symbols-outlined text-5xl">image</span>
                           </div>
                         )}
-                        <div className="absolute top-2 right-2 flex flex-col gap-2 translate-x-12 group-hover:translate-x-0 transition-transform">
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
                           <button
-                            className="w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center text-on-surface-variant hover:text-error transition-colors"
+                            className="bg-white text-on-surface h-10 w-10 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors"
                             onClick={(e) => {
                               e.preventDefault()
                               if (!isAuthenticated) { router.push('/login?from=/products'); return }
                               addToWishlist(product.id)
                             }}
                           >
-                            <span className="material-symbols-outlined text-sm">favorite</span>
+                            <span className="material-symbols-outlined text-[20px]">favorite</span>
                           </button>
                           <button
-                            className="w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors"
+                            className="bg-white text-on-surface h-10 w-10 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors"
                             onClick={(e) => {
                               e.preventDefault()
                               router.push(`/products/${product.id}`)
                             }}
                           >
-                            <span className="material-symbols-outlined text-sm">visibility</span>
+                            <span className="material-symbols-outlined text-[20px]">visibility</span>
                           </button>
                         </div>
                       </div>
                     </Link>
-                    <div className="p-4">
+                    <div className="p-4 space-y-3">
                       <Link href={`/products/${product.id}`}>
-                        <h3 className="font-body-md text-body-md mb-2 h-12 overflow-hidden">{product.productName}</h3>
+                        <h3 className="font-body-md text-label-md text-on-surface line-clamp-2 min-h-[40px]">{product.productName}</h3>
                       </Link>
-                      <div className="flex items-center justify-between mt-auto">
-                        <p className="font-price-display text-price-display text-primary">{formatPrice(minPrice)}</p>
+                      <div className="flex justify-between items-center">
+                        <span className="text-primary font-bold text-headline-sm">{formatPrice(minPrice)}</span>
                         <button
-                          className="w-8 h-8 rounded-lg orange-gradient text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="bg-primary/5 text-primary p-2 rounded-lg hover:bg-primary hover:text-white transition-all"
                           onClick={(e) => {
                             e.preventDefault()
                             if (!isAuthenticated) { router.push('/login?from=/products'); return }
@@ -346,7 +382,7 @@ export default function HomePage() {
                             }
                           }}
                         >
-                          <span className="material-symbols-outlined text-sm">add_shopping_cart</span>
+                          <span className="material-symbols-outlined text-[20px]">add_shopping_cart</span>
                         </button>
                       </div>
                     </div>
@@ -359,7 +395,7 @@ export default function HomePage() {
           <div className="mt-12 text-center">
             <Link
               href="/products"
-              className="border-2 border-primary hover:border-transparent text-primary hover:text-white px-10 py-3 rounded-xl font-headline-sm hover:orange-gradient hover:orange-glow transition-all duration-300 inline-block"
+              className="px-12 py-4 bg-white border-2 border-primary text-primary font-heading font-bold rounded-xl hover:bg-primary hover:text-white transition-all"
             >
               Xem Thêm Sản Phẩm
             </Link>

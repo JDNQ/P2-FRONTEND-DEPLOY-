@@ -196,7 +196,7 @@ export default function CheckoutPage() {
             <div className="rounded-2xl p-stack-lg shadow-lg bg-primary-container/20 border border-primary/20">
               <h2 className="font-headline-sm text-headline-sm text-on-surface mb-stack-lg">Tóm tắt đơn hàng</h2>
 
-              <div className="space-y-stack-lg mb-stack-lg max-h-[400px] overflow-y-auto pr-2" style={{ scrollbarWidth: 'thin', scrollbarColor: '#c4c5d9 transparent' }}>
+              <div className="space-y-stack-lg mb-stack-lg max-h-[400px] overflow-y-auto pr-2 [&::-webkit-scrollbar-thumb]:bg-outline-variant [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent">
                 {items.map((item) => {
                   const itemPrice = item.product.basePrice + item.variant.extraPrice
                   return (
@@ -242,7 +242,7 @@ export default function CheckoutPage() {
                   <span className="font-body-md text-body-md">Phí vận chuyển</span>
                   <span className="font-price-display text-price-display text-primary">Miễn phí</span>
                 </div>
-                <div className="flex justify-between" style={{ color: '#3432c8' }}>
+                <div className="flex justify-between text-tertiary">
                   <span className="font-body-md text-body-md">Giảm giá</span>
                   <span className="font-price-display text-price-display text-error">{appliedDiscount > 0 ? `-${formatPrice(appliedDiscount)}` : '-0đ'}</span>
                 </div>

@@ -26,16 +26,11 @@ export default function CheckoutSuccessPage() {
           {/* Success Icon */}
           <div className="flex justify-center mb-4">
             <div
-              className="w-24 h-24 md:w-32 md:h-32 rounded-full flex items-center justify-center border-4 animate-check"
-              style={{
-                backgroundColor: 'rgba(34, 197, 94, 0.1)',
-                borderColor: 'rgba(34, 197, 94, 0.2)',
-                boxShadow: '0 0 40px rgba(34, 197, 94, 0.3)',
-              }}
+              className="w-24 h-24 md:w-32 md:h-32 rounded-full flex items-center justify-center border-4 animate-check bg-green-500/10 border-green-500/20 shadow-[0_0_40px_rgba(34,197,94,0.3)]"
             >
               <span
-                className="material-symbols-outlined text-[48px] md:text-[64px]"
-                style={{ color: '#22c55e', fontVariationSettings: "'FILL' 1, 'wght' 600" }}
+                className="material-symbols-outlined text-[48px] md:text-[64px] text-green-500"
+                style={{ fontVariationSettings: "'FILL' 1, 'wght' 600" }}
               >
                 check_circle
               </span>

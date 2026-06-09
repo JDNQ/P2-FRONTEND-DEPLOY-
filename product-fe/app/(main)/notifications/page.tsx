@@ -83,24 +83,20 @@ export default function NotificationsPage() {
         ) : (
           <div className="space-y-stack-md">
             {visibleNotifications.map((n) => {
-              const categoryColor = n.type === 'Orders' ? '#0035d1' : n.type === 'Promotions' ? '#3432c8' : '#4958a9'
+              const categoryColor = n.type === 'Orders' ? 'text-primary' : n.type === 'Promotions' ? 'text-tertiary' : 'text-secondary'
               const icon = n.type === 'Orders' ? 'package_2' : n.type === 'Promotions' ? 'sell' : 'security'
+              const categoryHex = n.type === 'Orders' ? '#0035d1' : n.type === 'Promotions' ? '#3432c8' : '#4958a9'
               return (
                 <div key={n.id}
-                  className="relative overflow-hidden rounded-xl border transition-all hover:shadow-lg hover:-translate-y-0.5 group cursor-pointer"
-                  style={{
-                    background: !n.isRead ? 'rgba(255, 255, 255, 0.8)' : '#ffffff',
-                    borderColor: '#c4c5d9',
-                    borderLeft: !n.isRead ? '4px solid #0035d1' : '4px solid transparent',
-                  }}
+                  className={`relative overflow-hidden rounded-xl border transition-all hover:shadow-lg hover:-translate-y-0.5 group cursor-pointer ${!n.isRead ? 'bg-white/80 border-l-4 border-l-primary' : 'bg-white border-l-4 border-l-transparent'} border-outline-variant`}
                   onClick={() => { if (!n.isRead) markRead(n.id) }}>
                   <div className="p-stack-md flex gap-4">
                     <div className="flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center bg-primary-container/10">
-                      <span className="material-symbols-outlined" style={{ color: categoryColor, fontVariationSettings: "'FILL' 1" }}>{icon}</span>
+                      <span className={`material-symbols-outlined ${categoryColor}`} style={{ fontVariationSettings: "'FILL' 1" }}>{icon}</span>
                     </div>
                     <div className="flex-grow min-w-0">
                       <div className="flex justify-between items-start mb-1">
-                        <span className="font-label-md text-label-md font-bold" style={{ color: categoryColor }}>{n.type}</span>
+                        <span className={`font-label-md text-label-md font-bold ${categoryColor}`}>{n.type}</span>
                         <span className="font-caption text-caption text-on-surface-variant flex-shrink-0 ml-2">
                           {new Date(n.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                         </span>

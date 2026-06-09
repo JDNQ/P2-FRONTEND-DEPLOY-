@@ -1,6 +1,7 @@
 'use client'
 import { useProduct } from '@/lib/hooks/useProducts'
 import { useAddToCart } from '@/lib/hooks/useCart'
+import { useAddToWishlist } from '@/lib/hooks/useWishlist'
 import { useAuthStore } from '@/lib/stores/authStore'
 import { formatPrice } from '@/lib/utils/formatPrice'
 import { PLACEHOLDER_80, PLACEHOLDER_600 } from '@/lib/utils/placeholder'
@@ -17,6 +18,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
   const productId = parseInt(params.id)
   const { data: product, isLoading } = useProduct(productId)
   const { mutate: addToCart, isPending } = useAddToCart()
+  const { mutate: addToWishlist } = useAddToWishlist()
 
   const [selectedVariantId, setSelectedVariantId] = useState<number | null>(null)
   const [quantity, setQuantity] = useState(1)
@@ -110,7 +112,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
               {product.images.slice(0, 4).map((img, idx) => (
                 <button key={idx} onClick={() => setMainImgIdx(idx)}
                   className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition-all hover:scale-105 ${
-                    idx === mainImgIdx ? 'border-primary shadow-[0_0_0_2px_#bac3ff]' : 'border-transparent'
+                    idx === mainImgIdx ? 'border-primary ring-2 ring-primary-fixed-dim' : 'border-transparent'
                   }`}>
                   <img src={img.url} alt="" className="w-full h-full object-cover"
                     onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_80 }} />
@@ -127,7 +129,13 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                   <span className="material-symbols-outlined text-6xl">image</span>
                 </div>
               )}
-              <button className="absolute top-6 right-6 p-3 bg-white/80 backdrop-blur-md rounded-full shadow-sm hover:text-error transition-all hover:scale-110">
+              <button
+                className="absolute top-6 right-6 p-3 bg-white/80 backdrop-blur-md rounded-full shadow-sm hover:text-error transition-all hover:scale-110"
+                onClick={(e) => {
+                  e.preventDefault()
+                  if (!isAuthenticated) { router.push('/login?from=/products'); return }
+                  addToWishlist(product.id)
+                }}>
                 <span className="material-symbols-outlined">favorite</span>
               </button>
             </div>
