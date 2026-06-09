@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import Link from 'next/link'
 import Header from '@/components/Header'
+import Footer from '@/components/Footer'
 
 export default function ProductDetailPage({ params }: { params: { id: string } }) {
   const { isAuthenticated } = useAuthStore()
@@ -208,12 +209,12 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 pt-stack-md">
               <button onClick={handleAddToCart} disabled={isPending || currentStock === 0}
-                className="flex-1 bg-primary text-on-primary font-label-md py-4 px-8 rounded-xl transition-all flex items-center justify-center gap-2 shadow-[0_10px_15px_-3px_rgba(30,76,253,0.25)] hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50">
+                className="flex-1 orange-gradient orange-glow text-white font-label-md py-4 px-8 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50">
                 <span className="material-symbols-outlined">shopping_cart</span>
                 Add to Cart
               </button>
               <button onClick={handleBuyNow} disabled={currentStock === 0}
-                className="flex-1 bg-surface-container-highest text-on-surface font-label-md py-4 px-8 rounded-xl active:scale-95 transition-all border border-outline-variant disabled:opacity-50">
+                className="flex-1 bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-md py-4 px-8 rounded-xl active:scale-95 transition-all border border-outline-variant/30 disabled:opacity-50">
                 Buy Now
               </button>
             </div>
@@ -310,6 +311,8 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
           )}
         </section>
       </div>
+
+      <Footer />
     </div>
   )
 }

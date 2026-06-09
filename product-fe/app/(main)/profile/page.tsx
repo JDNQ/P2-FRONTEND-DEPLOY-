@@ -177,7 +177,7 @@ export default function ProfilePage() {
                 </div>
                 <div className="flex flex-col sm:flex-row gap-4 pt-stack-lg border-t border-outline-variant/30">
                   <button type="submit" disabled={isSaving}
-                    className="flex-1 sm:flex-none px-8 py-3 bg-primary text-on-primary font-label-md rounded-xl hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-60 flex items-center justify-center gap-2 shadow-[0_10px_15px_-3px_rgba(30,76,253,0.25)]">
+                    className="flex-1 sm:flex-none px-8 py-3 orange-gradient orange-glow text-white font-label-md rounded-xl hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-60 flex items-center justify-center gap-2">
                     {isSaving ? (
                       <><span className="animate-spin h-4 w-4 border-2 border-white/30 border-t-white rounded-full" /> Saving...</>
                     ) : (

@@ -56,7 +56,7 @@ export default function NotificationsPage() {
             <button key={f} onClick={() => { setActiveFilter(f); setPage(1) }}
               className={`px-6 py-2.5 rounded-full font-label-md text-label-md transition-all ${
                 activeFilter === f
-                  ? 'bg-primary text-on-primary shadow-md'
+                  ? 'orange-gradient text-white shadow-md'
                   : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-variant'
               }`}>
               {f}

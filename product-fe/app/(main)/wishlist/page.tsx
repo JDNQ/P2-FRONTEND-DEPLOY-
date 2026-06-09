@@ -25,7 +25,7 @@ export default function WishlistPage() {
             </div>
             <div className="flex gap-3">
               <button onClick={() => addAllToCart()}
-                className="flex items-center gap-2 px-6 py-3 rounded-xl font-label-md shadow-sm hover:shadow-lg transition-all active:scale-[0.98] bg-primary text-on-primary">
+                className="flex items-center gap-2 px-6 py-3 rounded-xl font-label-md shadow-sm hover:shadow-lg transition-all active:scale-[0.98] orange-gradient orange-glow text-white">
                 <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>shopping_cart_checkout</span>
                 Add All to Cart
               </button>

@@ -201,7 +201,7 @@ export default function CartPage() {
 
                 <Link
                   href="/checkout"
-                  className="w-full bg-primary text-on-primary font-label-md py-4 rounded-xl flex items-center justify-center gap-2 shadow-[0_10px_15px_-3px_rgba(30,76,253,0.25)] hover:scale-[1.02] active:scale-[0.98] transition-all"
+                  className="w-full orange-gradient orange-glow text-white font-label-md py-4 rounded-xl flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all"
                 >
                   Tiến hành thanh toán
                   <span className="material-symbols-outlined">arrow_forward</span>

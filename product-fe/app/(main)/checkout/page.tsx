@@ -252,7 +252,7 @@ export default function CheckoutPage() {
               </div>
 
               <button onClick={handleSubmitOrder} disabled={isPending}
-                className="w-full bg-primary text-on-primary font-label-md py-4 rounded-xl shadow-lg flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-60">
+                className="w-full orange-gradient orange-glow text-white font-label-md py-4 rounded-xl shadow-lg flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-60">
                 <span>{isPending ? 'Đang xử lý...' : 'Đặt hàng'}</span>
                 <span className="material-symbols-outlined">arrow_forward</span>
               </button>

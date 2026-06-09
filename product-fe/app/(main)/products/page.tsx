@@ -10,6 +10,7 @@ import Link from 'next/link'
 import { formatPrice } from '@/lib/utils/formatPrice'
 import Header from '@/components/Header'
 import SidebarFilter from '@/components/SidebarFilter'
+import Footer from '@/components/Footer'
 
 export default function ProductsPage() {
   const { data: products, isLoading } = useProducts()
@@ -143,7 +144,7 @@ export default function ProductsPage() {
                             </button>
                             <div className="absolute inset-x-0 bottom-0 p-stack-sm bg-white/90 backdrop-blur-md flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                               <button
-                                className="flex-1 bg-primary text-on-primary font-label-md py-2 rounded-lg shadow-[0_4px_10px_rgba(0,53,209,0.3)] hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2"
+                                className="flex-1 orange-gradient orange-glow text-white font-label-md py-2 rounded-lg hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2"
                                 onClick={(e) => {
                                   e.preventDefault()
                                   if (!isAuthenticated) { router.push('/login?from=/products'); return }
@@ -206,9 +207,9 @@ export default function ProductsPage() {
                       <button
                         key={page}
                         onClick={() => setCurrentPage(page)}
-                        className={`w-10 h-10 flex items-center justify-center rounded-lg font-label-md transition-colors ${
+                        className={`w-10 h-10 flex items-center justify-center rounded-lg font-label-md transition-all ${
                           currentPage === page
-                            ? 'bg-primary text-on-primary'
+                            ? 'orange-gradient text-white shadow-sm'
                             : 'border border-outline-variant hover:bg-surface-variant text-on-surface'
                         }`}
                       >
@@ -236,49 +237,7 @@ export default function ProductsPage() {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="bg-surface-container-highest border-t border-outline-variant mt-section-gap">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-section-gap px-gutter py-section-gap max-w-container-max mx-auto">
-          <div className="col-span-1 md:col-span-1">
-            <div className="text-headline-sm font-black text-on-surface mb-stack-md">TL Market</div>
-            <p className="font-body-md text-body-md text-on-surface-variant">Giải pháp mua sắm trực tuyến hàng đầu với những sản phẩm công nghệ mới nhất và chất lượng dịch vụ vượt trội.</p>
-          </div>
-          <div>
-            <h4 className="font-label-md text-label-md font-bold text-on-surface mb-stack-md">Khám phá</h4>
-            <ul className="space-y-2">
-              <li><a className="font-caption text-caption text-on-surface-variant hover:text-primary transition-all" href="#">Về chúng tôi</a></li>
-              <li><a className="font-caption text-caption text-on-surface-variant hover:text-primary transition-all" href="#">Tin tức công nghệ</a></li>
-              <li><a className="font-caption text-caption text-on-surface-variant hover:text-primary transition-all" href="#">Khuyến mãi cực sốc</a></li>
-              <li><a className="font-caption text-caption text-on-surface-variant hover:text-primary transition-all" href="#">Cửa hàng gần nhất</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-label-md text-label-md font-bold text-on-surface mb-stack-md">Hỗ trợ khách hàng</h4>
-            <ul className="space-y-2">
-              <li><a className="font-caption text-caption text-on-surface-variant hover:text-primary transition-all" href="#">Chính sách bảo hành</a></li>
-              <li><a className="font-caption text-caption text-on-surface-variant hover:text-primary transition-all" href="#">Đổi trả & Hoàn tiền</a></li>
-              <li><a className="font-caption text-caption text-on-surface-variant hover:text-primary transition-all" href="#">Hướng dẫn mua hàng</a></li>
-              <li><a className="font-caption text-caption text-on-surface-variant hover:text-primary transition-all" href="#">Liên hệ chúng tôi</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-label-md text-label-md font-bold text-on-surface mb-stack-md">Bản tin</h4>
-            <p className="font-caption text-caption text-on-surface-variant mb-stack-sm">Nhận thông tin ưu đãi mới nhất từ chúng tôi.</p>
-            <div className="flex gap-2">
-              <input className="bg-surface border border-outline-variant rounded-lg px-3 py-2 text-caption w-full focus:ring-1 focus:ring-primary outline-none" placeholder="Email của bạn" type="email" />
-              <button className="bg-primary text-on-primary px-4 py-2 rounded-lg font-label-md hover:brightness-110 transition-all">Gửi</button>
-            </div>
-          </div>
-        </div>
-        <div className="max-w-container-max mx-auto px-gutter py-stack-md border-t border-outline-variant flex flex-col md:flex-row justify-between items-center gap-stack-md">
-          <span className="font-caption text-caption text-on-surface-variant">© 2024 TL Market. All rights reserved.</span>
-          <div className="flex gap-stack-md">
-            <a className="text-on-surface-variant hover:text-primary transition-all" href="#"><span className="material-symbols-outlined">public</span></a>
-            <a className="text-on-surface-variant hover:text-primary transition-all" href="#"><span className="material-symbols-outlined">share</span></a>
-            <a className="text-on-surface-variant hover:text-primary transition-all" href="#"><span className="material-symbols-outlined">mail</span></a>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   )
 }
