@@ -3,35 +3,16 @@
 import { useParams, useRouter } from 'next/navigation'
 import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
 import { useProduct, useUpdateProduct } from '@/lib/hooks/useProducts'
 import { PLACEHOLDER_150 } from '@/lib/utils/placeholder'
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { toast } from 'sonner'
+import { productSchema } from '@/lib/validations/productSchema'
 import type { ProductImageDto } from '@/lib/types/product'
+import type { z } from 'zod'
 
-const editProductSchema = z.object({
-  productName: z.string().min(1, 'Tên sản phẩm không được để trống'),
-  description: z.string().optional(),
-  basePrice: z.number().min(1000, 'Giá tối thiểu 1.000đ'),
-  variants: z
-    .array(
-      z.object({
-        variantName: z.string().min(1, 'Không được để trống'),
-        extraPrice: z.number().min(0, 'Phải >= 0'),
-        stock: z.number().min(0, 'Phải >= 0'),
-      })
-    )
-    .min(1, 'Cần ít nhất 1 phân loại'),
-})
-
-interface EditProductValues {
-  productName: string
-  description?: string
-  basePrice: number
-  variants: { variantName: string; extraPrice: number; stock: number }[]
-}
+type EditProductValues = z.infer<typeof productSchema>
 
 const fileToBase64 = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -65,12 +46,13 @@ export default function EditProductPage() {
     formState: { errors },
     watch,
   } = useForm<EditProductValues>({
-    resolver: zodResolver(editProductSchema),
+    resolver: zodResolver(productSchema),
     values: product
       ? {
           productName: product.productName,
           description: product.description || '',
           basePrice: product.basePrice,
+          shopId: product.shopId,
           variants: product.variants.map((v) => ({
             variantName: v.variantName,
             extraPrice: v.extraPrice,
@@ -311,6 +293,20 @@ export default function EditProductPage() {
               <option>Máy tính bảng</option>
               <option>Phụ kiện</option>
             </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-[#444656] mb-1">
+              Shop
+            </label>
+            <select
+              {...register('shopId', { valueAsNumber: true })}
+              className="w-full border border-[#c4c5d9] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#0035d1]/20 focus:border-[#0035d1] outline-none transition-all"
+            >
+              <option value={1}>Shop chính</option>
+            </select>
+            {errors.shopId && (
+              <p className="text-[#ba1a1a] text-xs mt-1">{errors.shopId.message}</p>
+            )}
           </div>
         </div>
       </section>

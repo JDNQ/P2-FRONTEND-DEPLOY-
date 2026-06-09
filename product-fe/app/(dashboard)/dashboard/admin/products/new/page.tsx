@@ -3,32 +3,13 @@
 import { useRouter } from 'next/navigation'
 import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
 import { useCreateProduct } from '@/lib/hooks/useProducts'
 import { useRef, useState, useEffect } from 'react'
+import { productSchema } from '@/lib/validations/productSchema'
 import type { ProductImageDto } from '@/lib/types/product'
+import type { z } from 'zod'
 
-const newProductSchema = z.object({
-  productName: z.string().min(1, 'Tên sản phẩm không được để trống'),
-  description: z.string().optional(),
-  basePrice: z.number().min(1000, 'Giá tối thiểu 1.000đ'),
-  variants: z
-    .array(
-      z.object({
-        variantName: z.string().min(1, 'Không được để trống'),
-        extraPrice: z.number().min(0, 'Phải >= 0'),
-        stock: z.number().min(0, 'Phải >= 0'),
-      })
-    )
-    .min(1, 'Cần ít nhất 1 phân loại'),
-})
-
-interface NewProductValues {
-  productName: string
-  description?: string
-  basePrice: number
-  variants: { variantName: string; extraPrice: number; stock: number }[]
-}
+type NewProductValues = z.infer<typeof productSchema>
 
 const fileToBase64 = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -56,11 +37,12 @@ export default function NewProductPage() {
     formState: { errors },
     watch,
   } = useForm<NewProductValues>({
-    resolver: zodResolver(newProductSchema),
+    resolver: zodResolver(productSchema),
     defaultValues: {
       productName: '',
       description: '',
       basePrice: 0,
+      shopId: 1,
       variants: [{ variantName: '', extraPrice: 0, stock: 0 }],
     },
   })
@@ -136,7 +118,6 @@ export default function NewProductPage() {
     createProduct.mutate(
       {
         ...data,
-        shopId: 1,
         ...(imageDtos.length ? { images: imageDtos } : {}),
         variants: variantDtos,
       },
@@ -206,6 +187,18 @@ export default function NewProductPage() {
                     <option>Thời trang nữ</option>
                     <option>Phụ kiện</option>
                   </select>
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-sm font-semibold text-[#444656]">Shop</label>
+                  <select
+                    {...register('shopId', { valueAsNumber: true })}
+                    className="w-full px-4 py-2.5 border border-[#c4c5d9] rounded-lg focus:ring-2 focus:ring-[#0035d1]/20 focus:border-[#0035d1] transition-all outline-none text-sm bg-white appearance-none"
+                  >
+                    <option value={1}>Shop chính</option>
+                  </select>
+                  {errors.shopId && (
+                    <p className="text-[#ba1a1a] text-xs mt-1">{errors.shopId.message}</p>
+                  )}
                 </div>
               </div>
             </div>
