@@ -131,7 +131,9 @@ export default function Header() {
               }`}
           >
             <div className="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center overflow-hidden border border-white">
-              {isAuthenticated && user?.username ? (
+              {isAuthenticated && user?.avatarUrl ? (
+                <img src={user.avatarUrl} alt="" className="w-full h-full object-cover" />
+              ) : isAuthenticated && user?.username ? (
                 <span className="font-bold text-sm text-primary uppercase">
                   {user.username.charAt(0)}
                 </span>

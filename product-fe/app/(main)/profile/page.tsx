@@ -14,8 +14,10 @@ const SIDEBAR = [
   { href: '/notifications', label: 'Thông báo', icon: 'notifications' },
 ]
 
+const today = new Date().toISOString().split('T')[0]
+
 export default function ProfilePage() {
-  const { user, isAuthenticated, setAuth } = useAuthStore()
+  const { user, isAuthenticated, updateUser } = useAuthStore()
   const router = useRouter()
   const pathname = usePathname()
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -26,6 +28,7 @@ export default function ProfilePage() {
     email: user?.email || '',
     phone: '',
     bio: 'Tech enthusiast and frequent shopper at TL Market.',
+    birthday: '',
   })
 
   const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,17 +55,7 @@ export default function ProfilePage() {
 
       // Cập nhật user trong store với avatarUrl
       if (user) {
-        const token = localStorage.getItem('tl_access_token') || ''
-        setAuth({ ...user, avatarUrl: base64 }, token)
-        // Lưu thêm vào localStorage để persist (vì zustand persist lưu theo key 'tl_auth')
-        const stored = localStorage.getItem('tl_auth')
-        if (stored) {
-          try {
-            const parsed = JSON.parse(stored)
-            parsed.state.user.avatarUrl = base64
-            localStorage.setItem('tl_auth', JSON.stringify(parsed))
-          } catch { /* ignore */ }
-        }
+        updateUser({ avatarUrl: base64 })
       }
 
       setUploading(false)
@@ -228,7 +221,8 @@ export default function ProfilePage() {
                   </div>
                   <div className="space-y-2">
                     <label className="font-label-md text-label-md text-on-surface-variant px-1">Birthday</label>
-                    <input type="date"
+                    <input type="date" value={formData.birthday} onChange={(e) => setFormData({ ...formData, birthday: e.target.value })}
+                      max={today}
                       className="w-full rounded-xl py-3 px-4 font-body-md text-body-md outline-none border border-outline-variant bg-surface-container-low focus:border-primary focus:ring-1 focus:ring-primary transition-all" />
                   </div>
                 </div>
@@ -248,7 +242,7 @@ export default function ProfilePage() {
                     )}
                   </button>
                   <button type="button"
-                    onClick={() => setFormData({ username: user.username, email: user.email || '', phone: '', bio: 'Tech enthusiast and frequent shopper at TL Market.' })}
+                    onClick={() => setFormData({ username: user.username, email: user.email || '', phone: '', bio: 'Tech enthusiast and frequent shopper at TL Market.', birthday: '' })}
                     className="flex-1 sm:flex-none px-8 py-3 border border-outline-variant rounded-xl font-label-md text-primary hover:bg-primary-container/20 transition-all">
                     Cancel
                   </button>
