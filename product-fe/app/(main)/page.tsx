@@ -7,16 +7,14 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { formatPrice } from '@/lib/utils/formatPrice'
 import { PLACEHOLDER_400 } from '@/lib/utils/placeholder'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 function CountdownTimer() {
   const [time, setTime] = useState({ h: '00', m: '00', s: '00' })
   useEffect(() => {
     const update = () => {
       const now = new Date()
-      const tomorrow = new Date()
-      tomorrow.setHours(24, 0, 0, 0)
-      const diff = tomorrow.getTime() - now.getTime()
+      const diff = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0).getTime() - now.getTime()
       setTime({
         h: String(Math.floor((diff / (1000 * 60 * 60)) % 24)).padStart(2, '0'),
         m: String(Math.floor((diff / (1000 * 60)) % 60)).padStart(2, '0'),
@@ -29,41 +27,29 @@ function CountdownTimer() {
   }, [])
   return (
     <div className="flex gap-2 items-center">
-      {[
-        { value: time.h, label: 'Hrs' },
-        { value: time.m, label: 'Min' },
-        { value: time.s, label: 'Sec' },
-      ].map((item, i) => (
-        <div key={item.label} className="flex items-center gap-2">
-          <div className="flex flex-col items-center">
-            <div className="px-4 py-2 rounded-lg font-bold text-lg min-w-[60px] text-center"
-              style={{ background: '#f97316' }}
-            >
-              {item.value}
-            </div>
-            <span className="text-[10px] mt-1 uppercase opacity-60">{item.label}</span>
-          </div>
-          {i < 2 && <span className="font-bold text-lg pt-2">:</span>}
-        </div>
-      ))}
+      <div className="bg-[#1e4cfd] px-3 py-1.5 rounded-lg min-w-[40px] text-center text-white font-bold">{time.h}</div>
+      <span className="text-primary text-xl self-center">:</span>
+      <div className="bg-[#1e4cfd] px-3 py-1.5 rounded-lg min-w-[40px] text-center text-white font-bold">{time.m}</div>
+      <span className="text-primary text-xl self-center">:</span>
+      <div className="bg-[#1e4cfd] px-3 py-1.5 rounded-lg min-w-[40px] text-center text-white font-bold">{time.s}</div>
     </div>
   )
 }
 
 const CATEGORIES = [
-  { name: 'Electronics', icon: 'devices', color: '#0035d1' },
-  { name: 'Fashion', icon: 'styler', color: '#f97316' },
-  { name: 'Home Decor', icon: 'chair', color: '#3432c8' },
-  { name: 'Fitness', icon: 'fitness_center', color: '#4958a9' },
-  { name: 'Beauty', icon: 'face_5', color: '#ba1a1a' },
-  { name: 'More', icon: 'more_horiz', color: '#08006c' },
+  { name: 'Điện Tử', icon: 'devices' },
+  { name: 'Thời Trang', icon: 'checkroom' },
+  { name: 'Gia Dụng', icon: 'kitchen' },
+  { name: 'Làm Đẹp', icon: 'face_6' },
+  { name: 'Đồ Chơi', icon: 'sports_esports' },
+  { name: 'Quà Tặng', icon: 'redeem' },
 ]
 
 const TRUST_ITEMS = [
-  { icon: 'verified', title: 'Genuine Products', desc: '100% Quality Guaranteed', color: '#0035d1' },
-  { icon: 'bolt', title: '2h Delivery', desc: 'Available in Metro Areas', color: '#f97316' },
-  { icon: 'support_agent', title: '24/7 Support', desc: 'Dedicated Assistance', color: '#3432c8' },
-  { icon: 'payments', title: 'Secure Pay', desc: 'Multiple Payment Options', color: '#4958a9' },
+  { icon: 'verified_user', title: 'Hàng Chính Hãng', desc: 'Cam kết 100% auth' },
+  { icon: 'bolt', title: 'Giao Nhanh 2H', desc: 'Nội thành hỏa tốc' },
+  { icon: 'autorenew', title: 'Đổi Trả 7 Ngày', desc: 'Thủ tục nhanh gọn' },
+  { icon: 'support_agent', title: 'Hỗ Trợ 24/7', desc: 'Tư vấn tận tâm' },
 ]
 
 export default function HomePage() {
@@ -80,293 +66,400 @@ export default function HomePage() {
     }
   }, [isAuthenticated, user, router])
 
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('opacity-100', 'translate-y-0')
+          entry.target.classList.remove('opacity-0', 'translate-y-10')
+        }
+      })
+    }, { threshold: 0.1 })
+    const sections = document.querySelectorAll('.reveal-section')
+    sections.forEach((el) => {
+      el.classList.add('transition-all', 'duration-1000', 'opacity-0', 'translate-y-10')
+      observer.observe(el)
+    })
+    return () => observer.disconnect()
+  }, [])
+
   return (
     <>
-      {/* Hero Section */}
-      <section className="px-4 py-6 max-w-[1280px] mx-auto">
-        <div className="relative rounded-3xl overflow-hidden h-[500px] flex items-center shadow-2xl">
-          <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-[#08006c]/80 via-[#08006c]/40 to-transparent z-10"></div>
-          <div className="relative z-10 px-12 md:px-20 max-w-2xl text-white">
-            <span className="inline-block px-4 py-1 rounded-full text-sm font-bold mb-6 tracking-wider uppercase text-white"
-              style={{ background: '#f97316' }}
+      {/* Announcement Bar */}
+      <div className="orange-gradient text-white py-2 text-center overflow-hidden">
+        <p className="font-label-md text-label-md animate-pulse">🔥 FLASH SALE: Giảm tới 50% tất cả mặt hàng điện tử - Duy nhất hôm nay! 🔥</p>
+      </div>
+
+      {/* TopNavBar */}
+      <header className="bg-surface sticky top-0 z-50 shadow-sm">
+        <nav className="flex justify-between items-center w-full px-gutter py-stack-md max-w-container-max mx-auto">
+          <div className="flex items-center gap-8">
+            <Link href="/" className="flex-shrink-0">
+              <img alt="TL Market Logo" className="h-10 w-auto" src="/logo-removebg-preview.png" />
+            </Link>
+            <div className="hidden lg:flex items-center gap-6">
+              <Link href="/products" className="text-primary border-b-2 border-primary pb-1 font-label-md text-label-md">Electronics</Link>
+              <Link href="/products" className="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md">Fashion</Link>
+              <Link href="/products" className="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md">Home</Link>
+              <Link href="/products" className="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md">Gifts</Link>
+              <Link href="/products" className="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md">Deals</Link>
+            </div>
+          </div>
+          <div className="flex-1 max-w-md mx-8 hidden md:block">
+            <div className="relative group">
+              <input
+                className="w-full bg-surface-container border-none rounded-xl py-2 pl-10 pr-4 focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+                placeholder="Tìm kiếm sản phẩm..."
+                type="text"
+              />
+              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <button className="p-2 hover:bg-surface-container rounded-full transition-colors text-on-surface-variant">
+              <span className="material-symbols-outlined">favorite</span>
+            </button>
+            <Link href="/cart" className="relative p-2 hover:bg-surface-container rounded-full transition-colors text-on-surface-variant cursor-pointer group">
+              <span className="material-symbols-outlined">shopping_cart</span>
+              <span className="absolute top-0 right-0 bg-error text-white text-[10px] px-1.5 py-0.5 rounded-full">3</span>
+            </Link>
+            <Link
+              href={isAuthenticated ? '/profile' : '/login'}
+              className="flex items-center gap-2 p-1.5 pr-3 hover:bg-surface-container rounded-full transition-colors border border-outline-variant"
             >
-              Exclusive Launch
-            </span>
-            <h1 className="font-heading text-4xl md:text-5xl font-extrabold leading-tight mb-6">
-              Upgrade Your Lifestyle with <span style={{ color: '#f97316' }}>TL Market</span>
-            </h1>
-            <p className="text-lg md:text-xl opacity-80 mb-10 leading-relaxed">
-              Discover thousands of premium products from top global brands, delivered to your doorstep with unmatched speed and care.
-            </p>
-            <div className="flex gap-4">
-              <Link
-                href="/products"
-                className="px-8 py-4 rounded-xl font-bold text-white transition-all transform hover:scale-105 active:scale-95"
-                style={{
-                  background: '#f97316',
-                  boxShadow: '0 4px 12px rgba(249, 115, 22, 0.3)'
-                }}
-              >
-                Shop Now
-              </Link>
-              <Link
-                href="/products"
-                className="px-8 py-4 border border-white rounded-xl font-bold hover:bg-white/10 transition-all active:scale-95"
-              >
-                View Offers
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Trust Badges */}
-      <section className="max-w-[1280px] mx-auto px-4 py-8">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {TRUST_ITEMS.map((item) => (
-            <div key={item.title} className="flex items-center gap-4 p-6 bg-white rounded-2xl shadow-sm border border-outline-variant/30">
-              <div
-                className="h-12 w-12 rounded-full flex items-center justify-center"
-                style={{ background: `${item.color}10`, color: item.color }}
-              >
-                <span className="material-symbols-outlined">{item.icon}</span>
+              <div className="w-7 h-7 rounded-full bg-primary-fixed flex items-center justify-center">
+                <span className="material-symbols-outlined text-[18px] text-primary">person</span>
               </div>
-              <div>
-                <h4 className="font-bold text-m3-on-surface text-sm">{item.title}</h4>
-                <p className="text-xs text-m3-on-surface-variant">{item.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Flash Sale Section */}
-      <section className="relative overflow-hidden"
-        style={{ background: '#08006c' }}
-      >
-        <div className="absolute top-0 right-0 opacity-10 pointer-events-none">
-          <span className="material-symbols-outlined text-[400px]">bolt</span>
-        </div>
-        <div className="max-w-[1280px] mx-auto px-4 py-16 relative z-10">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-8">
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                <span className="h-3 w-3 rounded-full animate-pulse" style={{ background: '#f97316' }}></span>
-                <span className="font-bold uppercase tracking-widest text-sm" style={{ color: '#f97316' }}>Live Event</span>
-              </div>
-              <h2 className="font-heading text-3xl md:text-4xl font-extrabold text-white">Flash Sale Frenzy</h2>
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="text-sm text-white/70">Ends in:</span>
-              <CountdownTimer />
-            </div>
+              <span className="font-label-md text-label-md hidden sm:block">{isAuthenticated ? (user?.username || 'Tài khoản') : 'Tài khoản'}</span>
+            </Link>
           </div>
+        </nav>
+      </header>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {isLoading ? (
-              [...Array(4)].map((_, i) => (
-                <div key={i} className="bg-white rounded-2xl p-4 animate-pulse">
-                  <div className="h-64 bg-neutral-200 rounded-xl mb-4" />
-                  <div className="h-4 bg-neutral-200 rounded w-3/4 mb-2" />
-                  <div className="h-4 bg-neutral-200 rounded w-1/2" />
-                </div>
-              ))
-            ) : (
-              products?.slice(0, 4).map((product) => {
-                const minPrice = product.variants.length > 0
-                  ? Math.min(...product.variants.map((v) => product.basePrice + v.extraPrice))
-                  : product.basePrice
-                const maxPrice = product.variants.length > 0
-                  ? Math.max(...product.variants.map((v) => product.basePrice + v.extraPrice))
-                  : product.basePrice
-                const totalStock = product.variants.reduce((s, v) => s + v.stock, 0)
-                const barPercent = Math.min(totalStock, 100)
-                const discount = maxPrice > minPrice ? Math.round((1 - minPrice / maxPrice) * 100) : 0
-                return (
-                  <Link
-                    key={product.id}
-                    href={`/products/${product.id}`}
-                    className="bg-white rounded-2xl p-4 transition-all duration-300 group hover:-translate-y-1 hover:shadow-lg"
-                    style={{ boxShadow: '0 4px 6px -1px rgba(71, 71, 208, 0.1)' }}
-                  >
-                    <div className="relative rounded-xl overflow-hidden mb-4 h-64 bg-surface-container-low">
-                      {product.images[0] ? (
-                        <img
-                          src={product.images[0].url}
-                          alt={product.productName}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                          onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_400 }}
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-m3-outline">
-                          <span className="material-symbols-outlined text-5xl">image</span>
-                        </div>
-                      )}
-                      {discount > 0 && (
-                        <div className="absolute top-2 left-2 text-white font-bold text-xs px-2 py-1 rounded-lg"
-                          style={{ background: '#ba1a1a' }}
-                        >
-                          -{discount}%
-                        </div>
-                      )}
-                    </div>
-                    <h3 className="font-bold text-m3-on-surface truncate mb-2 group-hover:text-primary transition-colors">{product.productName}</h3>
-                    <div className="flex items-center gap-2 mb-4">
-                      <span className="font-bold text-lg" style={{ color: '#f97316' }}>{formatPrice(minPrice)}</span>
-                      {discount > 0 && (
-                        <span className="text-xs text-outline line-through">{formatPrice(maxPrice)}</span>
-                      )}
-                    </div>
-                    <div className="w-full bg-surface-container rounded-full h-1.5 mb-2">
-                      <div className="h-1.5 rounded-full" style={{ width: `${barPercent}%`, background: '#f97316' }}></div>
-                    </div>
-                    <p className="text-[11px] text-m3-on-surface-variant font-medium">{totalStock} items left in stock</p>
-                  </Link>
-                )
-              })
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Categories */}
-      <section className="max-w-[1280px] mx-auto px-4 py-16">
-        <div className="flex justify-between items-end mb-10">
-          <div>
-            <h2 className="font-heading text-3xl font-bold text-m3-on-surface">Explore Categories</h2>
-            <p className="text-sm text-m3-on-surface-variant mt-2">Curated selections for every part of your life.</p>
-          </div>
-          <Link href="/products" className="text-primary font-bold hover:underline flex items-center gap-1 group text-sm">
-            View All <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
-          </Link>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-          {CATEGORIES.map((cat) => (
-            <div key={cat.name} className="group cursor-pointer">
-              <div className="bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/30 flex flex-col items-center justify-center transition-all duration-300 group-hover:shadow-lg"
-                style={{ borderColor: 'rgba(196, 197, 217, 0.3)' }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderColor = cat.color }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(196, 197, 217, 0.3)' }}
-              >
-                <div
-                  className="h-20 w-20 rounded-2xl flex items-center justify-center mb-4 transition-all duration-300"
-                  style={{ background: `${cat.color}10`, color: cat.color }}
-                  onMouseEnter={(e) => {
-                    const el = e.currentTarget as HTMLElement
-                    el.style.background = cat.color
-                    el.style.color = '#fff'
-                  }}
-                  onMouseLeave={(e) => {
-                    const el = e.currentTarget as HTMLElement
-                    el.style.background = `${cat.color}10`
-                    el.style.color = cat.color
-                  }}
+      <main className="max-w-container-max mx-auto">
+        {/* Hero Banner */}
+        <section className="px-gutter pt-8">
+          <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-primary-container to-tertiary h-[500px] flex items-center px-12 lg:px-24">
+            <div className="absolute inset-0 opacity-20">
+              <div className="absolute top-0 left-0 w-full h-full" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '40px 40px' }}></div>
+            </div>
+            <div className="relative z-10 max-w-xl text-white">
+              <span className="inline-block px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-md font-label-md text-label-md mb-6">Mùa Sale Đỉnh Nhất Năm 2024</span>
+              <h1 className="font-display-lg text-display-lg mb-4 leading-tight">
+                Nâng Tầm Trải Nghiệm <span className="text-[#f97316]">Mua Sắm Việt</span>
+              </h1>
+              <p className="font-body-lg text-body-lg mb-8 opacity-90">Hàng triệu sản phẩm chính hãng với ưu đãi đặc quyền. Giao hàng thần tốc, bảo hành tận tâm.</p>
+              <div className="flex gap-4">
+                <Link
+                  href="/products"
+                  className="orange-gradient orange-glow text-white px-8 py-3.5 rounded-xl font-headline-sm text-headline-sm transition-transform hover:scale-105 active:scale-95"
                 >
-                  <span className="material-symbols-outlined text-4xl">{cat.icon}</span>
-                </div>
-                <span className="font-bold text-m3-on-surface text-center text-sm">{cat.name}</span>
+                  Mua Sắm Ngay
+                </Link>
+                <Link
+                  href="/products"
+                  className="bg-white/10 backdrop-blur-md border border-white/30 text-white px-8 py-3.5 rounded-xl font-headline-sm text-headline-sm hover:bg-white/20 transition-all"
+                >
+                  Khám Phá
+                </Link>
               </div>
             </div>
-          ))}
-        </div>
-      </section>
+            <div className="hidden lg:block absolute right-24 top-1/2 -translate-y-1/2 w-96 h-96 animate-float">
+              <div className="w-full h-full flex items-center justify-center text-white/30">
+                <span className="material-symbols-outlined text-8xl">shopping_bag</span>
+              </div>
+            </div>
+          </div>
+        </section>
 
-      {/* Recommended Products */}
-      <section className="max-w-[1280px] mx-auto px-4 py-16">
-        <div className="mb-12 text-center">
-          <h2 className="font-heading text-3xl font-bold text-m3-on-surface mb-4">Recommended For You</h2>
-          <div className="h-1 w-20 mx-auto rounded-full" style={{ background: '#f97316' }}></div>
-        </div>
-
-        {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="bg-white rounded-2xl animate-pulse overflow-hidden border border-outline-variant/20">
-                <div className="h-64 bg-neutral-200" />
-                <div className="p-5 space-y-3">
-                  <div className="h-4 bg-neutral-200 rounded w-1/3" />
-                  <div className="h-4 bg-neutral-200 rounded w-3/4" />
-                  <div className="h-8 bg-neutral-200 rounded w-1/2" />
+        {/* Trust Badges */}
+        <section className="px-gutter py-12 reveal-section">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {TRUST_ITEMS.map((item) => (
+              <div key={item.title} className="flex items-center gap-4 p-6 rounded-2xl bg-surface-container-low hover:bg-surface-container transition-all">
+                <div className="w-12 h-12 rounded-full orange-gradient flex items-center justify-center text-white shrink-0">
+                  <span className="material-symbols-outlined">{item.icon}</span>
+                </div>
+                <div>
+                  <h4 className="font-headline-sm text-headline-sm text-[16px]">{item.title}</h4>
+                  <p className="text-on-surface-variant font-caption text-caption">{item.desc}</p>
                 </div>
               </div>
             ))}
           </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {products?.slice(0, 8).map((product) => {
-              const minPrice = product.variants.length > 0
-                ? Math.min(...product.variants.map((v) => product.basePrice + v.extraPrice))
-                : product.basePrice
-              return (
-                <div
-                  key={product.id}
-                  className="bg-white rounded-2xl shadow-sm transition-all duration-300 flex flex-col overflow-hidden group border border-outline-variant/20 hover:-translate-y-1"
-                  style={{ boxShadow: '0 4px 6px -1px rgba(71, 71, 208, 0.1)' }}
-                >
-                  <Link href={`/products/${product.id}`}>
-                    <div className="relative h-64 overflow-hidden bg-surface-container-low">
-                      {product.images[0] ? (
-                        <img
-                          src={product.images[0].url}
-                          alt={product.productName}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                           onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_400 }}
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-m3-outline">
-                          <span className="material-symbols-outlined text-5xl">image</span>
+        </section>
+
+        {/* Category Quick Access */}
+        <section className="px-gutter py-stack-lg reveal-section">
+          <div className="flex justify-between items-end mb-8">
+            <div>
+              <h2 className="font-headline-lg text-headline-lg">Danh Mục Nổi Bật</h2>
+              <p className="text-on-surface-variant">Khám phá thế giới mua sắm đa dạng</p>
+            </div>
+            <Link href="/products" className="text-primary font-label-md hover:underline flex items-center gap-1">
+              Xem tất cả <span className="material-symbols-outlined text-[18px]">chevron_right</span>
+            </Link>
+          </div>
+          <div className="grid grid-cols-3 md:grid-cols-6 gap-6">
+            {CATEGORIES.map((cat) => (
+              <Link key={cat.name} href="/products" className="group cursor-pointer text-center">
+                <div className="aspect-square rounded-3xl bg-surface-container hover:bg-primary-fixed-dim transition-all flex items-center justify-center mb-3 group-hover:-translate-y-2">
+                  <span className="material-symbols-outlined text-4xl text-primary">{cat.icon}</span>
+                </div>
+                <span className="font-label-md text-label-md">{cat.name}</span>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* Flash Sale Section */}
+        <section className="px-gutter py-section-gap reveal-section">
+          <div className="bg-surface-container-high rounded-[32px] p-8 lg:p-12 overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-64 h-64 orange-gradient blur-[120px] opacity-20"></div>
+            <div className="flex flex-col md:flex-row justify-between items-center gap-8 mb-10 relative z-10">
+              <div className="flex items-center gap-6">
+                <h2 className="font-headline-lg text-headline-lg flex items-center gap-3">
+                  <span className="material-symbols-outlined text-4xl text-[#f97316]" style={{ fontVariationSettings: "'FILL' 1" }}>bolt</span>
+                  Flash Sale
+                </h2>
+                <CountdownTimer />
+              </div>
+              <Link href="/products" className="orange-gradient text-white px-6 py-2 rounded-full font-label-md">Khám phá tất cả ưu đãi</Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
+              {isLoading ? (
+                [...Array(4)].map((_, i) => (
+                  <div key={i} className="bg-white rounded-2xl p-4 animate-pulse">
+                    <div className="h-64 bg-neutral-200 rounded-xl mb-4" />
+                    <div className="h-4 bg-neutral-200 rounded w-3/4 mb-2" />
+                    <div className="h-4 bg-neutral-200 rounded w-1/2" />
+                  </div>
+                ))
+              ) : (
+                products?.slice(0, 4).map((product) => {
+                  const minPrice = product.variants.length > 0
+                    ? Math.min(...product.variants.map((v) => product.basePrice + v.extraPrice))
+                    : product.basePrice
+                  const maxPrice = product.variants.length > 0
+                    ? Math.max(...product.variants.map((v) => product.basePrice + v.extraPrice))
+                    : product.basePrice
+                  const totalStock = product.variants.reduce((s, v) => s + v.stock, 0)
+                  const barPercent = Math.min(totalStock, 100)
+                  const discount = maxPrice > minPrice ? Math.round((1 - minPrice / maxPrice) * 100) : 40
+                  return (
+                    <div
+                      key={product.id}
+                      className="bg-white rounded-2xl p-4 shadow-sm group hover:shadow-lg transition-all border border-outline-variant/30"
+                    >
+                      <Link href={`/products/${product.id}`}>
+                        <div className="relative overflow-hidden rounded-xl mb-4">
+                          {discount > 0 && (
+                            <span className="absolute top-2 left-2 z-20 bg-error text-white text-[12px] font-bold px-2 py-1 rounded-lg">-{discount}%</span>
+                          )}
+                          {product.images[0] ? (
+                            <img
+                              src={product.images[0].url}
+                              alt={product.productName}
+                              className="w-full aspect-square object-cover group-hover:scale-110 transition-transform duration-500"
+                              onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_400 }}
+                            />
+                          ) : (
+                            <div className="w-full aspect-square flex items-center justify-center text-outline bg-surface-container-low">
+                              <span className="material-symbols-outlined text-5xl">image</span>
+                            </div>
+                          )}
+                          <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-4 pointer-events-none">
+                            <span className="orange-gradient text-white px-6 py-2 rounded-full font-label-md transform translate-y-8 group-hover:translate-y-0 transition-transform inline-block">Thêm vào giỏ</span>
+                          </div>
                         </div>
-                      )}
-                      <button
-                        className="absolute top-3 right-3 h-10 w-10 rounded-full bg-white/80 backdrop-blur shadow-sm flex items-center justify-center text-error opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-50 hover:scale-110 active:scale-95 transition-all"
-                        onClick={(e) => {
-                          e.preventDefault()
-                          if (!isAuthenticated) { router.push('/login?from=/products'); return }
-                          addToWishlist(product.id)
-                        }}
-                      >
-                        <span className="material-symbols-outlined">favorite</span>
-                      </button>
+                      </Link>
+                      <Link href={`/products/${product.id}`}>
+                        <h3 className="font-headline-sm text-[16px] mb-2 truncate">{product.productName}</h3>
+                      </Link>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-error font-price-display text-price-display">{formatPrice(minPrice)}</p>
+                          {discount > 0 && <p className="text-outline text-caption line-through">{formatPrice(maxPrice)}</p>}
+                        </div>
+                        <div className="w-20 bg-surface-container-highest rounded-full h-2 relative overflow-hidden">
+                          <div className="absolute top-0 left-0 h-full orange-gradient" style={{ width: `${barPercent}%` }}></div>
+                        </div>
+                      </div>
                     </div>
-                  </Link>
-                  <div className="p-5 flex flex-col flex-grow">
-                    <div className="flex items-center gap-1 mb-2">
-                      <span className="material-symbols-outlined text-sm" style={{ color: '#f97316', fontVariationSettings: "'FILL' 1" }}>star</span>
-                      <span className="text-xs font-bold">4.9</span>
-                      <span className="text-xs text-m3-on-surface-variant">(128)</span>
-                    </div>
-                    <Link href={`/products/${product.id}`}>
-                      <h4 className="font-bold text-m3-on-surface mb-1 group-hover:text-primary transition-colors text-sm">{product.productName}</h4>
-                      <p className="text-xs text-m3-on-surface-variant mb-4 line-clamp-2">
-                        {product.description || 'Premium quality product curated for you.'}
-                      </p>
-                    </Link>
-                    <div className="mt-auto flex items-center justify-between">
-                      <span className="font-bold text-lg text-m3-on-surface">{formatPrice(minPrice)}</span>
-                      <button
-                        className="h-10 w-10 rounded-xl text-white flex items-center justify-center transition-colors active:scale-95"
-                        style={{ background: '#0035d1' }}
-                        onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = '#f97316' }}
-                        onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = '#0035d1' }}
-                        onClick={(e) => {
-                          e.preventDefault()
-                          if (!isAuthenticated) { router.push('/login?from=/products'); return }
-                          const firstVariant = product.variants[0]
-                          if (firstVariant) {
-                            addToCart({ productId: product.id, variantId: firstVariant.id, quantity: 1 })
-                          }
-                        }}
-                      >
-                        <span className="material-symbols-outlined">add_shopping_cart</span>
-                      </button>
-                    </div>
+                  )
+                })
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* Featured Products */}
+        <section className="px-gutter pb-24 reveal-section">
+          <div className="flex flex-col md:flex-row justify-between items-center mb-10">
+            <div>
+              <h2 className="font-headline-lg text-headline-lg">Gợi Ý Hôm Nay</h2>
+              <p className="text-on-surface-variant">Sản phẩm được tuyển chọn dành riêng cho bạn</p>
+            </div>
+            <div className="flex gap-2 mt-4 md:mt-0">
+              <button className="px-4 py-2 rounded-full bg-primary text-white font-label-md">Tất cả</button>
+              <button className="px-4 py-2 rounded-full bg-surface-container text-on-surface-variant hover:bg-surface-variant transition-colors font-label-md">Theo xu hướng</button>
+              <button className="px-4 py-2 rounded-full bg-surface-container text-on-surface-variant hover:bg-surface-variant transition-colors font-label-md">Mới nhất</button>
+            </div>
+          </div>
+
+          {isLoading ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="bg-white rounded-2xl animate-pulse overflow-hidden border border-outline-variant/20">
+                  <div className="aspect-[4/5] bg-neutral-200" />
+                  <div className="p-4 space-y-3">
+                    <div className="h-4 bg-neutral-200 rounded w-1/3" />
+                    <div className="h-4 bg-neutral-200 rounded w-3/4" />
+                    <div className="h-8 bg-neutral-200 rounded w-1/2" />
                   </div>
                 </div>
-              )
-            })}
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+              {products?.slice(0, 10).map((product) => {
+                const minPrice = product.variants.length > 0
+                  ? Math.min(...product.variants.map((v) => product.basePrice + v.extraPrice))
+                  : product.basePrice
+                return (
+                  <div
+                    key={product.id}
+                    className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group"
+                  >
+                    <Link href={`/products/${product.id}`}>
+                      <div className="relative overflow-hidden">
+                        <div className="absolute top-2 left-2 z-10">
+                          <span className="bg-primary/10 text-primary text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded-md backdrop-blur-md">Bán chạy</span>
+                        </div>
+                        {product.images[0] ? (
+                          <img
+                            src={product.images[0].url}
+                            alt={product.productName}
+                            className="w-full aspect-[4/5] object-cover group-hover:scale-110 transition-transform duration-700"
+                            onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_400 }}
+                          />
+                        ) : (
+                          <div className="w-full aspect-[4/5] flex items-center justify-center text-outline bg-surface-container-low">
+                            <span className="material-symbols-outlined text-5xl">image</span>
+                          </div>
+                        )}
+                        <div className="absolute top-2 right-2 flex flex-col gap-2 translate-x-12 group-hover:translate-x-0 transition-transform">
+                          <button
+                            className="w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center text-on-surface-variant hover:text-error transition-colors"
+                            onClick={(e) => {
+                              e.preventDefault()
+                              if (!isAuthenticated) { router.push('/login?from=/products'); return }
+                              addToWishlist(product.id)
+                            }}
+                          >
+                            <span className="material-symbols-outlined text-sm">favorite</span>
+                          </button>
+                          <button
+                            className="w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors"
+                            onClick={(e) => {
+                              e.preventDefault()
+                              router.push(`/products/${product.id}`)
+                            }}
+                          >
+                            <span className="material-symbols-outlined text-sm">visibility</span>
+                          </button>
+                        </div>
+                      </div>
+                    </Link>
+                    <div className="p-4">
+                      <Link href={`/products/${product.id}`}>
+                        <h3 className="font-body-md text-body-md mb-2 h-12 overflow-hidden">{product.productName}</h3>
+                      </Link>
+                      <div className="flex items-center justify-between mt-auto">
+                        <p className="font-price-display text-price-display text-primary">{formatPrice(minPrice)}</p>
+                        <button
+                          className="w-8 h-8 rounded-lg orange-gradient text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={(e) => {
+                            e.preventDefault()
+                            if (!isAuthenticated) { router.push('/login?from=/products'); return }
+                            const firstVariant = product.variants[0]
+                            if (firstVariant) {
+                              addToCart({ productId: product.id, variantId: firstVariant.id, quantity: 1 })
+                            }
+                          }}
+                        >
+                          <span className="material-symbols-outlined text-sm">add_shopping_cart</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+
+          <div className="mt-12 text-center">
+            <Link
+              href="/products"
+              className="border-2 border-primary text-primary px-10 py-3 rounded-xl font-headline-sm hover:bg-primary hover:text-white transition-all inline-block"
+            >
+              Xem Thêm Sản Phẩm
+            </Link>
           </div>
-        )}
-      </section>
+        </section>
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-surface-container-highest border-t border-outline-variant">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-section-gap px-gutter py-section-gap max-w-container-max mx-auto">
+          <div className="col-span-1 md:col-span-1">
+            <img alt="TL Market Logo" className="h-10 w-auto mb-6" src="/logo-removebg-preview.png" />
+            <p className="text-on-surface-variant font-body-md text-body-md mb-6">Hệ thống bán lẻ hàng đầu Việt Nam, cung cấp giải pháp mua sắm hiện đại và tin cậy.</p>
+            <div className="flex gap-4">
+              <a className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary hover:orange-gradient hover:text-white transition-all" href="#">
+                <span className="material-symbols-outlined">public</span>
+              </a>
+              <a className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary hover:orange-gradient hover:text-white transition-all" href="#">
+                <span className="material-symbols-outlined">alternate_email</span>
+              </a>
+              <a className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary hover:orange-gradient hover:text-white transition-all" href="#">
+                <span className="material-symbols-outlined">phone_in_talk</span>
+              </a>
+            </div>
+          </div>
+          <div>
+            <h4 className="font-headline-sm text-headline-sm mb-6">Về TL Market</h4>
+            <ul className="space-y-4">
+              <li><a className="text-on-surface-variant hover:text-primary transition-colors font-body-md text-body-md" href="#">About Us</a></li>
+              <li><a className="text-on-surface-variant hover:text-primary transition-colors font-body-md text-body-md" href="#">Tin tức công ty</a></li>
+              <li><a className="text-on-surface-variant hover:text-primary transition-colors font-body-md text-body-md" href="#">Cơ hội nghề nghiệp</a></li>
+              <li><a className="text-on-surface-variant hover:text-primary transition-colors font-body-md text-body-md" href="#">Hệ thống cửa hàng</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-headline-sm text-headline-sm mb-6">Hỗ Trợ Khách Hàng</h4>
+            <ul className="space-y-4">
+              <li><a className="text-on-surface-variant hover:text-primary transition-colors font-body-md text-body-md" href="#">Contact</a></li>
+              <li><a className="text-on-surface-variant hover:text-primary transition-colors font-body-md text-body-md" href="#">Privacy Policy</a></li>
+              <li><a className="text-on-surface-variant hover:text-primary transition-colors font-body-md text-body-md" href="#">Terms of Service</a></li>
+              <li><a className="text-on-surface-variant hover:text-primary transition-colors font-body-md text-body-md" href="#">Shipping Info</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-headline-sm text-headline-sm mb-6">Đăng Ký Nhận Tin</h4>
+            <p className="text-on-surface-variant font-body-md text-body-md mb-4">Newsletter Signup - Nhận ngay voucher 100k cho đơn hàng đầu tiên.</p>
+            <div className="flex gap-2">
+              <input className="bg-surface border-none rounded-xl py-2.5 px-4 focus:ring-2 focus:ring-primary w-full outline-none" placeholder="Email của bạn" type="email" />
+              <button className="orange-gradient text-white p-2.5 rounded-xl flex items-center justify-center">
+                <span className="material-symbols-outlined">send</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div className="border-t border-outline-variant/30 py-6 text-center">
+          <p className="text-outline font-caption text-caption">© 2024 TL Market. All rights reserved.</p>
+        </div>
+      </footer>
     </>
   )
 }
