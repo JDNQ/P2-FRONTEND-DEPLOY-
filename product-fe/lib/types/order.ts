@@ -32,6 +32,9 @@ export interface CreateOrderDto {
   items: { productId: number; variantId: number; quantity: number }[]
   voucherCode?: string
   note?: string
+  paymentMethod?: string
+  phoneNumber?: string
+  shippingAddress?: string
 }
 
 export interface UpdateOrderStatusDto {

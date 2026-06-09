@@ -62,7 +62,10 @@ export default function CheckoutPage() {
         quantity: item.quantity,
       })),
       voucherCode: voucherCode || undefined,
-      note: [note, fullName ? `Họ tên: ${fullName}` : '', phoneNumber ? `SĐT: ${phoneNumber}` : '', shippingAddress ? `Địa chỉ: ${shippingAddress}` : ''].filter(Boolean).join('\n') || undefined,
+      note: note || undefined,
+      paymentMethod,
+      phoneNumber: phoneNumber || undefined,
+      shippingAddress: shippingAddress || undefined,
     })
   }
 

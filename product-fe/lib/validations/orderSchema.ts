@@ -10,6 +10,9 @@ export const createOrderSchema = z.object({
     .min(1, 'Giỏ hàng trống'),
   voucherCode: z.string().optional(),
   note: z.string().max(500, 'Ghi chú tối đa 500 ký tự').optional(),
+  paymentMethod: z.string().optional(),
+  phoneNumber: z.string().optional(),
+  shippingAddress: z.string().optional(),
 })
 
 export type CreateOrderValues = z.infer<typeof createOrderSchema>

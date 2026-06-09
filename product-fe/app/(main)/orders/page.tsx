@@ -4,7 +4,6 @@ import { formatPrice } from '@/lib/utils/formatPrice'
 import { formatDate } from '@/lib/utils/formatDate'
 import Link from 'next/link'
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 
@@ -29,7 +28,6 @@ const STATUS_CONFIG: Record<string, { label: string; bg: string; text: string; i
 export default function OrdersPage() {
   const { data: orders, isLoading } = useMyOrders()
   const [activeTab, setActiveTab] = useState('Tất cả')
-  const router = useRouter()
 
   const orderList = (orders || []).filter((o) => {
     const key = TAB_KEY_MAP[activeTab]
@@ -175,18 +173,15 @@ export default function OrdersPage() {
                       <p className="font-price-display text-price-display text-primary">{formatPrice(order.totalPrice)}</p>
                     </div>
 
-                    <button
+                    <Link
+                      href={isCancelled ? '/products' : `/orders/${order.id}`}
                       className="w-full md:w-auto px-6 py-3 border-2 border-neutral-100 rounded-xl font-label-md transition-all active:scale-95 flex items-center justify-center gap-2 bg-white hover:bg-primary hover:text-white hover:border-transparent"
-                      onClick={() => {
-                        if (isCancelled) { router.push('/products') }
-                        else { router.push(`/checkout/success`) }
-                      }}
                     >
-                      <span>{isCancelled ? 'Mua lại' : order.status === 'SHIPPING' ? 'Theo dõi' : 'Chi tiết'}</span>
+                      <span>{isCancelled ? 'Mua lại' : 'Chi tiết'}</span>
                       <span className="material-symbols-outlined text-[18px]">
-                        {isCancelled ? 'replay' : order.status === 'SHIPPING' ? 'map' : 'chevron_right'}
+                        {isCancelled ? 'replay' : 'chevron_right'}
                       </span>
-                    </button>
+                    </Link>
                   </div>
                 </div>
               )
