@@ -53,10 +53,11 @@ export const useAuthStore = create<AuthStore>()(
       setAuth: (user, token) => {
         localStorage.setItem("tl_access_token", token);
         api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-        // Nếu user có avatarUrl từ BE thì dùng, nếu không thì merge avatar từ localStorage riêng
-        const mergedUser = user.avatarUrl
-          ? user
-          : { ...user, avatarUrl: readLocalAvatar(user.id) ?? undefined };
+        // Luôn ưu tiên avatar từ localStorage hơn BE (vì BE có thể trả avatar cũ)
+        const localAvatar = readLocalAvatar(user.id);
+        const mergedUser = localAvatar
+          ? { ...user, avatarUrl: localAvatar }
+          : user;
         set({ user: mergedUser, token, isAuthenticated: true });
       },
       updateUser: (partial) => {
@@ -100,9 +101,7 @@ export const useAuthStore = create<AuthStore>()(
         return (state, error) => {
           if (error || !state?.user?.id) return;
           const localAvatar = readLocalAvatar(state.user.id);
-          if (localAvatar && !state.user.avatarUrl) {
-            state.user.avatarUrl = localAvatar;
-            // Force re-render bằng cách set state
+          if (localAvatar && localAvatar !== state.user.avatarUrl) {
             useAuthStore.setState({
               user: { ...state.user, avatarUrl: localAvatar },
             });
