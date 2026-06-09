@@ -102,7 +102,7 @@ export default function RegisterPage() {
             <div className="animate-entrance space-y-1">
               <label className="block text-xs font-bold text-on-surface" htmlFor="username">Tên người dùng</label>
               <div className="relative">
-                <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-outline text-lg">person</span>
+                <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-outline text-lg"></span>
                 <input {...form.register('username')} id="username" placeholder="Nhập tên đăng nhập"
                   className="block w-full pl-9 pr-3 py-2.5 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none text-sm text-on-surface placeholder:text-outline-variant" />
               </div>
@@ -114,7 +114,7 @@ export default function RegisterPage() {
             <div className="animate-entrance space-y-1">
               <label className="block text-xs font-bold text-on-surface" htmlFor="email">Email (Không bắt buộc)</label>
               <div className="relative">
-                <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-outline text-lg">mail</span>
+                <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-outline text-lg"></span>
                 <input {...form.register('email')} id="email" type="email" placeholder="example@gmail.com"
                   className="block w-full pl-9 pr-3 py-2.5 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none text-sm text-on-surface placeholder:text-outline-variant" />
               </div>
@@ -126,7 +126,7 @@ export default function RegisterPage() {
             <div className="animate-entrance space-y-1">
               <label className="block text-xs font-bold text-on-surface" htmlFor="password">Mật khẩu</label>
               <div className="relative">
-                <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-outline text-lg">lock</span>
+                <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-outline text-lg"></span>
                 <input {...form.register('password')} id="password" type={showPassword ? 'text' : 'password'} placeholder="••••••••"
                   className="block w-full pl-9 pr-9 py-2.5 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none text-sm text-on-surface placeholder:text-outline-variant" />
                 <button type="button" onClick={() => setShowPassword(!showPassword)}
