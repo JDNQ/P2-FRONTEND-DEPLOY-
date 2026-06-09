@@ -6,7 +6,6 @@ import { useState, useRef } from 'react'
 import { toast } from 'sonner'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-import api from '@/lib/api/axiosInstance'
 
 const SIDEBAR = [
   { href: '/profile', label: 'Hồ sơ', icon: 'person' },
@@ -29,7 +28,7 @@ export default function ProfilePage() {
     bio: 'Tech enthusiast and frequent shopper at TL Market.',
   })
 
-  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
@@ -45,33 +44,38 @@ export default function ProfilePage() {
     }
 
     setUploading(true)
-    try {
-      const form = new FormData()
-      form.append('file', file)
 
-      const { data } = await api.post('/files/upload', form, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      })
+    // Đọc file thành base64
+    const reader = new FileReader()
+    reader.onload = () => {
+      const base64 = reader.result as string
 
-      // data.url hoặc data.data.url tùy backend response
-      const avatarUrl = data.url || data.data?.url
+      // Cập nhật user trong store với avatarUrl
+      if (user) {
+        const token = localStorage.getItem('tl_access_token') || ''
+        setAuth({ ...user, avatarUrl: base64 }, token)
+        // Lưu thêm vào localStorage để persist (vì zustand persist lưu theo key 'tl_auth')
+        const stored = localStorage.getItem('tl_auth')
+        if (stored) {
+          try {
+            const parsed = JSON.parse(stored)
+            parsed.state.user.avatarUrl = base64
+            localStorage.setItem('tl_auth', JSON.stringify(parsed))
+          } catch { /* ignore */ }
+        }
+      }
 
-      // Gọi API cập nhật user
-      const { data: userData } = await api.patch('/auth/profile', { avatarUrl })
-      const updatedUser = userData.data || userData
-
-      // Cập nhật lại store với token hiện tại
-      const token = localStorage.getItem('tl_access_token') || ''
-      setAuth(updatedUser, token)
-
-      toast.success('Cập nhật ảnh đại diện thành công!')
-    } catch {
-      toast.error('Tải ảnh thất bại, vui lòng thử lại')
-    } finally {
       setUploading(false)
-      // Reset input để có thể upload lại cùng file
-      if (fileInputRef.current) fileInputRef.current.value = ''
+      toast.success('Cập nhật ảnh đại diện thành công!')
     }
+    reader.onerror = () => {
+      setUploading(false)
+      toast.error('Đọc file thất bại, vui lòng thử lại')
+    }
+    reader.readAsDataURL(file)
+
+    // Reset input để có thể upload lại cùng file
+    if (fileInputRef.current) fileInputRef.current.value = ''
   }
 
   const handleSave = async (e: React.FormEvent) => {
