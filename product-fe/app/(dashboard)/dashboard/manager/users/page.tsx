@@ -1,12 +1,26 @@
 'use client'
 import Link from 'next/link'
 import { useUsers, useUserStats, useToggleUserStatus, useDeleteUser } from '@/lib/hooks/useUsers'
+import { useState, useMemo } from 'react'
 
 export default function ManagerUsersPage() {
   const { data: users = [], isLoading: usersLoading } = useUsers()
   const { data: stats } = useUserStats()
   const { mutate: toggleStatus } = useToggleUserStatus()
   const { mutate: deleteUser } = useDeleteUser()
+  const [searchQuery, setSearchQuery] = useState('')
+
+  // Search filter logic
+  const filteredUsers = useMemo(() => {
+    if (!searchQuery.trim()) return users
+    const term = searchQuery.toLowerCase()
+    return users.filter(
+      (u) =>
+        u.username.toLowerCase().includes(term) ||
+        u.email.toLowerCase().includes(term) ||
+        u.role.toLowerCase().includes(term)
+    )
+  }, [users, searchQuery])
 
   return (
     <div className="space-y-6">
@@ -58,6 +72,8 @@ export default function ManagerUsersPage() {
               <input
                 type="text"
                 placeholder="Search by name or email..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-9 pr-3 py-1.5 bg-[#f5f2ff] border border-[#c4c5d9] rounded-lg text-[12px] leading-[16px] outline-none focus:ring-1 focus:ring-[#0035d1] w-56"
               />
             </div>
@@ -93,7 +109,7 @@ export default function ManagerUsersPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#c4c5d9]/20">
-                {users.map((u) => {
+                {filteredUsers.map((u) => {
                   const roleColors: Record<string, { bg: string; text: string; initialsBg: string; initialsColor: string }> = {
                     MANAGER: { bg: 'bg-[#3432c8]/10', text: 'text-[#3432c8]', initialsBg: '#4e4fe0', initialsColor: '#ffffff' },
                     ADMIN: { bg: 'bg-[#1e4cfd]/10', text: 'text-[#0035d1]', initialsBg: '#1e4cfd', initialsColor: '#ffffff' },
@@ -143,7 +159,7 @@ export default function ManagerUsersPage() {
                             <span className="material-symbols-outlined text-sm">toggle_off</span>
                           </button>
                           <button
-                            onClick={() => { if (confirm('Delete this user?')) deleteUser(u.id) }}
+                            onClick={() => { if (confirm('Bạn chắc chắn muốn xoá người dùng này?')) deleteUser(u.id) }}
                             className="p-2 hover:bg-[#ffdad6] hover:text-[#ba1a1a] rounded-lg transition-all"
                             title="Delete"
                           >
@@ -160,7 +176,7 @@ export default function ManagerUsersPage() {
         )}
         {/* Pagination */}
         <div className="px-6 py-4 flex items-center justify-between bg-[#f5f2ff] border-t border-[#c4c5d9]">
-          <span className="text-[12px] leading-[16px] text-[#444656]">Showing {users.length} users</span>
+          <span className="text-[12px] leading-[16px] text-[#444656]">Showing {filteredUsers.length} users</span>
           <div className="flex items-center gap-2">
             <button className="p-2 rounded-lg hover:bg-[#e1dfff] transition-colors">
               <span className="material-symbols-outlined text-sm">chevron_left</span>

@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
+import { toast } from 'sonner'
 
 export default function ForgotPasswordPage() {
   const [identifier, setIdentifier] = useState('')
@@ -13,6 +14,7 @@ export default function ForgotPasswordPage() {
     await new Promise((r) => setTimeout(r, 1500))
     setIsLoading(false)
     setIsSent(true)
+    toast.success('Đã gửi yêu cầu đặt lại mật khẩu!')
   }
 
   return (
@@ -146,10 +148,13 @@ export default function ForgotPasswordPage() {
           {/* Footer */}
           <footer className="mt-auto pt-12 border-t border-m3-outline-variant/30 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-m3-on-surface-variant">
             <p>© 2024 TL Market. All rights reserved.</p>
-            <a className="flex items-center gap-1.5 hover:text-m3-primary transition-colors font-medium" href="#">
+            <button 
+              onClick={() => toast.success('Đang kết nối với hỗ trợ kỹ thuật...')}
+              className="flex items-center gap-1.5 hover:text-m3-primary transition-colors font-medium bg-transparent border-none outline-none"
+            >
               <span className="material-symbols-outlined text-sm">headphones</span>
               Liên hệ kỹ thuật
-            </a>
+            </button>
           </footer>
         </section>
       </main>

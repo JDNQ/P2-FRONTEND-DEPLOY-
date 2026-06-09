@@ -4,6 +4,7 @@ import { formatPrice } from '@/lib/utils/formatPrice'
 import { PLACEHOLDER_48 } from '@/lib/utils/placeholder'
 import { useState } from 'react'
 import Link from 'next/link'
+import { toast } from 'sonner'
 
 const PAGE_SIZE = 10
 
@@ -99,11 +100,19 @@ export default function AdminProductsPage() {
               <span className="material-symbols-outlined text-[18px]">add</span>
               Add Product
             </Link>
-            <button className="px-4 py-2 rounded-lg border border-[#c4c5d9] hover:bg-[#e1dfff] transition-colors flex items-center gap-2 text-[14px] leading-[20px] font-medium text-[#444656]" style={{ backgroundColor: '#fcf8ff' }}>
+            <button 
+              onClick={() => toast.info('Chức năng lọc sản phẩm đang được phát triển!')}
+              className="px-4 py-2 rounded-lg border border-[#c4c5d9] hover:bg-[#e1dfff] transition-colors flex items-center gap-2 text-[14px] leading-[20px] font-medium text-[#444656]" 
+              style={{ backgroundColor: '#fcf8ff' }}
+            >
               <span className="material-symbols-outlined text-[18px]">filter_alt</span>
               Filters
             </button>
-            <button className="px-4 py-2 rounded-lg border border-[#c4c5d9] hover:bg-[#e1dfff] transition-colors flex items-center gap-2 text-[14px] leading-[20px] font-medium text-[#444656]" style={{ backgroundColor: '#fcf8ff' }}>
+            <button 
+              onClick={() => toast.success('Đã xuất danh sách sản phẩm thành công!')}
+              className="px-4 py-2 rounded-lg border border-[#c4c5d9] hover:bg-[#e1dfff] transition-colors flex items-center gap-2 text-[14px] leading-[20px] font-medium text-[#444656]" 
+              style={{ backgroundColor: '#fcf8ff' }}
+            >
               <span className="material-symbols-outlined text-[18px]">download</span>
               Export
             </button>
@@ -192,7 +201,7 @@ export default function AdminProductsPage() {
                             <span className="material-symbols-outlined">edit</span>
                           </Link>
                           <button
-                            onClick={() => { if (confirm('Delete this product?')) deleteProduct.mutate(product.id) }}
+                            onClick={() => { if (confirm('Bạn chắc chắn muốn xoá sản phẩm này?')) deleteProduct.mutate(product.id) }}
                             className="p-2 hover:bg-[#ffdad6] hover:text-[#93000a] rounded-lg transition-all text-[#444656]"
                           >
                             <span className="material-symbols-outlined">delete</span>
@@ -212,7 +221,10 @@ export default function AdminProductsPage() {
           <div className="px-6 py-4 border-t border-[#c4c5d9]/30 flex justify-between items-center" style={{ backgroundColor: '#f5f2ff' }}>
             <div className="flex items-center gap-4">
               <p className="text-[12px] leading-[16px] text-[#747688]">Rows per page:</p>
-              <select className="bg-transparent border-none focus:ring-0 text-[14px] leading-[20px] font-bold cursor-pointer outline-none">
+              <select 
+                onChange={() => toast.info('Chức năng số dòng hiển thị động sẽ sớm được cập nhật!')}
+                className="bg-transparent border-none focus:ring-0 text-[14px] leading-[20px] font-bold cursor-pointer outline-none"
+              >
                 <option>10</option>
                 <option>25</option>
                 <option>50</option>

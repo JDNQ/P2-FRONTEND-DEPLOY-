@@ -2,24 +2,47 @@
 import { useAuthStore } from '@/lib/stores/authStore'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
+import { useState } from 'react'
+import { toast } from 'sonner'
 
 const SIDEBAR = [
   { href: '/profile', label: 'Profile', icon: 'person' },
   { href: '/orders', label: 'Orders', icon: 'package' },
   { href: '/wishlist', label: 'Wishlist', icon: 'favorite' },
-  { href: '#', label: 'Notifications', icon: 'notifications' },
+  { href: '/notifications', label: 'Notifications', icon: 'notifications' },
 ]
 
 export default function ProfilePage() {
   const { user, clearAuth, isAuthenticated } = useAuthStore()
   const router = useRouter()
   const pathname = usePathname()
+  const [isSaving, setIsSaving] = useState(false)
+  const [formData, setFormData] = useState({
+    username: user?.username || '',
+    email: user?.email || '',
+    phone: '',
+    bio: 'Tech enthusiast and frequent shopper at TL Market.',
+  })
 
   const handleLogout = () => {
     clearAuth()
     document.cookie = 'tl_token=; path=/; max-age=0'
     document.cookie = 'tl_role=; path=/; max-age=0'
     router.push('/')
+  }
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSaving(true)
+    try {
+      // Simulate API call - profile update endpoint
+      await new Promise((resolve) => setTimeout(resolve, 800))
+      toast.success('Cập nhật thông tin thành công!')
+    } catch {
+      toast.error('Cập nhật thất bại, vui lòng thử lại')
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   if (!isAuthenticated || !user) {
@@ -151,14 +174,15 @@ export default function ProfilePage() {
               </div>
 
               {/* Form */}
-              <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+              <form className="space-y-6" onSubmit={handleSave}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-[14px] leading-[20px] font-medium text-[#444656] px-1">Username</label>
                     <input
                       type="text"
-                      defaultValue={user.username}
-                      className="w-full rounded-xl py-3 px-4 text-[16px] leading-[24px] transition-all outline-none border border-[#c4c5d9]"
+                      value={formData.username}
+                      onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                      className="w-full rounded-xl py-3 px-4 text-[16px] leading-[24px] transition-all outline-none border border-[#c4c5d9] focus:border-[#0035d1] focus:ring-1 focus:ring-[#0035d1]"
                       style={{ backgroundColor: '#f5f2ff' }}
                     />
                   </div>
@@ -166,8 +190,10 @@ export default function ProfilePage() {
                     <label className="text-[14px] leading-[20px] font-medium text-[#444656] px-1">Email Address</label>
                     <input
                       type="email"
-                      defaultValue={user.email || 'user@example.com'}
-                      className="w-full rounded-xl py-3 px-4 text-[16px] leading-[24px] transition-all outline-none border border-[#c4c5d9]"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      placeholder="user@example.com"
+                      className="w-full rounded-xl py-3 px-4 text-[16px] leading-[24px] transition-all outline-none border border-[#c4c5d9] focus:border-[#0035d1] focus:ring-1 focus:ring-[#0035d1]"
                       style={{ backgroundColor: '#f5f2ff' }}
                     />
                   </div>
@@ -175,8 +201,10 @@ export default function ProfilePage() {
                     <label className="text-[14px] leading-[20px] font-medium text-[#444656] px-1">Phone Number</label>
                     <input
                       type="tel"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       placeholder="Enter phone number"
-                      className="w-full rounded-xl py-3 px-4 text-[16px] leading-[24px] transition-all outline-none border border-[#c4c5d9]"
+                      className="w-full rounded-xl py-3 px-4 text-[16px] leading-[24px] transition-all outline-none border border-[#c4c5d9] focus:border-[#0035d1] focus:ring-1 focus:ring-[#0035d1]"
                       style={{ backgroundColor: '#f5f2ff' }}
                     />
                   </div>
@@ -184,39 +212,49 @@ export default function ProfilePage() {
                     <label className="text-[14px] leading-[20px] font-medium text-[#444656] px-1">Birthday</label>
                     <div className="relative">
                       <input
-                        type="text"
-                        placeholder="Select date"
-                        className="w-full rounded-xl py-3 px-4 text-[16px] leading-[24px] transition-all outline-none border border-[#c4c5d9]"
+                        type="date"
+                        className="w-full rounded-xl py-3 px-4 text-[16px] leading-[24px] transition-all outline-none border border-[#c4c5d9] focus:border-[#0035d1] focus:ring-1 focus:ring-[#0035d1]"
                         style={{ backgroundColor: '#f5f2ff' }}
                       />
-                      <span className="material-symbols-outlined absolute right-4 top-3 text-[#747688]">calendar_today</span>
                     </div>
                   </div>
                 </div>
                 <div className="space-y-2 pt-4">
                   <label className="text-[14px] leading-[20px] font-medium text-[#444656] px-1">Biography (Optional)</label>
                   <textarea
-                    placeholder="Write a short bio about yourself..."
+                    value={formData.bio}
+                    onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
                     rows={4}
-                    className="w-full rounded-xl py-3 px-4 text-[16px] leading-[24px] transition-all outline-none border border-[#c4c5d9] resize-none"
+                    className="w-full rounded-xl py-3 px-4 text-[16px] leading-[24px] transition-all outline-none border border-[#c4c5d9] resize-none focus:border-[#0035d1] focus:ring-1 focus:ring-[#0035d1]"
                     style={{ backgroundColor: '#f5f2ff' }}
-                    defaultValue={`Tech enthusiast and frequent shopper at TL Market.`}
                   />
                 </div>
                 <div className="flex flex-col sm:flex-row gap-4 pt-8 border-t border-[#c4c5d9]/30">
                   <button
                     type="submit"
-                    className="flex-1 sm:flex-none px-8 py-3 text-white font-bold rounded-xl hover:scale-[1.02] active:scale-[0.98] transition-all"
+                    disabled={isSaving}
+                    className="flex-1 sm:flex-none px-8 py-3 text-white font-bold rounded-xl hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-60 flex items-center justify-center gap-2"
                     style={{
                       background: 'linear-gradient(135deg, #0035d1 0%, #3432c8 100%)',
                       boxShadow: '0 10px 15px -3px rgba(30, 76, 253, 0.25)',
                     }}
                   >
-                    Save Changes
+                    {isSaving ? (
+                      <>
+                        <span className="animate-spin h-4 w-4 border-2 border-white/30 border-t-white rounded-full" />
+                        Saving...
+                      </>
+                    ) : (
+                      <>
+                        <span className="material-symbols-outlined text-[18px]">save</span>
+                        Save Changes
+                      </>
+                    )}
                   </button>
                   <button
                     type="button"
-                    className="flex-1 sm:flex-none px-8 py-3 border rounded-xl font-bold transition-all"
+                    onClick={() => setFormData({ username: user.username, email: user.email || '', phone: '', bio: 'Tech enthusiast and frequent shopper at TL Market.' })}
+                    className="flex-1 sm:flex-none px-8 py-3 border rounded-xl font-bold transition-all hover:bg-[#e1dfff]"
                     style={{ borderColor: '#c4c5d9', color: '#0035d1', backgroundColor: '#fcf8ff' }}
                   >
                     Cancel

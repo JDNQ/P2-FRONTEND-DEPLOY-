@@ -1,9 +1,11 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
+import { toast } from 'sonner'
 import { useNotifications, useMarkNotificationRead, useMarkAllNotificationsRead, useDeleteNotification } from '@/lib/hooks/useNotifications'
 
 const FILTERS = ['All', 'Orders', 'Promotions', 'System']
+const ITEMS_PER_PAGE = 5
 
 export default function NotificationsPage() {
   const { data: notifications = [], isLoading } = useNotifications()
@@ -16,6 +18,10 @@ export default function NotificationsPage() {
   const filtered = activeFilter === 'All'
     ? notifications
     : notifications.filter(n => n.type === activeFilter)
+
+  // Client-side pagination logic
+  const visibleNotifications = filtered.slice(0, page * ITEMS_PER_PAGE)
+  const hasMore = filtered.length > visibleNotifications.length
 
   return (
     <div className="min-h-screen pb-16" style={{ backgroundColor: '#fcf8ff', color: '#08006c' }}>
@@ -33,7 +39,10 @@ export default function NotificationsPage() {
           </div>
           <div className="flex items-center gap-3">
             <button
-              onClick={() => markAllRead()}
+              onClick={() => {
+                markAllRead()
+                toast.success('Đã đánh dấu đọc tất cả thông báo!')
+              }}
               className="flex items-center gap-2 px-4 py-2 rounded-lg transition-all text-[14px] leading-[20px] font-medium active:scale-[0.98]"
               style={{ color: '#0035d1' }}
               onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(30, 76, 253, 0.1)' }}
@@ -42,7 +51,10 @@ export default function NotificationsPage() {
               <span className="material-symbols-outlined text-[20px]">done_all</span>
               Mark all as read
             </button>
-            <button className="p-2 text-[#444656] hover:bg-[#eeecff] rounded-lg transition-colors">
+            <button 
+              onClick={() => toast.info('Tính năng tùy chỉnh cài đặt thông báo đang được phát triển!')}
+              className="p-2 text-[#444656] hover:bg-[#eeecff] rounded-lg transition-colors"
+            >
               <span className="material-symbols-outlined">settings</span>
             </button>
           </div>
@@ -53,7 +65,10 @@ export default function NotificationsPage() {
           {FILTERS.map((f) => (
             <button
               key={f}
-              onClick={() => setActiveFilter(f)}
+              onClick={() => {
+                setActiveFilter(f)
+                setPage(1) // Reset page on filter change
+              }}
               className={`px-6 py-2.5 rounded-full text-[14px] leading-[20px] font-medium transition-all ${
                 activeFilter === f
                   ? 'text-white shadow-md'
@@ -75,7 +90,7 @@ export default function NotificationsPage() {
               <div key={i} className="h-32 bg-white rounded-xl animate-pulse border border-[#c4c5d9]" />
             ))}
           </div>
-        ) : filtered.length === 0 ? (
+        ) : visibleNotifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-center">
             <span className="material-symbols-outlined text-[80px] text-[#c4c5d9] mb-4">notifications_off</span>
             <h2 className="text-[24px] font-bold mb-2">No notifications</h2>
@@ -93,7 +108,7 @@ export default function NotificationsPage() {
           </div>
         ) : (
           <div className="space-y-4">
-            {filtered.map((n) => {
+            {visibleNotifications.map((n) => {
               const categoryColor = n.type === 'Orders' ? '#0035d1' : n.type === 'Promotions' ? '#3432c8' : '#4958a9'
               const icon = n.type === 'Orders' ? 'package_2' : n.type === 'Promotions' ? 'sell' : 'security'
               return (
@@ -144,7 +159,7 @@ export default function NotificationsPage() {
         )}
 
         {/* Load More */}
-        {filtered.length > 0 && (
+        {hasMore && (
           <div className="mt-12 flex flex-col items-center">
             <button
               onClick={() => setPage(p => p + 1)}

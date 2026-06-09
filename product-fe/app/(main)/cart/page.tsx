@@ -1,18 +1,30 @@
 'use client'
 import { useCart, useRemoveCartItem, useUpdateCartItem } from '@/lib/hooks/useCart'
+import { useAuthStore } from '@/lib/stores/authStore'
 import { formatPrice } from '@/lib/utils/formatPrice'
 import { PLACEHOLDER_96 } from '@/lib/utils/placeholder'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 export default function CartPage() {
-  const { data: cart, isLoading } = useCart()
+  const { isAuthenticated } = useAuthStore()
+  const router = useRouter()
+  const { data: cart, isLoading } = useCart(isAuthenticated)
   const { mutate: removeItem } = useRemoveCartItem()
   const { mutate: updateItem } = useUpdateCartItem()
   const [removingIds, setRemovingIds] = useState<number[]>([])
   const [mounted, setMounted] = useState(false)
+  const [voucherInput, setVoucherInput] = useState('')
 
   useEffect(() => { setMounted(true) }, [])
+
+  useEffect(() => {
+    if (mounted && !isAuthenticated) {
+      router.push('/login?from=/cart')
+    }
+  }, [mounted, isAuthenticated, router])
 
   const handleRemove = (id: number) => {
     setRemovingIds(prev => [...prev, id])
@@ -164,10 +176,16 @@ export default function CartPage() {
                     <input
                       type="text"
                       placeholder="NHẬP MÃ"
+                      value={voucherInput}
+                      onChange={(e) => setVoucherInput(e.target.value.toUpperCase())}
                       className="flex-grow bg-[#f5f2ff] border border-[#c4c5d9] rounded-xl px-4 py-2 text-[16px] leading-[24px] focus:ring-[#0035d1] focus:border-[#0035d1] uppercase tracking-wider outline-none transition-all"
                       style={{ fontFamily: 'Be Vietnam Pro, sans-serif' }}
                     />
                     <button
+                      onClick={() => {
+                        if (!voucherInput.trim()) { toast.error('Vui lòng nhập mã khuyến mãi'); return }
+                        toast.info(`Mã "${voucherInput}" sẽ được áp dụng khi thanh toán`)
+                      }}
                       className="text-white px-4 py-2 rounded-xl font-bold hover:opacity-90 transition-colors"
                       style={{ backgroundColor: '#4958a9' }}
                     >

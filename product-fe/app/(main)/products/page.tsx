@@ -1,6 +1,7 @@
 'use client'
 import { useProducts } from '@/lib/hooks/useProducts'
 import { useAddToCart } from '@/lib/hooks/useCart'
+import { useAddToWishlist } from '@/lib/hooks/useWishlist'
 import { useAuthStore } from '@/lib/stores/authStore'
 import { useRouter } from 'next/navigation'
 import { PLACEHOLDER_400 } from '@/lib/utils/placeholder'
@@ -12,6 +13,7 @@ export default function ProductsPage() {
   const { data: products, isLoading } = useProducts()
   const { isAuthenticated } = useAuthStore()
   const { mutate: addToCart } = useAddToCart()
+  const { mutate: addToWishlist } = useAddToWishlist()
   const router = useRouter()
   const [searchTerm, setSearchTerm] = useState('')
   const [sortBy, setSortBy] = useState('newest')
@@ -173,9 +175,16 @@ export default function ProductsPage() {
                             </div>
                           )}
                           <div className="absolute top-3 right-3 space-y-2">
-                            <button className="opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100 w-10 h-10 rounded-full bg-white text-primary flex items-center justify-center shadow-md transition-all duration-300 hover:text-error">
-                              <span className="material-symbols-outlined">favorite</span>
-                            </button>
+                            <button
+                            className="opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100 w-10 h-10 rounded-full bg-white text-primary flex items-center justify-center shadow-md transition-all duration-300 hover:text-error hover:bg-red-50"
+                            onClick={(e) => {
+                              e.preventDefault()
+                              if (!isAuthenticated) { router.push('/login?from=/products'); return }
+                              addToWishlist(product.id)
+                            }}
+                          >
+                            <span className="material-symbols-outlined">favorite</span>
+                          </button>
                           </div>
                           <div className="absolute top-3 left-3">
                             <span className="bg-tertiary-container/10 text-tertiary-fixed text-xs px-3 py-1 rounded-full font-bold backdrop-blur-md"

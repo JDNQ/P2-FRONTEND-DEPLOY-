@@ -4,6 +4,8 @@ import { useProducts } from '@/lib/hooks/useProducts'
 import { useAdminDashboard } from '@/lib/hooks/useDashboard'
 import { formatPrice } from '@/lib/utils/formatPrice'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 const ORDER_STATUS_MAP: Record<string, { label: string; bg: string; text: string; dot: string }> = {
   PENDING:   { label: 'Pending',   bg: 'bg-yellow-100', text: 'text-yellow-700', dot: 'bg-yellow-600' },
@@ -19,6 +21,7 @@ function getInitials(id: number) {
 }
 
 export default function AdminDashboardPage() {
+  const router = useRouter()
   const { data: ordersData } = useAllOrders()
   const { data: products } = useProducts()
   const { data: dashboard } = useAdminDashboard()
@@ -224,7 +227,10 @@ export default function AdminDashboardPage() {
             >
               Xem tất cả
             </Link>
-            <button className="p-2 border border-[#c4c5d9] rounded-lg text-[#444656] hover:bg-[#e1dfff] transition-all">
+            <button
+              onClick={() => toast.info('Bộ lọc đang được phát triển!')}
+              className="p-2 border border-[#c4c5d9] rounded-lg text-[#444656] hover:bg-[#e1dfff] transition-all"
+            >
               <span className="material-symbols-outlined">filter_list</span>
             </button>
           </div>
@@ -272,7 +278,10 @@ export default function AdminDashboardPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <button className="p-1 hover:bg-[#e1dfff] rounded text-[#747688] group-hover:text-[#0035d1] transition-colors">
+                      <button
+                        onClick={() => router.push(`/dashboard/admin/orders`)}
+                        className="p-1 hover:bg-[#e1dfff] rounded text-[#747688] group-hover:text-[#0035d1] transition-colors"
+                      >
                         <span className="material-symbols-outlined">more_vert</span>
                       </button>
                     </td>

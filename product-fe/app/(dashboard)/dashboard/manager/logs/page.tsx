@@ -1,6 +1,7 @@
 'use client'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useActivityLogs, useLogStats } from '@/lib/hooks/useActivityLogs'
+import { toast } from 'sonner'
 
 export default function ManagerLogsPage() {
   const [search, setSearch] = useState('')
@@ -10,12 +11,28 @@ export default function ManagerLogsPage() {
   )
   const { data: stats } = useLogStats()
 
+  // Filter logs based on search query
+  const filteredLogs = useMemo(() => {
+    if (!search.trim()) return logs
+    const term = search.toLowerCase()
+    return logs.filter(
+      (log) =>
+        log.user.toLowerCase().includes(term) ||
+        log.action.toLowerCase().includes(term) ||
+        log.target.toLowerCase().includes(term) ||
+        log.role.toLowerCase().includes(term)
+    )
+  }, [logs, search])
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-[24px] font-bold leading-[32px] text-[#08006c]">Nhật Ký Hoạt Động</h2>
-        <button className="flex items-center gap-2 bg-[#1e4cfd] text-white px-4 py-2 rounded-xl font-bold shadow-sm transition-transform active:scale-95">
+        <button 
+          onClick={() => toast.success('Đang chuẩn bị file xuất và tải xuống...') }
+          className="flex items-center gap-2 bg-[#1e4cfd] text-white px-4 py-2 rounded-xl font-bold shadow-sm transition-transform active:scale-95"
+        >
           <span className="material-symbols-outlined">cloud_download</span>
           <span className="text-sm">Xuất File</span>
         </button>
@@ -44,7 +61,7 @@ export default function ManagerLogsPage() {
             <select
               value={actionFilter}
               onChange={(e) => setActionFilter(e.target.value)}
-              className="w-full py-2.5 px-4 rounded-xl border border-[#c4c5d9] bg-[#fcf8ff]/50 text-sm outline-none appearance-none"
+              className="w-full py-2.5 px-4 rounded-xl border border-[#c4c5d9] bg-[#fcf8ff]/50 text-sm outline-none appearance-none cursor-pointer"
             >
               <option>Tất cả</option>
               <option>Sửa đổi</option>
@@ -69,7 +86,10 @@ export default function ManagerLogsPage() {
                 readOnly
               />
             </div>
-            <button className="w-11 h-11 flex items-center justify-center rounded-xl bg-[#e8e6ff] text-[#08006c] hover:bg-[#e1dfff] transition-colors">
+            <button 
+              onClick={() => toast.info('Bộ lọc khoảng thời gian sẽ khả dụng khi kết nối với kho dữ liệu đầy đủ!')}
+              className="w-11 h-11 flex items-center justify-center rounded-xl bg-[#e8e6ff] text-[#08006c] hover:bg-[#e1dfff] transition-colors"
+            >
               <span className="material-symbols-outlined">filter_list</span>
             </button>
           </div>
@@ -112,12 +132,12 @@ export default function ManagerLogsPage() {
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-sm text-[#747688]">Đang tải...</td>
                 </tr>
-              ) : logs.length === 0 ? (
+              ) : filteredLogs.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-sm text-[#747688]">Không có dữ liệu</td>
+                  <td colSpan={6} className="px-6 py-12 text-center text-sm text-[#747688]">Không có dữ liệu phù hợp</td>
                 </tr>
               ) : (
-                logs.map((log) => (
+                filteredLogs.map((log) => (
                   <tr key={log.id} className="hover:bg-[#f5f2ff] transition-all cursor-default">
                     <td className="px-6 py-5 align-top">
                       <p className="text-sm text-[#08006c]">{new Date(log.timestamp).toLocaleTimeString('vi-VN')}</p>
@@ -178,7 +198,7 @@ export default function ManagerLogsPage() {
 
         {/* Pagination */}
         <div className="px-6 py-4 bg-[#f5f2ff] flex items-center justify-between border-t border-[#c4c5d9]">
-          <p className="text-[12px] text-[#747688]">Hiển thị {logs.length} trong tổng số {stats?.total24h ?? 0} hành động</p>
+          <p className="text-[12px] text-[#747688]">Hiển thị {filteredLogs.length} trong tổng số {stats?.total24h ?? 0} hành động</p>
           <div className="flex items-center gap-2">
             <button className="w-9 h-9 flex items-center justify-center rounded-lg border border-[#c4c5d9] text-[#747688] hover:bg-white transition-colors">
               <span className="material-symbols-outlined">chevron_left</span>

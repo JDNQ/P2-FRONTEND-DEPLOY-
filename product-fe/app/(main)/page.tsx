@@ -1,6 +1,8 @@
 'use client'
 import { useProducts } from '@/lib/hooks/useProducts'
 import { useAuthStore } from '@/lib/stores/authStore'
+import { useAddToCart } from '@/lib/hooks/useCart'
+import { useAddToWishlist } from '@/lib/hooks/useWishlist'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { formatPrice } from '@/lib/utils/formatPrice'
@@ -68,6 +70,8 @@ export default function HomePage() {
   const { isAuthenticated, user } = useAuthStore()
   const router = useRouter()
   const { data: products, isLoading } = useProducts()
+  const { mutate: addToCart } = useAddToCart()
+  const { mutate: addToWishlist } = useAddToWishlist()
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -313,7 +317,14 @@ export default function HomePage() {
                           <span className="material-symbols-outlined text-5xl">image</span>
                         </div>
                       )}
-                      <button className="absolute top-3 right-3 h-10 w-10 rounded-full bg-white/80 backdrop-blur shadow-sm flex items-center justify-center text-error opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        className="absolute top-3 right-3 h-10 w-10 rounded-full bg-white/80 backdrop-blur shadow-sm flex items-center justify-center text-error opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-50 hover:scale-110 active:scale-95 transition-all"
+                        onClick={(e) => {
+                          e.preventDefault()
+                          if (!isAuthenticated) { router.push('/login?from=/products'); return }
+                          addToWishlist(product.id)
+                        }}
+                      >
                         <span className="material-symbols-outlined">favorite</span>
                       </button>
                     </div>
@@ -342,10 +353,7 @@ export default function HomePage() {
                           if (!isAuthenticated) { router.push('/login?from=/products'); return }
                           const firstVariant = product.variants[0]
                           if (firstVariant) {
-                            import('@/lib/hooks/useCart').then(({ useAddToCart }) => {
-                              const { mutate } = useAddToCart()
-                              mutate({ productId: product.id, variantId: firstVariant.id, quantity: 1 })
-                            })
+                            addToCart({ productId: product.id, variantId: firstVariant.id, quantity: 1 })
                           }
                         }}
                       >

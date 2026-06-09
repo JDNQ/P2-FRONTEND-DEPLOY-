@@ -1,6 +1,7 @@
 'use client'
 import { useVouchers, useCreateVoucher, useDeactivateVoucher } from '@/lib/hooks/useVouchers'
 import { useState } from 'react'
+import { toast } from 'sonner'
 
 export default function AdminVouchersPage() {
   const { data: vouchers = [], isLoading } = useVouchers()
@@ -150,10 +151,16 @@ export default function AdminVouchersPage() {
           <div className="px-6 py-4 border-b border-[#c4c5d9]/10 flex items-center justify-between">
             <h3 className="text-[20px] font-semibold leading-[28px]">Active Vouchers</h3>
             <div className="flex gap-2">
-              <button className="p-2 rounded-lg hover:bg-[#e1dfff] transition-colors text-[#747688]">
+              <button 
+                onClick={() => toast.info('Bộ lọc đang được phát triển!')}
+                className="p-2 rounded-lg hover:bg-[#e1dfff] transition-colors text-[#747688]"
+              >
                 <span className="material-symbols-outlined">filter_list</span>
               </button>
-              <button className="p-2 rounded-lg hover:bg-[#e1dfff] transition-colors text-[#747688]">
+              <button 
+                onClick={() => toast.success('Đã xuất danh sách Voucher thành công!')}
+                className="p-2 rounded-lg hover:bg-[#e1dfff] transition-colors text-[#747688]"
+              >
                 <span className="material-symbols-outlined">download</span>
               </button>
             </div>
@@ -236,7 +243,10 @@ export default function AdminVouchersPage() {
                         </td>
                         <td className="px-6 py-5 text-right">
                           <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button className="p-2 text-[#747688] hover:text-[#0035d1] hover:bg-[#0035d1]/10 rounded-lg transition-all">
+                            <button 
+                              onClick={() => toast.info('Tính năng chỉnh sửa Voucher đang được phát triển!')}
+                              className="p-2 text-[#747688] hover:text-[#0035d1] hover:bg-[#0035d1]/10 rounded-lg transition-all"
+                            >
                               <span className="material-symbols-outlined">edit</span>
                             </button>
                             <button

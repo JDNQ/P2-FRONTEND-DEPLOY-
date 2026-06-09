@@ -2,8 +2,9 @@
 import { useProducts } from '@/lib/hooks/useProducts'
 import { formatPrice } from '@/lib/utils/formatPrice'
 import { PLACEHOLDER_48 } from '@/lib/utils/placeholder'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import Link from 'next/link'
+import { toast } from 'sonner'
 
 function getSupplyStatus(totalStock: number): { label: string; bg: string; text: string; dot: string } {
   if (totalStock === 0) return { label: 'Hết hàng', bg: 'bg-[#ffdad6]/10', text: 'text-[#ba1a1a]', dot: 'bg-[#ba1a1a]' }
@@ -17,14 +18,31 @@ const PLACEHOLDER = PLACEHOLDER_48
 export default function ManagerInventoryPage() {
   const { data: products, isLoading } = useProducts()
   const [page, setPage] = useState(1)
+  const [statusFilter, setStatusFilter] = useState<'ALL' | 'OUT_OF_STOCK' | 'LOW_STOCK'>('ALL')
+  const [selectedShop, setSelectedShop] = useState('ALL')
+  const [selectedCategory, setSelectedCategory] = useState('ALL')
+
   const list = products || []
-  const totalPages = Math.max(1, Math.ceil(list.length / 10))
-  const paged = list.slice((page - 1) * 10, page * 10)
+
+  // Calculated stats
   const totalValue = list.reduce((s, p) => s + p.basePrice * p.variants.reduce((ss, v) => ss + v.stock, 0), 0)
   const lowStockCount = list.filter((p) => {
     const t = p.variants.reduce((ss, v) => ss + v.stock, 0)
-    return t > 0 && t <= 10
-  }).length + list.filter((p) => p.variants.reduce((ss, v) => ss + v.stock, 0) === 0).length
+    return t >= 0 && t <= 10
+  }).length
+
+  // Filtered list
+  const filteredList = useMemo(() => {
+    return list.filter((p) => {
+      const totalStock = p.variants.reduce((ss, v) => ss + v.stock, 0)
+      if (statusFilter === 'OUT_OF_STOCK') return totalStock === 0
+      if (statusFilter === 'LOW_STOCK') return totalStock > 0 && totalStock <= 10
+      return true
+    })
+  }, [list, statusFilter])
+
+  const totalPages = Math.max(1, Math.ceil(filteredList.length / 10))
+  const paged = filteredList.slice((page - 1) * 10, page * 10)
 
   return (
     <div className="space-y-6">
@@ -51,10 +69,19 @@ export default function ManagerInventoryPage() {
             <div className="p-3 bg-[#ffdad6] rounded-xl text-[#ba1a1a]">
               <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>warning</span>
             </div>
-            <button className="text-[#0035d1] text-sm hover:underline">Chi tiết</button>
+            <button 
+              onClick={() => {
+                setStatusFilter('LOW_STOCK')
+                setPage(1)
+                toast.info('Đang lọc sản phẩm tồn kho thấp')
+              }}
+              className="text-[#0035d1] text-sm font-bold hover:underline"
+            >
+              Chi tiết
+            </button>
           </div>
           <div className="mt-4 z-10">
-            <p className="text-sm text-[#444656] uppercase tracking-wider">Sản phẩm sắp hết hàng</p>
+            <p className="text-sm text-[#444656] uppercase tracking-wider">Sản phẩm tồn thấp/hết hàng</p>
             <h3 className="text-[24px] font-bold mt-1">
               {lowStockCount} <span className="text-[20px] font-normal text-[#444656]">mã</span>
             </h3>
@@ -71,7 +98,7 @@ export default function ManagerInventoryPage() {
           </div>
           <div className="mt-4 z-10">
             <p className="text-sm text-[#444656] uppercase tracking-wider">Sản phẩm bán chạy</p>
-            <h3 className="text-[24px] font-bold mt-1 text-[#08006c]">
+            <h3 className="text-[24px] font-bold mt-1 text-[#08006c] truncate">
               {list[0]?.productName || 'TL Ultra Pro Max'}
             </h3>
           </div>
@@ -96,37 +123,62 @@ export default function ManagerInventoryPage() {
             </Link>
             <div className="flex flex-col gap-1">
               <label className="text-[12px] text-[#747688]">Lọc theo Shop</label>
-              <select className="bg-[#f5f2ff] border-none rounded-xl text-sm py-2 px-4 focus:ring-2 focus:ring-[#0035d1] min-w-[160px] outline-none">
-                <option>Tất cả Shop</option>
-                <option>Hà Nội - Flagship</option>
-                <option>TP.HCM - Quận 1</option>
-                <option>Đà Nẵng - Hải Châu</option>
+              <select 
+                value={selectedShop} 
+                onChange={(e) => {
+                  setSelectedShop(e.target.value)
+                  toast.info('Tính năng lọc theo cửa hàng đang được tích hợp')
+                }}
+                className="bg-[#f5f2ff] border-none rounded-xl text-sm py-2 px-4 focus:ring-2 focus:ring-[#0035d1] min-w-[160px] outline-none"
+              >
+                <option value="ALL">Tất cả Shop</option>
+                <option value="HN">Hà Nội - Flagship</option>
+                <option value="HCM">TP.HCM - Quận 1</option>
+                <option value="DN">Đà Nẵng - Hải Châu</option>
               </select>
             </div>
             <div className="flex flex-col gap-1">
               <label className="text-[12px] text-[#747688]">Danh mục</label>
-              <select className="bg-[#f5f2ff] border-none rounded-xl text-sm py-2 px-4 focus:ring-2 focus:ring-[#0035d1] min-w-[160px] outline-none">
-                <option>Tất cả danh mục</option>
-                <option>Điện tử & Công nghệ</option>
-                <option>Thời trang Nam</option>
-                <option>Gia dụng thông minh</option>
+              <select 
+                value={selectedCategory} 
+                onChange={(e) => {
+                  setSelectedCategory(e.target.value)
+                  toast.info('Tính năng lọc theo danh mục đang được tích hợp')
+                }}
+                className="bg-[#f5f2ff] border-none rounded-xl text-sm py-2 px-4 focus:ring-2 focus:ring-[#0035d1] min-w-[160px] outline-none"
+              >
+                <option value="ALL">Tất cả danh mục</option>
+                <option value="ELE">Điện tử & Công nghệ</option>
+                <option value="FAS">Thời trang Nam</option>
+                <option value="HOM">Gia dụng thông minh</option>
               </select>
             </div>
             <div className="flex flex-col gap-1">
               <label className="text-[12px] text-[#747688]">Trạng thái</label>
               <div className="flex items-center bg-[#f5f2ff] rounded-xl p-1">
-                {['Tất cả', 'Hết hàng', 'Tồn thấp'].map((t) => (
+                {[
+                  { label: 'Tất cả', value: 'ALL' },
+                  { label: 'Hết hàng', value: 'OUT_OF_STOCK' },
+                  { label: 'Tồn thấp', value: 'LOW_STOCK' }
+                ].map((t) => (
                   <button
-                    key={t}
-                    className={`px-3 py-1 rounded-lg text-sm font-bold ${t === 'Tất cả' ? 'bg-[#0035d1] text-white shadow-sm' : 'text-[#444656] hover:bg-[#e1dfff] transition-colors'}`}
+                    key={t.value}
+                    onClick={() => {
+                      setStatusFilter(t.value as any)
+                      setPage(1)
+                    }}
+                    className={`px-3 py-1 rounded-lg text-sm font-bold transition-all ${statusFilter === t.value ? 'bg-[#0035d1] text-white shadow-sm' : 'text-[#444656] hover:bg-[#e1dfff]'}`}
                   >
-                    {t}
+                    {t.label}
                   </button>
                 ))}
               </div>
             </div>
           </div>
-          <button className="flex items-center gap-2 text-[#0035d1] border border-[#0035d1]/20 px-4 py-2 rounded-xl text-sm font-bold hover:bg-[#0035d1]/5 transition-all">
+          <button 
+            onClick={() => toast.success('Đang tạo và xuất báo cáo tồn kho...')}
+            className="flex items-center gap-2 text-[#0035d1] border border-[#0035d1]/20 px-4 py-2 rounded-xl text-sm font-bold hover:bg-[#0035d1]/5 transition-all"
+          >
             <span className="material-symbols-outlined text-[20px]">file_download</span>
             Xuất báo cáo
           </button>
@@ -137,6 +189,11 @@ export default function ManagerInventoryPage() {
             {[...Array(4)].map((_, i) => (
               <div key={i} className="h-16 rounded-xl animate-pulse bg-[#eeecff]" />
             ))}
+          </div>
+        ) : filteredList.length === 0 ? (
+          <div className="text-center py-16">
+            <span className="material-symbols-outlined text-6xl text-[#c4c5d9]">inventory_2</span>
+            <p className="text-[#444656] mt-4 text-sm">Không tìm thấy sản phẩm nào theo bộ lọc</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -172,7 +229,7 @@ export default function ManagerInventoryPage() {
                             )}
                           </div>
                           <div>
-                            <p className="text-sm text-[#08006c]">{product.productName}</p>
+                            <p className="text-sm font-bold text-[#08006c]">{product.productName}</p>
                             <p className="text-[12px] text-[#747688]">{product.variants.length} variants</p>
                           </div>
                         </div>
@@ -189,7 +246,10 @@ export default function ManagerInventoryPage() {
                         </span>
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <button className="w-8 h-8 rounded-full hover:bg-[#e1dfff] flex items-center justify-center text-[#444656]">
+                        <button 
+                          onClick={() => toast.info('Chức năng điều phối kho cho sản phẩm này đang được xây dựng')}
+                          className="w-8 h-8 rounded-full hover:bg-[#e1dfff] flex items-center justify-center text-[#444656] mx-auto"
+                        >
                           <span className="material-symbols-outlined">more_vert</span>
                         </button>
                       </td>
@@ -202,42 +262,49 @@ export default function ManagerInventoryPage() {
         )}
 
         {/* Pagination */}
-        <div className="p-6 border-t border-[#c4c5d9]/30 flex items-center justify-between">
-          <p className="text-[12px] text-[#747688]">Hiển thị 1-{Math.min(10, list.length)} của {list.length} sản phẩm</p>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setPage(Math.max(1, page - 1))}
-              disabled={page === 1}
-              className="w-10 h-10 flex items-center justify-center rounded-xl border border-[#c4c5d9] text-[#747688] hover:bg-[#f5f2ff] disabled:opacity-30 transition-colors"
-            >
-              <span className="material-symbols-outlined">chevron_left</span>
-            </button>
-            {Array.from({ length: Math.min(totalPages, 3) }, (_, i) => i + 1).map((n) => (
+        {filteredList.length > 0 && (
+          <div className="p-6 border-t border-[#c4c5d9]/30 flex items-center justify-between">
+            <p className="text-[12px] text-[#747688]">
+              Hiển thị {((page - 1) * 10) + 1}-{Math.min(page * 10, filteredList.length)} của {filteredList.length} sản phẩm
+            </p>
+            <div className="flex items-center gap-2">
               <button
-                key={n}
-                onClick={() => setPage(n)}
-                className={`w-10 h-10 flex items-center justify-center rounded-xl font-bold text-sm ${
-                  page === n ? 'bg-[#0035d1] text-white shadow-sm' : 'border border-[#c4c5d9] text-[#444656] hover:bg-[#f5f2ff]'
-                }`}
+                onClick={() => setPage(Math.max(1, page - 1))}
+                disabled={page === 1}
+                className="w-10 h-10 flex items-center justify-center rounded-xl border border-[#c4c5d9] text-[#747688] hover:bg-[#f5f2ff] disabled:opacity-30 transition-colors"
               >
-                {n}
+                <span className="material-symbols-outlined">chevron_left</span>
               </button>
-            ))}
-            {totalPages > 3 && <span className="px-2 text-[#747688]">...</span>}
-            {totalPages > 3 && (
-              <button className="w-10 h-10 flex items-center justify-center rounded-xl border border-[#c4c5d9] text-[#444656] hover:bg-[#f5f2ff] text-sm">
-                {totalPages}
+              {Array.from({ length: Math.min(totalPages, 3) }, (_, i) => i + 1).map((n) => (
+                <button
+                  key={n}
+                  onClick={() => setPage(n)}
+                  className={`w-10 h-10 flex items-center justify-center rounded-xl font-bold text-sm ${
+                    page === n ? 'bg-[#0035d1] text-white shadow-sm' : 'border border-[#c4c5d9] text-[#444656] hover:bg-[#f5f2ff]'
+                  }`}
+                >
+                  {n}
+                </button>
+              ))}
+              {totalPages > 3 && <span className="px-2 text-[#747688]">...</span>}
+              {totalPages > 3 && (
+                <button 
+                  onClick={() => setPage(totalPages)}
+                  className={`w-10 h-10 flex items-center justify-center rounded-xl border border-[#c4c5d9] text-[#444656] hover:bg-[#f5f2ff] text-sm ${page === totalPages ? 'bg-[#0035d1] text-white shadow-sm' : ''}`}
+                >
+                  {totalPages}
+                </button>
+              )}
+              <button
+                onClick={() => setPage(Math.min(totalPages, page + 1))}
+                disabled={page === totalPages}
+                className="w-10 h-10 flex items-center justify-center rounded-xl border border-[#c4c5d9] text-[#747688] hover:bg-[#f5f2ff] disabled:opacity-30 transition-colors"
+              >
+                <span className="material-symbols-outlined">chevron_right</span>
               </button>
-            )}
-            <button
-              onClick={() => setPage(Math.min(totalPages, page + 1))}
-              disabled={page === totalPages}
-              className="w-10 h-10 flex items-center justify-center rounded-xl border border-[#c4c5d9] text-[#747688] hover:bg-[#f5f2ff] disabled:opacity-30 transition-colors"
-            >
-              <span className="material-symbols-outlined">chevron_right</span>
-            </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   )

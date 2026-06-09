@@ -1,5 +1,7 @@
 'use client'
 import { useManagerDashboard } from '@/lib/hooks/useDashboard'
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 function CardHover(e: React.MouseEvent<HTMLDivElement>, enter: boolean) {
   const el = e.currentTarget
@@ -13,6 +15,7 @@ function CardHover(e: React.MouseEvent<HTMLDivElement>, enter: boolean) {
 }
 
 export default function ManagerDashboardPage() {
+  const router = useRouter()
   const { data: dashboard, isLoading } = useManagerDashboard()
 
   if (isLoading || !dashboard) {
@@ -75,8 +78,18 @@ export default function ManagerDashboardPage() {
             <div className="flex items-center justify-between mb-8">
               <h4 className="text-[20px] font-semibold leading-[28px]">Revenue Overview</h4>
               <div className="flex gap-2">
-                <button className="px-3 py-1 rounded-full bg-[#1e4cfd] text-white text-sm font-bold">Weekly</button>
-                <button className="px-3 py-1 rounded-full text-[#444656] text-sm font-bold hover:bg-[#eeecff]">Monthly</button>
+                <button 
+                  onClick={() => toast.info('Chế độ xem hàng tuần đang được hiển thị')}
+                  className="px-3 py-1 rounded-full bg-[#1e4cfd] text-white text-sm font-bold"
+                >
+                  Weekly
+                </button>
+                <button 
+                  onClick={() => toast.info('Tính năng biểu đồ hàng tháng đang được phát triển!')}
+                  className="px-3 py-1 rounded-full text-[#444656] text-sm font-bold hover:bg-[#eeecff]"
+                >
+                  Monthly
+                </button>
               </div>
             </div>
 
@@ -137,7 +150,12 @@ export default function ManagerDashboardPage() {
                 </div>
               ))}
             </div>
-            <button className="w-full mt-8 py-2 text-[#0035d1] font-bold text-sm hover:underline">View All Logs</button>
+            <button 
+              onClick={() => router.push('/dashboard/manager/logs')}
+              className="w-full mt-8 py-2 text-[#0035d1] font-bold text-sm hover:underline"
+            >
+              View All Logs
+            </button>
           </div>
         </div>
 
@@ -145,7 +163,10 @@ export default function ManagerDashboardPage() {
         <section>
           <div className="flex items-center justify-between mb-6">
             <h4 className="text-[20px] font-semibold leading-[28px]">Top Performing Products</h4>
-            <button className="text-[#0035d1] font-bold text-sm flex items-center gap-1">
+            <button 
+              onClick={() => router.push('/dashboard/manager/inventory')}
+              className="text-[#0035d1] font-bold text-sm flex items-center gap-1"
+            >
               Full Report <span className="material-symbols-outlined text-[18px]">arrow_right_alt</span>
             </button>
           </div>

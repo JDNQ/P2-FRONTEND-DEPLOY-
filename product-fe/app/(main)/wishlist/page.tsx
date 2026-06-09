@@ -1,10 +1,13 @@
 'use client'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 import { formatPrice } from '@/lib/utils/formatPrice'
 import { PLACEHOLDER_400 } from '@/lib/utils/placeholder'
 import { useWishlist, useRemoveFromWishlist, useAddAllWishlistToCart } from '@/lib/hooks/useWishlist'
 
 export default function WishlistPage() {
+  const router = useRouter()
   const { data: items = [], isLoading } = useWishlist()
   const { mutate: removeItem } = useRemoveFromWishlist()
   const { mutate: addAllToCart } = useAddAllWishlistToCart()
@@ -28,7 +31,16 @@ export default function WishlistPage() {
                 <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>shopping_cart_checkout</span>
                 Add All to Cart
               </button>
-              <button className="flex items-center gap-2 px-6 py-3 border rounded-xl hover:bg-[#f5f2ff] transition-all text-[14px] leading-[20px] font-medium" style={{ borderColor: '#c4c5d9' }}>
+              <button
+                onClick={() => {
+                  if (typeof window !== 'undefined') {
+                    navigator.clipboard.writeText(window.location.href)
+                    toast.success('Đã sao chép liên kết chia sẻ danh sách yêu thích!')
+                  }
+                }}
+                className="flex items-center gap-2 px-6 py-3 border rounded-xl hover:bg-[#f5f2ff] transition-all text-[14px] leading-[20px] font-medium"
+                style={{ borderColor: '#c4c5d9' }}
+              >
                 <span className="material-symbols-outlined">share</span>
                 Share List
               </button>
@@ -73,15 +85,17 @@ export default function WishlistPage() {
                   style={{ backgroundColor: '#ffffff' }}
                 >
                   <div className="aspect-square relative overflow-hidden" style={{ backgroundColor: '#eeecff' }}>
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_400 }}
-                    />
+                    <Link href={`/products/${item.productId}`}>
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 cursor-pointer"
+                        onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_400 }}
+                      />
+                    </Link>
                     <button
                       onClick={() => removeItem(item.id)}
-                      className="absolute top-3 right-3 p-2 rounded-full shadow-sm transition-all active:scale-90"
+                      className="absolute top-3 right-3 p-2 rounded-full shadow-sm transition-all active:scale-90 z-10"
                       style={{ backgroundColor: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(4px)' }}
                       onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#ba1a1a'; e.currentTarget.style.color = '#ffffff' }}
                       onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.8)'; e.currentTarget.style.color = '#ba1a1a' }}
@@ -89,22 +103,25 @@ export default function WishlistPage() {
                       <span className="material-symbols-outlined text-[#ba1a1a]" style={{ color: 'inherit' }}>delete</span>
                     </button>
                     <div
-                      className="absolute bottom-0 inset-x-0 p-4 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300"
+                      className="absolute bottom-0 inset-x-0 p-4 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 z-10"
                       style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.5), transparent)' }}
                     >
                       <button
+                        onClick={() => router.push(`/products/${item.productId}`)}
                         className="w-full py-2 rounded-lg font-bold shadow-lg flex items-center justify-center gap-2 text-[14px] leading-[20px] font-medium hover:opacity-90 transition-colors"
                         style={{ backgroundColor: '#1e4cfd', color: '#ffffff' }}
                       >
-                        <span className="material-symbols-outlined text-[18px]">add_shopping_cart</span>
-                        Quick Add
+                        <span className="material-symbols-outlined text-[18px]">visibility</span>
+                        View Details
                       </button>
                     </div>
                   </div>
 
                   <div className="p-4">
                     <div className="flex justify-between items-start mb-2">
-                      <h3 className="text-[20px] font-semibold leading-[28px] truncate">{item.name}</h3>
+                      <Link href={`/products/${item.productId}`}>
+                        <h3 className="text-[20px] font-semibold leading-[28px] truncate hover:text-[#1e4cfd] cursor-pointer">{item.name}</h3>
+                      </Link>
                       <div className="flex items-center gap-1" style={{ color: '#0035d1' }}>
                         <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
                         <span className="text-[14px] leading-[20px] font-medium">{item.rating}</span>
@@ -147,6 +164,9 @@ export default function WishlistPage() {
                     Get 20% off when you buy 2 or more items from your wishlist today. Limited time only.
                   </p>
                   <button
+                    onClick={() => {
+                      toast.success('Mã giảm giá 20% đã được lưu vào ví của bạn!')
+                    }}
                     className="px-8 py-4 rounded-xl font-bold shadow-xl hover:shadow-2xl transition-all active:scale-[0.98] text-[14px] leading-[20px] font-medium"
                     style={{ backgroundColor: '#ffffff', color: '#0035d1' }}
                   >

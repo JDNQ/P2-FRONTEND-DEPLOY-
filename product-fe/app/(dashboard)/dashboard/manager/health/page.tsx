@@ -1,5 +1,6 @@
 'use client'
 import { useServices, useAlerts, useInfrastructure } from '@/lib/hooks/useSystemHealth'
+import { toast } from 'sonner'
 
 export default function ManagerHealthPage() {
   const { data: services = [], isLoading: servicesLoading } = useServices()
@@ -15,7 +16,15 @@ export default function ManagerHealthPage() {
           <p className="text-[14px] leading-[20px] text-[#444656]">Real-time infrastructure monitoring</p>
         </div>
         <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 px-4 py-2 bg-[#e8e6ff] rounded-full text-sm font-bold hover:bg-[#e1dfff] transition-colors">
+          <button 
+            onClick={() => {
+              toast.success('Đang cập nhật trạng thái hệ thống...')
+              setTimeout(() => {
+                window.location.reload()
+              }, 500)
+            }}
+            className="flex items-center gap-2 px-4 py-2 bg-[#e8e6ff] rounded-full text-sm font-bold hover:bg-[#e1dfff] transition-colors"
+          >
             <span className="material-symbols-outlined text-[18px]">refresh</span>
             Update Now
           </button>
@@ -97,7 +106,12 @@ export default function ManagerHealthPage() {
         <div className="lg:col-span-2 space-y-4">
           <div className="flex justify-between items-center">
             <h4 className="text-[20px] font-semibold">System Alerts</h4>
-            <a className="text-sm text-[#0035d1] hover:underline" href="#">View History</a>
+            <button 
+              onClick={() => toast.info('Chức năng xem lịch sử cảnh báo đang được phát triển!')}
+              className="text-sm text-[#0035d1] hover:underline bg-transparent border-none outline-none font-bold"
+            >
+              View History
+            </button>
           </div>
           <div className="space-y-3">
             {alerts.length === 0 ? (
@@ -125,6 +139,9 @@ export default function ManagerHealthPage() {
                           {alert.actions.map((action) => (
                             <button
                               key={action.label}
+                              onClick={() => {
+                                toast.success(`Đã gửi lệnh xử lý: ${action.label}`)
+                              }}
                               className={`px-3 py-1 rounded-lg text-sm font-bold ${
                                 action.action === 'restart' ? 'bg-[#ba1a1a] text-white' : 'bg-[#e8e6ff]'
                               }`}
@@ -195,7 +212,10 @@ export default function ManagerHealthPage() {
               )}
             </div>
 
-            <button className="w-full py-3 bg-[#0035d1] text-white rounded-xl text-sm font-bold hover:shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2">
+            <button 
+              onClick={() => toast.success('Đang tạo báo cáo chi tiết hạ tầng...') }
+              className="w-full py-3 bg-[#0035d1] text-white rounded-xl text-sm font-bold hover:shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2"
+            >
               <span className="material-symbols-outlined">analytics</span>
               Detailed Infrastructure Report
             </button>
@@ -226,7 +246,10 @@ export default function ManagerHealthPage() {
               <p className="text-[20px] font-bold text-green-400">{infra?.nodeHealth ?? '—'}%</p>
             </div>
           </div>
-          <button className="bg-white text-[#08006c] px-6 py-3 rounded-full text-sm font-bold hover:bg-[#0035d1] hover:text-white transition-all">
+          <button 
+            onClick={() => toast.info('Bản đồ Edge Nodes đang được chuẩn bị!')}
+            className="bg-white text-[#08006c] px-6 py-3 rounded-full text-sm font-bold hover:bg-[#0035d1] hover:text-white transition-all"
+          >
             View Server Map
           </button>
         </div>

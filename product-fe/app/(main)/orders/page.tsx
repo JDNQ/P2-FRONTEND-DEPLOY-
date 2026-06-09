@@ -4,6 +4,7 @@ import { formatPrice } from '@/lib/utils/formatPrice'
 import { formatDate } from '@/lib/utils/formatDate'
 import Link from 'next/link'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 const TABS = ['All Orders', 'Pending', 'Confirmed', 'Shipping', 'Delivered', 'Cancelled']
 const TAB_KEY_MAP: Record<string, string | undefined> = {
@@ -26,6 +27,7 @@ const STATUS_CONFIG: Record<string, { label: string; bg: string; text: string; i
 export default function OrdersPage() {
   const { data: orders, isLoading } = useMyOrders()
   const [activeTab, setActiveTab] = useState('All Orders')
+  const router = useRouter()
 
   const orderList = (orders || []).filter((o) => {
     const key = TAB_KEY_MAP[activeTab]
@@ -207,6 +209,17 @@ export default function OrdersPage() {
                         e.currentTarget.style.backgroundColor = '#ffffff'
                         e.currentTarget.style.borderColor = '#c4c5d9'
                         e.currentTarget.style.color = isCancelled ? '#444656' : '#0035d1'
+                      }}
+                      onClick={() => {
+                        if (isCancelled) {
+                          router.push('/products')
+                        } else if (order.status === 'SHIPPING') {
+                          // Track order - show order detail
+                          router.push(`/orders`)
+                        } else {
+                          // View order details
+                          router.push(`/orders`)
+                        }
                       }}
                     >
                       <span>{isCancelled ? 'Buy Again' : order.status === 'SHIPPING' ? 'Track Order' : 'View Details'}</span>

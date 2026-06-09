@@ -1,20 +1,28 @@
 'use client'
 import { useCart } from '@/lib/hooks/useCart'
 import { useCreateOrder } from '@/lib/hooks/useOrders'
+import { useAuthStore } from '@/lib/stores/authStore'
 import { formatPrice } from '@/lib/utils/formatPrice'
 import { PLACEHOLDER_80 } from '@/lib/utils/placeholder'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 export default function CheckoutPage() {
   const router = useRouter()
-  const { data: cart, isLoading: cartLoading } = useCart()
+  const { isAuthenticated } = useAuthStore()
+  const { data: cart, isLoading: cartLoading } = useCart(isAuthenticated)
   const { mutate: createOrder, isPending } = useCreateOrder()
 
   const [voucherCode, setVoucherCode] = useState('')
   const [note, setNote] = useState('')
-  const [paymentMethod, setPaymentMethod] = useState('zalopay')
+  const [paymentMethod, setPaymentMethod] = useState('cod')
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push('/login?from=/checkout')
+    }
+  }, [isAuthenticated, router])
 
   const items = cart?.items || []
   const total = cart?.totalPrice || 0

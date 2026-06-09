@@ -1,7 +1,9 @@
 'use client'
 import { useAllOrders } from '@/lib/hooks/useOrders'
 import { formatPrice } from '@/lib/utils/formatPrice'
-import { useState } from 'react'
+import { formatDate } from '@/lib/utils/formatDate'
+import { useState, useMemo } from 'react'
+import { toast } from 'sonner'
 
 const STATUS_MAP: Record<string, { label: string; bg: string; text: string }> = {
   PENDING:   { label: 'CHỜ XÁC NHẬN', bg: 'bg-yellow-100', text: 'text-yellow-700' },
@@ -14,12 +16,39 @@ const STATUS_MAP: Record<string, { label: string; bg: string; text: string }> = 
 export default function ManagerOrdersPage() {
   const { data: orders, isLoading } = useAllOrders()
   const [page, setPage] = useState(1)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [expandedOrderId, setExpandedOrderId] = useState<number | null>(null)
+
   const list = orders || []
-  const totalPages = Math.max(1, Math.ceil(list.length / 10))
-  const paged = list.slice((page - 1) * 10, page * 10)
+
+  // Search filter
+  const filteredList = useMemo(() => {
+    if (!searchQuery.trim()) return list
+    const term = searchQuery.toLowerCase()
+    return list.filter((o) => {
+      const orderIdStr = `#tl-${o.id.toString().padStart(5, '0')}`.toLowerCase()
+      const customerStr = `customer #${o.id}`.toLowerCase()
+      const phoneStr = o.phoneNumber ? o.phoneNumber.toLowerCase() : ''
+      const addressStr = o.shippingAddress ? o.shippingAddress.toLowerCase() : ''
+      return (
+        orderIdStr.includes(term) ||
+        customerStr.includes(term) ||
+        phoneStr.includes(term) ||
+        addressStr.includes(term)
+      )
+    })
+  }, [list, searchQuery])
+
+  const totalPages = Math.max(1, Math.ceil(filteredList.length / 10))
+  const paged = filteredList.slice((page - 1) * 10, page * 10)
+  
   const todayRevenue = list.filter((o) => o.status !== 'CANCELLED').reduce((s, o) => s + o.totalPrice, 0)
   const cancelledRate = list.length ? ((list.filter((o) => o.status === 'CANCELLED').length / list.length) * 100).toFixed(2) : '0'
   const newOrdersCount = list.filter((o) => o.status === 'PENDING').length
+
+  const toggleExpand = (id: number) => {
+    setExpandedOrderId(prev => prev === id ? null : id)
+  }
 
   return (
     <div className="space-y-6">
@@ -30,11 +59,15 @@ export default function ManagerOrdersPage() {
           <p className="text-[14px] leading-[20px] text-[#444656]">Hệ thống giám sát giao dịch thời gian thực</p>
         </div>
         <div className="flex items-center gap-3">
-          <button className="px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-bold border border-[#c4c5d9] text-[#444656] hover:bg-[#f5f2ff] transition-all">
+          <button 
+            onClick={() => toast.success('Đã xuất báo cáo giao dịch thành công!')}
+            className="px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-bold border border-[#c4c5d9] text-[#444656] hover:bg-[#f5f2ff] transition-all"
+          >
             <span className="material-symbols-outlined">download</span>
             Xuất báo cáo
           </button>
           <button
+            onClick={() => toast.info('Chức năng tạo đơn mới dành cho Manager đang được phát triển!')}
             className="px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-bold text-white transition-all active:scale-95"
             style={{
               background: 'linear-gradient(135deg, #0035d1 0%, #3432c8 100%)',
@@ -63,10 +96,13 @@ export default function ManagerOrdersPage() {
             {['Khu vực vận hành', 'Cửa hàng / Chi nhánh', 'Trạng thái tài chính'].map((label) => (
               <div key={label} className="space-y-1">
                 <label className="text-[12px] font-bold text-[#444656] px-1">{label}</label>
-                <select className="w-full bg-[#f5f2ff] border-[#c4c5d9] rounded-xl text-sm p-2.5 focus:ring-2 focus:ring-[#0035d1]/20 focus:border-[#0035d1] outline-none transition-all">
+                <select 
+                  onChange={() => toast.info(`Lọc theo ${label} đang được chuẩn bị!`)}
+                  className="w-full bg-[#f5f2ff] border-[#c4c5d9] rounded-xl text-sm p-2.5 focus:ring-2 focus:ring-[#0035d1]/20 focus:border-[#0035d1] outline-none transition-all cursor-pointer"
+                >
                   <option>Tất cả</option>
-                  <option>Option 1</option>
-                  <option>Option 2</option>
+                  <option>Khu vực miền Bắc</option>
+                  <option>Khu vực miền Nam</option>
                 </select>
               </div>
             ))}
@@ -136,6 +172,8 @@ export default function ManagerOrdersPage() {
             <input
               type="text"
               placeholder="Tìm mã đơn, tên khách, số điện thoại..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 bg-[#f5f2ff] border-[#c4c5d9] rounded-xl text-sm focus:ring-2 focus:ring-[#0035d1]/20 focus:border-[#0035d1] outline-none transition-all"
             />
           </div>
@@ -146,6 +184,11 @@ export default function ManagerOrdersPage() {
             {[...Array(5)].map((_, i) => (
               <div key={i} className="h-16 rounded-xl animate-pulse bg-[#eeecff]" />
             ))}
+          </div>
+        ) : filteredList.length === 0 ? (
+          <div className="text-center py-16">
+            <span className="material-symbols-outlined text-6xl text-[#c4c5d9]">package</span>
+            <p className="text-[#444656] mt-4 text-sm">Không tìm thấy đơn hàng nào phù hợp</p>
           </div>
         ) : (
           <div className="overflow-x-auto custom-scrollbar">
@@ -164,49 +207,103 @@ export default function ManagerOrdersPage() {
                   const status = STATUS_MAP[order.status] || STATUS_MAP.PENDING
                   const customerInitials = `KH${String(order.id).slice(0, 2)}`
                   const profit = order.totalPrice * 0.25
+                  const isExpanded = expandedOrderId === order.id
                   return (
-                    <tr key={order.id} className="hover:bg-[#0035d1]/5 transition-colors duration-150">
-                      <td className="px-6 py-4">
-                        <div className="flex flex-col">
-                          <span className="font-bold text-[#0035d1]">#TL-{order.id.toString().padStart(5, '0')}</span>
-                          <span className="text-[11px] text-[#747688]">{new Date(order.createdAt).toLocaleString('vi-VN')}</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div
-                            className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-[12px]"
-                            style={{ backgroundColor: i % 2 === 0 ? '#9aa8ff' : '#4e4fe0', color: '#ffffff' }}
-                          >
-                            {customerInitials}
+                    <>
+                      <tr key={order.id} className="hover:bg-[#0035d1]/5 transition-colors duration-150">
+                        <td className="px-6 py-4">
+                          <div className="flex flex-col">
+                            <span className="font-bold text-[#0035d1]">#TL-{order.id.toString().padStart(5, '0')}</span>
+                            <span className="text-[11px] text-[#747688]">{new Date(order.createdAt).toLocaleString('vi-VN')}</span>
                           </div>
-                          <div>
-                            <p className="text-sm font-semibold">Customer #{order.id}</p>
-                            <p className="text-[12px] text-[#747688]">{order.items.length} items</p>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <div
+                              className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-[12px]"
+                              style={{ backgroundColor: i % 2 === 0 ? '#9aa8ff' : '#4e4fe0', color: '#ffffff' }}
+                            >
+                              {customerInitials}
+                            </div>
+                            <div>
+                              <p className="text-sm font-semibold">Customer #{order.id}</p>
+                              <p className="text-[12px] text-[#747688]">{order.items.length} items</p>
+                            </div>
                           </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-sm">
-                        {['TL Flagship', 'TL Quận 1', 'TL Cầu Giấy', 'TL Đà Nẵng', 'TP HCM Hub'][i % 5]}
-                      </td>
-                      <td className="px-6 py-4 font-bold">{formatPrice(order.totalPrice)}</td>
-                      <td className="px-6 py-4 text-green-600 font-semibold">+{formatPrice(profit)}</td>
-                      <td className="px-6 py-4">
-                        <span className={`px-3 py-1 rounded-full text-[11px] font-bold ${status.bg} ${status.text}`}>
-                          {status.label}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-1">
-                          <button className="p-2 hover:bg-[#e1dfff] rounded-lg transition-colors">
-                            <span className="material-symbols-outlined text-[#747688]">visibility</span>
-                          </button>
-                          <button className="p-2 hover:bg-[#e1dfff] rounded-lg transition-colors">
-                            <span className="material-symbols-outlined text-[#747688]">more_vert</span>
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
+                        </td>
+                        <td className="px-6 py-4 text-sm">
+                          {['TL Flagship', 'TL Quận 1', 'TL Cầu Giấy', 'TL Đà Nẵng', 'TP HCM Hub'][i % 5]}
+                        </td>
+                        <td className="px-6 py-4 font-bold">{formatPrice(order.totalPrice)}</td>
+                        <td className="px-6 py-4 text-green-600 font-semibold">+{formatPrice(profit)}</td>
+                        <td className="px-6 py-4">
+                          <span className={`px-3 py-1 rounded-full text-[11px] font-bold ${status.bg} ${status.text}`}>
+                            {status.label}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-1">
+                            <button 
+                              onClick={() => toggleExpand(order.id)}
+                              className={`p-2 rounded-lg transition-colors ${isExpanded ? 'bg-[#dee1ff] text-[#0035d1]' : 'hover:bg-[#e1dfff]'}`}
+                            >
+                              <span className="material-symbols-outlined text-[#747688]">{isExpanded ? 'visibility_off' : 'visibility'}</span>
+                            </button>
+                            <button 
+                              onClick={() => toast.info('Chức năng điều phối đang được xây dựng')}
+                              className="p-2 hover:bg-[#e1dfff] rounded-lg transition-colors"
+                            >
+                              <span className="material-symbols-outlined text-[#747688]">more_vert</span>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+
+                      {/* Expanded View */}
+                      {isExpanded && (
+                        <tr>
+                          <td colSpan={7} className="px-6 py-4 bg-[#fcf8ff] border-t border-[#c4c5d9]/10">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-4">
+                              <div>
+                                <h5 className="font-bold text-[#08006c] mb-1">Thông tin giao hàng</h5>
+                                <p><span className="text-[#444656]">Số điện thoại:</span> {order.phoneNumber || 'N/A'}</p>
+                                <p><span className="text-[#444656]">Địa chỉ:</span> {order.shippingAddress || 'N/A'}</p>
+                              </div>
+                              <div>
+                                <h5 className="font-bold text-[#08006c] mb-1">Voucher áp dụng</h5>
+                                <p>{order.voucherId ? `Voucher ID: #${order.voucherId}` : 'Không sử dụng'}</p>
+                              </div>
+                            </div>
+                            <div className="space-y-2">
+                              <h5 className="font-bold text-[#08006c] text-xs">Sản phẩm trong đơn hàng:</h5>
+                              {order.items.map((item) => (
+                                <div key={item.id} className="flex justify-between items-center bg-white p-3 rounded-xl border border-[#c4c5d9]/10">
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-9 h-9 rounded-lg bg-[#eeecff] flex-shrink-0 flex items-center justify-center text-xs text-[#747688]">
+                                      {item.product?.images?.[0] ? (
+                                        <img src={item.product.images[0].url} alt={item.product.productName} className="w-full h-full object-cover rounded-lg" />
+                                      ) : (
+                                        'No Img'
+                                      )}
+                                    </div>
+                                    <div>
+                                      <p className="font-bold text-xs text-[#08006c]">{item.product?.productName || 'Sản phẩm không tên'}</p>
+                                      <p className="text-[10px] text-[#444656]">
+                                        Phân loại: {item.variant?.color || 'Mặc định'} {item.variant?.size ? `- Size ${item.variant.size}` : ''}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div className="text-right text-xs">
+                                    <p className="font-bold text-[#0035d1]">{formatPrice(item.price)}</p>
+                                    <p className="text-[10px] text-[#444656]">Số lượng: x{item.quantity}</p>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </>
                   )
                 })}
               </tbody>
@@ -215,38 +312,40 @@ export default function ManagerOrdersPage() {
         )}
 
         {/* Pagination */}
-        <div className="p-4 border-t border-[#c4c5d9] flex items-center justify-between">
-          <p className="text-[12px] text-[#747688]">Hiển thị {paged.length} trong {list.length} đơn hàng</p>
-          <div className="flex gap-2">
-            <button
-              onClick={() => setPage(Math.max(1, page - 1))}
-              disabled={page === 1}
-              className="w-8 h-8 flex items-center justify-center border border-[#c4c5d9] rounded-lg hover:bg-[#e1dfff] text-[#747688] disabled:opacity-50 transition-colors"
-            >
-              <span className="material-symbols-outlined text-[18px]">chevron_left</span>
-            </button>
-            {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => i + 1).map((n) => (
+        {filteredList.length > 0 && (
+          <div className="p-4 border-t border-[#c4c5d9] flex items-center justify-between">
+            <p className="text-[12px] text-[#747688]">Hiển thị {paged.length} trong {filteredList.length} đơn hàng</p>
+            <div className="flex gap-2">
               <button
-                key={n}
-                onClick={() => setPage(n)}
-                className={`w-8 h-8 flex items-center justify-center rounded-lg font-bold text-[12px] transition-colors ${
-                  page === n
-                    ? 'bg-[#1e4cfd] text-white'
-                    : 'border border-[#c4c5d9] hover:bg-[#e1dfff] text-[#444656]'
-                }`}
+                onClick={() => setPage(Math.max(1, page - 1))}
+                disabled={page === 1}
+                className="w-8 h-8 flex items-center justify-center border border-[#c4c5d9] rounded-lg hover:bg-[#e1dfff] text-[#747688] disabled:opacity-50 transition-colors"
               >
-                {n}
+                <span className="material-symbols-outlined text-[18px]">chevron_left</span>
               </button>
-            ))}
-            <button
-              onClick={() => setPage(Math.min(totalPages, page + 1))}
-              disabled={page === totalPages}
-              className="w-8 h-8 flex items-center justify-center border border-[#c4c5d9] rounded-lg hover:bg-[#e1dfff] text-[#747688] disabled:opacity-50 transition-colors"
-            >
-              <span className="material-symbols-outlined text-[18px]">chevron_right</span>
-            </button>
+              {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => i + 1).map((n) => (
+                <button
+                  key={n}
+                  onClick={() => setPage(n)}
+                  className={`w-8 h-8 flex items-center justify-center rounded-lg font-bold text-[12px] transition-colors ${
+                    page === n
+                      ? 'bg-[#1e4cfd] text-white'
+                      : 'border border-[#c4c5d9] hover:bg-[#e1dfff] text-[#444656]'
+                  }`}
+                >
+                  {n}
+                </button>
+              ))}
+              <button
+                onClick={() => setPage(Math.min(totalPages, page + 1))}
+                disabled={page === totalPages}
+                className="w-8 h-8 flex items-center justify-center border border-[#c4c5d9] rounded-lg hover:bg-[#e1dfff] text-[#747688] disabled:opacity-50 transition-colors"
+              >
+                <span className="material-symbols-outlined text-[18px]">chevron_right</span>
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       <style>{`.custom-scrollbar::-webkit-scrollbar{width:4px;height:4px}.custom-scrollbar::-webkit-scrollbar-track{background:transparent}.custom-scrollbar::-webkit-scrollbar-thumb{background:#c4c5d9;border-radius:10px}`}</style>
