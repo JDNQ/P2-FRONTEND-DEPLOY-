@@ -41,8 +41,10 @@ export default function ProfilePage() {
       toast.error('Chỉ hỗ trợ định dạng JPG, PNG, WEBP, GIF')
       return
     }
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error('Ảnh không được vượt quá 5MB')
+    // Cho phép GIF lên tới 10MB vì GIF animation thường lớn
+    const maxSize = file.type === 'image/gif' ? 10 * 1024 * 1024 : 5 * 1024 * 1024
+    if (file.size > maxSize) {
+      toast.error(`Ảnh không được vượt quá ${maxSize / 1024 / 1024}MB`)
       return
     }
 
@@ -75,6 +77,21 @@ export default function ProfilePage() {
     e.preventDefault()
     setIsSaving(true)
     try {
+      // Validate birthday không được vượt quá ngày hiện tại
+      if (formData.birthday && formData.birthday > today) {
+        toast.error('Ngày sinh không được vượt quá ngày hiện tại')
+        setIsSaving(false)
+        return
+      }
+
+      // Lưu thông tin vào store (chỉ lưu các trường có thay đổi)
+      if (user) {
+        updateUser({
+          username: formData.username || user.username,
+          email: formData.email || undefined,
+        })
+      }
+
       await new Promise((resolve) => setTimeout(resolve, 800))
       toast.success('Cập nhật thông tin thành công!')
     } catch {
@@ -179,6 +196,7 @@ export default function ProfilePage() {
                     accept="image/jpeg,image/png,image/webp,image/gif"
                     className="hidden"
                     onChange={handleAvatarUpload}
+                    title="Chọn ảnh đại diện"
                   />
                   <button
                     type="button"
