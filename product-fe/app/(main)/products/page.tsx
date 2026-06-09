@@ -160,9 +160,9 @@ export default function ProductsPage() {
                             <h3 className="font-body-md text-label-md text-on-surface line-clamp-2 min-h-[40px]">{product.productName}</h3>
                           </Link>
                           <div className="flex justify-between items-center">
-                            <span className="text-primary font-bold text-headline-sm">{formatPrice(minP)}</span>
+                            <span className="text-on-surface font-bold text-headline-sm">{formatPrice(minP)}</span>
                             <button
-                              className="bg-primary/5 text-primary p-2 rounded-lg hover:bg-primary hover:text-white transition-all"
+                              className="text-on-surface-variant hover:text-primary p-2 transition-colors"
                               onClick={(e) => {
                                 e.preventDefault()
                                 if (!isAuthenticated) { router.push('/login?from=/products'); return }
