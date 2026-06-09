@@ -31,6 +31,9 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
     : product?.basePrice || 0
   const currentStock = selectedVariant?.stock ?? 0
 
+  const hasImages = product?.images && product.images.length > 0
+  const safeMainImgIdx = hasImages ? Math.min(mainImgIdx, product.images.length - 1) : 0
+
   const handleAddToCart = () => {
     if (!isAuthenticated) { router.push('/login'); return }
     if (!selectedVariantId) { toast.error('Vui lòng chọn phân loại'); return }
@@ -109,19 +112,23 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
           {/* Product Gallery */}
           <div className="lg:col-span-7 flex flex-col md:flex-row gap-4">
             <div className="flex md:flex-col gap-3 order-2 md:order-1">
-              {product.images.slice(0, 4).map((img, idx) => (
+              {hasImages ? product.images.slice(0, 4).map((img, idx) => (
                 <button key={idx} onClick={() => setMainImgIdx(idx)}
                   className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition-all hover:scale-105 ${
-                    idx === mainImgIdx ? 'border-primary ring-2 ring-primary-fixed-dim' : 'border-transparent'
+                    idx === safeMainImgIdx ? 'border-primary ring-2 ring-primary-fixed-dim' : 'border-transparent'
                   }`}>
                   <img src={img.url} alt="" className="w-full h-full object-cover"
                     onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_80 }} />
                 </button>
-              ))}
+              )) : (
+                <button className="w-20 h-20 rounded-xl overflow-hidden border-2 border-primary ring-2 ring-primary-fixed-dim">
+                  <img src={PLACEHOLDER_80} alt="" className="w-full h-full object-cover" />
+                </button>
+              )}
             </div>
             <div className="flex-1 order-1 md:order-2 bg-surface-container-low rounded-3xl overflow-hidden flex items-center justify-center p-6 relative group">
-              {product.images[mainImgIdx] ? (
-                <img src={product.images[mainImgIdx].url} alt={product.productName}
+              {hasImages ? (
+                <img src={product.images[safeMainImgIdx].url} alt={product.productName}
                   className="max-w-full h-auto object-contain transition-transform duration-500 group-hover:scale-105"
                   onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_600 }} />
               ) : (
@@ -286,8 +293,9 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                 </div>
               </div>
               <div className="rounded-3xl overflow-hidden shadow-lg h-full min-h-[300px] relative bg-surface-container-low">
-                {product.images[0] ? (
-                  <img src={product.images[0].url} alt={product.productName} className="w-full h-full object-cover" />
+                {hasImages ? (
+                  <img src={product.images[0].url} alt={product.productName} className="w-full h-full object-cover"
+                    onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_600 }} />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-outline">
                     <span className="material-symbols-outlined text-6xl">image</span>
