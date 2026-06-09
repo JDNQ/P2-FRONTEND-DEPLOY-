@@ -5,17 +5,18 @@ import { useAddToWishlist } from '@/lib/hooks/useWishlist'
 import { useAuthStore } from '@/lib/stores/authStore'
 import { formatPrice } from '@/lib/utils/formatPrice'
 import { PLACEHOLDER_80, PLACEHOLDER_600 } from '@/lib/utils/placeholder'
-import { useState } from 'react'
+import { useState, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import Link from 'next/link'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 
-export default function ProductDetailPage({ params }: { params: { id: string } }) {
+export default function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { isAuthenticated } = useAuthStore()
   const router = useRouter()
-  const productId = parseInt(params.id)
+  const { id } = use(params)
+  const productId = parseInt(id)
   const { data: product, isLoading } = useProduct(productId)
   const { mutate: addToCart, isPending } = useAddToCart()
   const { mutate: addToWishlist } = useAddToWishlist()
