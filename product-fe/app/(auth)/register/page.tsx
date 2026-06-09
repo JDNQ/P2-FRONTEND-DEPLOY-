@@ -13,6 +13,7 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [agreeTerms, setAgreeTerms] = useState(false)
   const formRef = useRef<HTMLDivElement>(null)
 
   const form = useForm<RegisterValues>({
@@ -21,6 +22,10 @@ export default function RegisterPage() {
   })
 
   const onSubmit = async (data: RegisterValues) => {
+    if (!agreeTerms) {
+      toast.error('Vui lòng đồng ý với điều khoản dịch vụ')
+      return
+    }
     setIsLoading(true)
     try {
       await authApi.register(data)
@@ -236,6 +241,8 @@ export default function RegisterPage() {
                 <input
                   type="checkbox"
                   id="terms"
+                  checked={agreeTerms}
+                  onChange={(e) => setAgreeTerms(e.target.checked)}
                   className="h-5 w-5 rounded border-m3-outline-variant text-m3-primary focus:ring-m3-primary-container bg-m3-surface-container-low cursor-pointer"
                 />
               </div>
@@ -284,6 +291,7 @@ export default function RegisterPage() {
             <div className="grid grid-cols-2 gap-4 animate-entrance">
               <button
                 type="button"
+                onClick={() => toast.info('Tính năng đăng ký Google đang phát triển')}
                 className="flex items-center justify-center py-3 px-4 border border-m3-outline-variant rounded-xl hover:bg-m3-surface-container-low transition-all duration-200 font-semibold text-m3-on-surface"
               >
                 <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
@@ -296,6 +304,7 @@ export default function RegisterPage() {
               </button>
               <button
                 type="button"
+                onClick={() => toast.info('Tính năng đăng ký Facebook đang phát triển')}
                 className="flex items-center justify-center py-3 px-4 border border-m3-outline-variant rounded-xl hover:bg-m3-surface-container-low transition-all duration-200 font-semibold text-m3-on-surface"
               >
                 <svg className="w-5 h-5 mr-3" fill="#1877F2" viewBox="0 0 24 24">

@@ -213,12 +213,8 @@ export default function OrdersPage() {
                       onClick={() => {
                         if (isCancelled) {
                           router.push('/products')
-                        } else if (order.status === 'SHIPPING') {
-                          // Track order - show order detail
-                          router.push(`/orders`)
                         } else {
-                          // View order details
-                          router.push(`/orders`)
+                          router.push(`/checkout/success`)
                         }
                       }}
                     >

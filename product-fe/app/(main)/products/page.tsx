@@ -112,25 +112,37 @@ export default function ProductsPage() {
 
         {/* Product Display Area */}
         <div>
-          {/* Sort & Header */}
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-            <h1 className="text-2xl md:text-3xl font-bold">
-              Sản phẩm{' '}
-              <span className="text-base text-outline font-normal ml-2">
-                ({filteredProducts.length} items)
-              </span>
-            </h1>
-            <div className="flex items-center gap-4">
-              <span className="text-sm text-m3-on-surface-variant">Sort by:</span>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="bg-surface border border-outline-variant rounded-xl text-sm py-2 pl-4 pr-10 focus:ring-primary focus:border-primary cursor-pointer"
-              >
-                <option value="newest">Newest Arrivals</option>
-                <option value="price-asc">Price: Low to High</option>
-                <option value="price-desc">Price: High to Low</option>
-              </select>
+          {/* Search & Sort & Header */}
+          <div className="flex flex-col gap-4 mb-8">
+            <div className="relative">
+              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-m3-outline">search</span>
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Tìm kiếm sản phẩm..."
+                className="w-full pl-12 pr-4 py-3 border border-outline-variant rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all bg-surface-container-lowest"
+              />
+            </div>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <h1 className="text-2xl md:text-3xl font-bold">
+                Sản phẩm{' '}
+                <span className="text-base text-outline font-normal ml-2">
+                  ({filteredProducts.length} items)
+                </span>
+              </h1>
+              <div className="flex items-center gap-4">
+                <span className="text-sm text-m3-on-surface-variant">Sort by:</span>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="bg-surface border border-outline-variant rounded-xl text-sm py-2 pl-4 pr-10 focus:ring-primary focus:border-primary cursor-pointer"
+                >
+                  <option value="newest">Newest Arrivals</option>
+                  <option value="price-asc">Price: Low to High</option>
+                  <option value="price-desc">Price: High to Low</option>
+                </select>
+              </div>
             </div>
           </div>
 

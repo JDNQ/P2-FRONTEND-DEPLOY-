@@ -20,6 +20,10 @@ export interface Order {
   totalPrice: number
   voucherCode?: string
   note?: string
+  phoneNumber?: string
+  shippingAddress?: string
+  voucherId?: number
+  paymentMethod?: string
   createdAt: string
   updatedAt: string
 }

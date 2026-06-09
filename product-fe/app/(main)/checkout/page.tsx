@@ -7,6 +7,8 @@ import { PLACEHOLDER_80 } from '@/lib/utils/placeholder'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { voucherApi } from '@/lib/api/voucherApi'
+import { toast } from 'sonner'
 
 export default function CheckoutPage() {
   const router = useRouter()
@@ -17,6 +19,11 @@ export default function CheckoutPage() {
   const [voucherCode, setVoucherCode] = useState('')
   const [note, setNote] = useState('')
   const [paymentMethod, setPaymentMethod] = useState('cod')
+  const [fullName, setFullName] = useState('')
+  const [phoneNumber, setPhoneNumber] = useState('')
+  const [shippingAddress, setShippingAddress] = useState('')
+  const [appliedDiscount, setAppliedDiscount] = useState(0)
+  const [applyingVoucher, setApplyingVoucher] = useState(false)
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -26,6 +33,23 @@ export default function CheckoutPage() {
 
   const items = cart?.items || []
   const total = cart?.totalPrice || 0
+  const finalPrice = Math.max(0, total - appliedDiscount)
+
+  const handleApplyVoucher = async () => {
+    if (!voucherCode.trim()) return
+    setApplyingVoucher(true)
+    try {
+      const res = await voucherApi.apply(voucherCode.trim(), total)
+      const { discount } = res.data.data
+      setAppliedDiscount(discount)
+      toast.success('Áp dụng mã giảm giá thành công!')
+    } catch {
+      toast.error('Mã giảm giá không hợp lệ hoặc đã hết hạn')
+      setAppliedDiscount(0)
+    } finally {
+      setApplyingVoucher(false)
+    }
+  }
 
   const handleSubmitOrder = () => {
     if (items.length === 0) return
@@ -36,7 +60,7 @@ export default function CheckoutPage() {
         quantity: item.quantity,
       })),
       voucherCode: voucherCode || undefined,
-      note: note || undefined,
+      note: [note, fullName ? `Họ tên: ${fullName}` : '', phoneNumber ? `SĐT: ${phoneNumber}` : '', shippingAddress ? `Địa chỉ: ${shippingAddress}` : ''].filter(Boolean).join('\n') || undefined,
     })
   }
 
@@ -112,6 +136,8 @@ export default function CheckoutPage() {
                   <input
                     type="text"
                     placeholder="Nguyen Van A"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
                     className="h-12 px-4 rounded-xl border border-[#c4c5d9] focus:border-[#0035d1] focus:ring-1 focus:ring-[#0035d1] outline-none transition-all bg-[#fcf8ff]"
                   />
                 </div>
@@ -120,6 +146,8 @@ export default function CheckoutPage() {
                   <input
                     type="tel"
                     placeholder="0901234567"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
                     className="h-12 px-4 rounded-xl border border-[#c4c5d9] focus:border-[#0035d1] focus:ring-1 focus:ring-[#0035d1] outline-none transition-all bg-[#fcf8ff]"
                   />
                 </div>
@@ -128,6 +156,8 @@ export default function CheckoutPage() {
                   <input
                     type="text"
                     placeholder="123 Example Street, District 1, HCMC"
+                    value={shippingAddress}
+                    onChange={(e) => setShippingAddress(e.target.value)}
                     className="h-12 px-4 rounded-xl border border-[#c4c5d9] focus:border-[#0035d1] focus:ring-1 focus:ring-[#0035d1] outline-none transition-all bg-[#fcf8ff]"
                   />
                 </div>
@@ -300,8 +330,12 @@ export default function CheckoutPage() {
                   onChange={(e) => setVoucherCode(e.target.value)}
                   className="flex-grow h-12 px-4 rounded-xl border border-[#c4c5d9] focus:border-[#0035d1] focus:ring-1 focus:ring-[#0035d1] outline-none transition-all bg-white"
                 />
-                <button className="px-6 h-12 text-[14px] leading-[20px] font-medium border border-[#0035d1] text-[#0035d1] rounded-xl hover:bg-[#dee1ff]/20 transition-all font-bold">
-                  Apply
+                <button
+                  onClick={handleApplyVoucher}
+                  disabled={applyingVoucher || !voucherCode.trim()}
+                  className="px-6 h-12 text-[14px] leading-[20px] font-medium border border-[#0035d1] text-[#0035d1] rounded-xl hover:bg-[#dee1ff]/20 transition-all font-bold disabled:opacity-50"
+                >
+                  {applyingVoucher ? '...' : 'Apply'}
                 </button>
               </div>
 
@@ -317,11 +351,11 @@ export default function CheckoutPage() {
                 </div>
                 <div className="flex justify-between" style={{ color: '#3432c8' }}>
                   <span className="text-[16px] leading-[24px]">Voucher Discount</span>
-                  <span className="text-[20px] font-bold leading-[1]" style={{ color: '#ba1a1a' }}>-0đ</span>
+                  <span className="text-[20px] font-bold leading-[1]" style={{ color: '#ba1a1a' }}>{appliedDiscount > 0 ? `-${formatPrice(appliedDiscount)}` : '-0đ'}</span>
                 </div>
                 <div className="flex justify-between items-center pt-4 border-t border-[#c4c5d9]">
                   <span className="text-xl font-extrabold" style={{ fontFamily: 'Sora, sans-serif' }}>Total Amount</span>
-                  <span className="text-2xl font-extrabold text-[#0035d1]" style={{ fontFamily: 'Sora, sans-serif' }}>{formatPrice(total)}</span>
+                  <span className="text-2xl font-extrabold text-[#0035d1]" style={{ fontFamily: 'Sora, sans-serif' }}>{formatPrice(finalPrice)}</span>
                 </div>
               </div>
 

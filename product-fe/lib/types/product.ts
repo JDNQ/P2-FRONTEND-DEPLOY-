@@ -4,6 +4,8 @@ export interface Variant {
   extraPrice: number
   stock: number
   image?: string
+  color?: string
+  size?: string
 }
 
 export interface ProductImage {
