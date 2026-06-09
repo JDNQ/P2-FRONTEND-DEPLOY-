@@ -2,6 +2,8 @@
 import confetti from 'canvas-confetti'
 import { useEffect } from 'react'
 import Link from 'next/link'
+import Header from '@/components/Header'
+import Footer from '@/components/Footer'
 
 export default function CheckoutSuccessPage() {
   useEffect(() => {
@@ -9,121 +11,84 @@ export default function CheckoutSuccessPage() {
       particleCount: 150,
       spread: 80,
       origin: { y: 0.5 },
-      colors: ['#0035d1', '#1246f8', '#22c55e', '#f97316', '#4958a9'],
+      colors: ['#0035d1', '#f97316', '#22c55e', '#4958a9'],
     })
   }, [])
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-16 relative overflow-hidden" style={{ backgroundColor: '#fcf8ff', color: '#08006c' }}>
-      {/* Ambient Blurs */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full blur-[120px] pointer-events-none" style={{ backgroundColor: 'rgba(0, 53, 209, 0.1)' }} />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full blur-[120px] pointer-events-none" style={{ backgroundColor: 'rgba(73, 88, 169, 0.1)' }} />
+    <div className="min-h-screen bg-background text-on-surface">
+      <Header />
+      <div className="flex items-center justify-center px-gutter py-section-gap relative overflow-hidden">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full blur-[120px] pointer-events-none bg-primary/10" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full blur-[120px] pointer-events-none bg-tertiary/10" />
 
-      <div className="max-w-2xl w-full text-center space-y-6 z-20">
-        {/* Success Icon */}
-        <div className="flex justify-center mb-4">
-          <div
-            className="w-24 h-24 md:w-32 md:h-32 rounded-full flex items-center justify-center border-4 animate-check"
-            style={{
-              backgroundColor: 'rgba(34, 197, 94, 0.1)',
-              borderColor: 'rgba(34, 197, 94, 0.2)',
-              boxShadow: '0 0 40px rgba(34, 197, 94, 0.3)',
-            }}
-          >
-            <span
-              className="material-symbols-outlined text-[48px] md:text-[64px]"
-              style={{ color: '#22c55e', fontVariationSettings: "'FILL' 1, 'wght' 600" }}
+        <div className="max-w-2xl w-full text-center space-y-6 z-20">
+          {/* Success Icon */}
+          <div className="flex justify-center mb-4">
+            <div
+              className="w-24 h-24 md:w-32 md:h-32 rounded-full flex items-center justify-center border-4 animate-check"
+              style={{
+                backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                borderColor: 'rgba(34, 197, 94, 0.2)',
+                boxShadow: '0 0 40px rgba(34, 197, 94, 0.3)',
+              }}
             >
-              check_circle
-            </span>
-          </div>
-        </div>
-
-        {/* Headlines */}
-        <div className="space-y-2">
-          <h1 className="text-[32px] md:text-[48px] font-extrabold leading-tight tracking-tight" style={{ fontFamily: 'Sora, sans-serif' }}>
-            Order Successful!
-          </h1>
-          <p className="text-[18px] leading-[28px] text-[#444656] max-w-md mx-auto">
-            Thank you for your purchase. We&apos;ve received your order and we&apos;re getting it ready for shipment.
-          </p>
-        </div>
-
-        {/* Info Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-10">
-          <div
-            className="p-6 rounded-xl text-left shadow-sm"
-            style={{
-              background: 'rgba(255, 255, 255, 0.8)',
-              backdropFilter: 'blur(12px)',
-              border: '1px solid rgba(225, 223, 255, 0.4)',
-            }}
-          >
-            <span className="text-[14px] leading-[20px] font-medium text-[#747688] mb-1 block uppercase tracking-wider">Order ID</span>
-            <div className="flex items-center justify-between">
-              <span className="text-[20px] font-semibold leading-[28px]">#TLM-8829410</span>
-              <button
-                className="p-2 hover:bg-[#e1dfff] rounded-lg transition-colors"
-                title="Copy Order ID"
-                onClick={() => navigator.clipboard.writeText('TLM-8829410')}
+              <span
+                className="material-symbols-outlined text-[48px] md:text-[64px]"
+                style={{ color: '#22c55e', fontVariationSettings: "'FILL' 1, 'wght' 600" }}
               >
-                <span className="material-symbols-outlined text-[#0035d1] text-[20px]">content_copy</span>
-              </button>
+                check_circle
+              </span>
             </div>
           </div>
-          <div
-            className="p-6 rounded-xl text-left shadow-sm"
-            style={{
-              background: 'rgba(255, 255, 255, 0.8)',
-              backdropFilter: 'blur(12px)',
-              border: '1px solid rgba(225, 223, 255, 0.4)',
-            }}
-          >
-            <span className="text-[14px] leading-[20px] font-medium text-[#747688] mb-1 block uppercase tracking-wider">Estimated Delivery</span>
-            <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-[20px]" style={{ color: '#4958a9' }}>local_shipping</span>
-              <span className="text-[20px] font-semibold leading-[28px]">3-5 business days</span>
+
+          <div className="space-y-2">
+            <h1 className="font-display-lg text-display-lg text-on-surface">Order Successful!</h1>
+            <p className="font-body-lg text-body-lg text-on-surface-variant max-w-md mx-auto">
+              Thank you for your purchase. We&apos;ve received your order and we&apos;re getting it ready for shipment.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-10">
+            <div className="p-6 rounded-xl text-left shadow-sm bg-surface/80 backdrop-blur-md border border-outline-variant/30">
+              <span className="font-label-md text-label-md text-outline mb-1 block uppercase tracking-wider">Order ID</span>
+              <div className="flex items-center justify-between">
+                <span className="font-headline-sm text-headline-sm text-on-surface">#TLM-8829410</span>
+                <button className="p-2 hover:bg-surface-variant rounded-lg transition-colors" title="Copy Order ID"
+                  onClick={() => navigator.clipboard.writeText('TLM-8829410')}>
+                  <span className="material-symbols-outlined text-primary text-[20px]">content_copy</span>
+                </button>
+              </div>
+            </div>
+            <div className="p-6 rounded-xl text-left shadow-sm bg-surface/80 backdrop-blur-md border border-outline-variant/30">
+              <span className="font-label-md text-label-md text-outline mb-1 block uppercase tracking-wider">Estimated Delivery</span>
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-[20px] text-secondary">local_shipping</span>
+                <span className="font-headline-sm text-headline-sm text-on-surface">3-5 business days</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Actions */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
-          <Link
-            href="/orders"
-            className="w-full sm:w-auto px-10 py-4 text-white rounded-xl font-bold text-[16px] leading-[24px] shadow-[0_10px_20px_-5px_rgba(249,115,22,0.3)] hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center gap-2"
-            style={{ backgroundColor: '#f97316' }}
-          >
-            View My Orders
-            <span className="material-symbols-outlined">arrow_forward</span>
-          </Link>
-          <Link
-            href="/products"
-            className="w-full sm:w-auto px-10 py-4 border-2 rounded-xl font-bold text-[16px] leading-[24px] transition-all duration-200 flex items-center justify-center gap-2"
-            style={{
-              borderColor: '#c4c5d9',
-              color: '#08006c',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#e1dfff'
-              e.currentTarget.style.borderColor = 'transparent'
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'transparent'
-              e.currentTarget.style.borderColor = '#c4c5d9'
-            }}
-          >
-            <span className="material-symbols-outlined">shopping_bag</span>
-            Back to Shopping
-          </Link>
-        </div>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
+            <Link href="/orders"
+              className="w-full sm:w-auto px-10 py-4 orange-gradient orange-glow text-white rounded-xl font-bold font-label-md hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2">
+              View My Orders
+              <span className="material-symbols-outlined">arrow_forward</span>
+            </Link>
+            <Link href="/products"
+              className="w-full sm:w-auto px-10 py-4 border-2 border-outline-variant text-on-surface rounded-xl font-bold font-label-md hover:bg-surface-variant transition-all flex items-center justify-center gap-2">
+              <span className="material-symbols-outlined">shopping_bag</span>
+              Back to Shopping
+            </Link>
+          </div>
 
-        {/* Footer Note */}
-        <div className="pt-12 opacity-60">
-          <div className="h-1 w-24 mx-auto rounded-full mb-8" style={{ backgroundColor: '#c4c5d9' }} />
-          <p className="text-[12px] leading-[16px] text-[#747688]">A confirmation email has been sent to your registered address.</p>
+          <div className="pt-12">
+            <div className="h-1 w-24 mx-auto rounded-full mb-8 bg-outline-variant" />
+            <p className="font-caption text-caption text-outline">A confirmation email has been sent to your registered address.</p>
+          </div>
         </div>
       </div>
+      <Footer />
 
       <style>{`
         @keyframes check-bounce {

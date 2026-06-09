@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { toast } from 'sonner'
 import { useNotifications, useMarkNotificationRead, useMarkAllNotificationsRead, useDeleteNotification } from '@/lib/hooks/useNotifications'
 import Header from '@/components/Header'
+import Footer from '@/components/Footer'
 
 const FILTERS = ['All', 'Orders', 'Promotions', 'System']
 const ITEMS_PER_PAGE = 5
@@ -128,6 +129,7 @@ export default function NotificationsPage() {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   )
 }

@@ -29,11 +29,11 @@ function CountdownTimer() {
   }, [])
   return (
     <div className="flex gap-2 items-center">
-      <div className="bg-[#1e4cfd] px-3 py-1.5 rounded-lg min-w-[40px] text-center text-white font-bold">{time.h}</div>
+      <div className="bg-primary-container px-3 py-1.5 rounded-lg min-w-[40px] text-center text-white font-bold">{time.h}</div>
       <span className="text-primary text-xl self-center">:</span>
-      <div className="bg-[#1e4cfd] px-3 py-1.5 rounded-lg min-w-[40px] text-center text-white font-bold">{time.m}</div>
+      <div className="bg-primary-container px-3 py-1.5 rounded-lg min-w-[40px] text-center text-white font-bold">{time.m}</div>
       <span className="text-primary text-xl self-center">:</span>
-      <div className="bg-[#1e4cfd] px-3 py-1.5 rounded-lg min-w-[40px] text-center text-white font-bold">{time.s}</div>
+      <div className="bg-primary-container px-3 py-1.5 rounded-lg min-w-[40px] text-center text-white font-bold">{time.s}</div>
     </div>
   )
 }

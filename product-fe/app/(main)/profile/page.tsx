@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import Header from '@/components/Header'
+import Footer from '@/components/Footer'
 
 const SIDEBAR = [
   { href: '/profile', label: 'Profile', icon: 'person' },
@@ -219,6 +220,7 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   )
 }

@@ -6,6 +6,7 @@ import { formatPrice } from '@/lib/utils/formatPrice'
 import { PLACEHOLDER_400 } from '@/lib/utils/placeholder'
 import { useWishlist, useRemoveFromWishlist, useAddAllWishlistToCart } from '@/lib/hooks/useWishlist'
 import Header from '@/components/Header'
+import Footer from '@/components/Footer'
 
 export default function WishlistPage() {
   const router = useRouter()
@@ -145,6 +146,7 @@ export default function WishlistPage() {
           </>
         )}
       </div>
+      <Footer />
     </div>
   )
 }

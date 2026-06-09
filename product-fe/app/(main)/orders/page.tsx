@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Header from '@/components/Header'
+import Footer from '@/components/Footer'
 
 const TABS = ['All Orders', 'Pending', 'Confirmed', 'Shipping', 'Delivered', 'Cancelled']
 const TAB_KEY_MAP: Record<string, string | undefined> = {
@@ -193,6 +194,7 @@ export default function OrdersPage() {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   )
 }

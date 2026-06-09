@@ -10,6 +10,7 @@ import Link from 'next/link'
 import { voucherApi } from '@/lib/api/voucherApi'
 import { toast } from 'sonner'
 import Header from '@/components/Header'
+import Footer from '@/components/Footer'
 
 export default function CheckoutPage() {
   const router = useRouter()
@@ -266,6 +267,7 @@ export default function CheckoutPage() {
           </aside>
         </div>
       </div>
+      <Footer />
     </div>
   )
 }

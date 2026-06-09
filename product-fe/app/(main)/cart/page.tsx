@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import Header from '@/components/Header'
+import Footer from '@/components/Footer'
 
 export default function CartPage() {
   const { isAuthenticated } = useAuthStore()
@@ -222,6 +223,7 @@ export default function CartPage() {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   )
 }
