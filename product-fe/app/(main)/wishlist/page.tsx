@@ -21,19 +21,19 @@ export default function WishlistPage() {
         <header className="mb-stack-lg">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
-              <h1 className="font-heading text-headline-lg text-on-surface mb-1">My Favorites</h1>
-              <p className="font-body-md text-body-md text-on-surface-variant">Manage your saved items and add them to your cart whenever you&apos;re ready.</p>
+              <h1 className="font-heading text-headline-lg text-on-surface mb-1">Yêu thích</h1>
+              <p className="font-body-md text-body-md text-on-surface-variant">Quản lý sản phẩm đã lưu và thêm vào giỏ hàng khi bạn sẵn sàng.</p>
             </div>
             <div className="flex gap-3">
               <button onClick={() => addAllToCart()}
                 className="flex items-center gap-2 px-6 py-3 rounded-xl font-label-md shadow-sm hover:shadow-lg transition-all active:scale-[0.98] orange-gradient orange-glow text-white">
                 <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>shopping_cart_checkout</span>
-                Add All to Cart
+                Thêm tất cả vào giỏ
               </button>
               <button onClick={() => { navigator.clipboard.writeText(window.location.href); toast.success('Đã sao chép liên kết!') }}
                 className="flex items-center gap-2 px-6 py-3 border border-outline-variant rounded-xl hover:bg-surface-variant transition-all font-label-md text-on-surface">
                 <span className="material-symbols-outlined">share</span>
-                Share List
+                Chia sẻ
               </button>
             </div>
           </div>
@@ -56,10 +56,10 @@ export default function WishlistPage() {
             <div className="w-32 h-32 rounded-full flex items-center justify-center mb-stack-lg bg-surface-container-low">
               <span className="material-symbols-outlined text-6xl text-outline-variant">favorite</span>
             </div>
-            <h2 className="font-heading text-headline-sm text-on-surface mb-1">Your wishlist is empty</h2>
-            <p className="font-body-md text-body-md text-on-surface-variant mb-stack-lg">Save items you love and they will appear here.</p>
+            <h2 className="font-heading text-headline-sm text-on-surface mb-1">Danh sách yêu thích trống</h2>
+            <p className="font-body-md text-body-md text-on-surface-variant mb-stack-lg">Lưu sản phẩm bạn thích và chúng sẽ xuất hiện tại đây.</p>
             <Link href="/products" className="inline-flex items-center gap-2 bg-white border-2 border-primary text-primary font-heading font-bold px-8 py-3 rounded-xl hover:bg-primary hover:text-white transition-all">
-              Start Shopping
+              Bắt đầu mua sắm
             </Link>
           </div>
         ) : (

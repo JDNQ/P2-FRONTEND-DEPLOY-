@@ -1,7 +1,8 @@
 import axios from 'axios'
+import { config } from '@/lib/config'
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  baseURL: config.apiUrl,
   timeout: 30000, // 30s - Render free tier có cold start mất 30-60s
   headers: { 'Content-Type': 'application/json' },
 })

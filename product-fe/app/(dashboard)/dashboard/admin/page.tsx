@@ -51,10 +51,10 @@ export default function AdminDashboardPage() {
   const weekLabels = weeks.slice(0, 4)
 
   const categories = dashboard?.categoryStats ?? [
-    { name: 'Electronics', percentage: 45, color: 'bg-[#0035d1]' },
-    { name: 'Fashion', percentage: 32, color: 'bg-[#4958a9]' },
-    { name: 'Home Decor', percentage: 15, color: 'bg-[#3432c8]' },
-    { name: 'Others', percentage: 8, color: 'bg-[#c4c5d9]' },
+    { name: 'Điện tử', percentage: 45, color: 'bg-primary-500' },
+    { name: 'Thời trang', percentage: 32, color: 'bg-primary-600' },
+    { name: 'Gia dụng', percentage: 15, color: 'bg-secondary' },
+    { name: 'Khác', percentage: 8, color: 'bg-outline-variant' },
   ]
 
   return (

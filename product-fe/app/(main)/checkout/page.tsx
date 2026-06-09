@@ -110,20 +110,20 @@ export default function CheckoutPage() {
       <div className="max-w-container-max mx-auto px-gutter py-stack-lg">
         {/* Breadcrumbs */}
         <nav className="flex items-center gap-2 mb-stack-lg font-caption text-caption text-on-surface-variant">
-          <Link href="/" className="hover:text-primary transition-colors">Home</Link>
+          <Link href="/" className="hover:text-primary transition-colors">Trang chủ</Link>
           <span className="material-symbols-outlined text-sm">chevron_right</span>
-          <Link href="/cart" className="hover:text-primary transition-colors">Shopping Cart</Link>
+          <Link href="/cart" className="hover:text-primary transition-colors">Giỏ hàng</Link>
           <span className="material-symbols-outlined text-sm">chevron_right</span>
-          <span className="font-bold text-on-surface">Checkout</span>
+          <span className="font-bold text-on-surface">Thanh toán</span>
         </nav>
 
-        <h1 className="font-heading text-display-lg text-on-surface mb-stack-lg">Checkout</h1>
+        <h1 className="font-heading text-display-lg-mobile md:text-display-lg text-on-surface mb-stack-lg">Thanh toán</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-stack-lg items-start">
           {/* Left: Shipping + Payment */}
           <div className="lg:col-span-7 space-y-stack-lg">
             {/* Shipping */}
-            <section className="bg-surface rounded-xl p-stack-lg shadow-sm border border-outline-variant/30">
+            <section className="bg-white rounded-xl p-stack-lg shadow-sm border border-neutral-50">
               <div className="flex items-center gap-3 mb-stack-lg">
                 <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>local_shipping</span>
                 <h2 className="font-heading text-headline-sm text-on-surface">Thông tin giao hàng</h2>
@@ -153,7 +153,7 @@ export default function CheckoutPage() {
             </section>
 
             {/* Payment */}
-            <section className="bg-surface rounded-xl p-stack-lg shadow-sm border border-outline-variant/30">
+            <section className="bg-white rounded-xl p-stack-lg shadow-sm border border-neutral-50">
               <div className="flex items-center gap-3 mb-stack-lg">
                 <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>payments</span>
                 <h2 className="font-heading text-headline-sm text-on-surface">Phương thức thanh toán</h2>
@@ -193,7 +193,7 @@ export default function CheckoutPage() {
 
           {/* Right: Order Summary */}
           <aside className="lg:col-span-5 sticky top-24">
-            <div className="rounded-2xl p-stack-lg shadow-lg bg-primary-container/20 border border-primary/20">
+            <div className="rounded-2xl p-stack-lg shadow-lg bg-white border border-neutral-50">
               <h2 className="font-heading text-headline-sm text-on-surface mb-stack-lg">Tóm tắt đơn hàng</h2>
 
               <div className="space-y-stack-lg mb-stack-lg max-h-[400px] overflow-y-auto pr-2 [&::-webkit-scrollbar-thumb]:bg-outline-variant [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent">

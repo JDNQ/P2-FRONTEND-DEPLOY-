@@ -8,10 +8,10 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 
 const SIDEBAR = [
-  { href: '/profile', label: 'Profile', icon: 'person' },
-  { href: '/orders', label: 'Orders', icon: 'package' },
-  { href: '/wishlist', label: 'Wishlist', icon: 'favorite' },
-  { href: '/notifications', label: 'Notifications', icon: 'notifications' },
+  { href: '/profile', label: 'Hồ sơ', icon: 'person' },
+  { href: '/orders', label: 'Đơn hàng', icon: 'package' },
+  { href: '/wishlist', label: 'Yêu thích', icon: 'favorite' },
+  { href: '/notifications', label: 'Thông báo', icon: 'notifications' },
 ]
 
 export default function ProfilePage() {
@@ -83,7 +83,7 @@ export default function ProfilePage() {
                 </div>
                 <div>
                   <h2 className="font-heading text-headline-sm text-on-surface">{user.username}</h2>
-                  <p className="font-caption text-caption text-on-surface-variant">Member since 2024</p>
+                  <p className="font-caption text-caption text-on-surface-variant">Thành viên từ 2024</p>
                 </div>
               </div>
 
@@ -109,15 +109,15 @@ export default function ProfilePage() {
               <nav className="space-y-1">
                 <Link href="#" className="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-primary-container rounded-lg transition-all hover:translate-x-1 font-label-md">
                   <span className="material-symbols-outlined">settings</span>
-                  Settings
+                  Cài đặt
                 </Link>
                 <Link href="#" className="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-primary-container rounded-lg transition-all hover:translate-x-1 font-label-md">
                   <span className="material-symbols-outlined">help</span>
-                  Support
+                  Hỗ trợ
                 </Link>
                 <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 text-error hover:bg-error-container/20 rounded-lg transition-all hover:translate-x-1 font-label-md">
                   <span className="material-symbols-outlined">logout</span>
-                  Logout
+                  Đăng xuất
                 </button>
               </nav>
             </div>
@@ -140,8 +140,8 @@ export default function ProfilePage() {
                   </button>
                 </div>
                 <div className="text-center md:text-left">
-                  <h1 className="font-heading text-headline-sm text-on-surface mb-1">Personal Information</h1>
-                  <p className="font-body-md text-body-md text-on-surface-variant">Update your photo and personal details here.</p>
+                  <h1 className="font-heading text-headline-sm text-on-surface mb-1">Thông tin cá nhân</h1>
+                  <p className="font-body-md text-body-md text-on-surface-variant">Cập nhật ảnh đại diện và thông tin cá nhân tại đây.</p>
                 </div>
               </div>
 

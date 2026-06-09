@@ -33,10 +33,11 @@ export function useCreateOrder() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: orderApi.create,
-    onSuccess: () => {
+    onSuccess: (res) => {
       qc.invalidateQueries({ queryKey: ["cart"] });
       qc.invalidateQueries({ queryKey: ["orders"] });
-      router.push("/orders");
+      const orderId = res.data.data.id;
+      router.push(`/checkout/success?orderId=${orderId}`);
     },
     onError: (err: any) =>
       toast.error(

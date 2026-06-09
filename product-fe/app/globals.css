@@ -1,24 +1,82 @@
 @import 'tailwindcss';
+@config "../tailwind.config.ts";
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
 
-/* Material Design 3 Auth Page Styles */
-.cta-gradient {
-  background: linear-gradient(135deg, #1e4cfd 0%, #3432c8 100%);
+/* TL Market — Vibrant Marketplace Design System */
+.orange-gradient {
+  background: linear-gradient(to right, #f97316, #ea580c);
 }
 
-.brand-gradient {
-  background: linear-gradient(135deg, #fcf8ff 0%, #eeecff 100%);
+.orange-glow {
+  box-shadow: 0 10px 15px -3px rgba(249, 115, 22, 0.3);
+}
+
+.flash-sale-gradient {
+  background: linear-gradient(135deg, #ff2d2d 0%, #dc2626 100%);
+}
+
+.card-elevated {
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 16px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-elevated:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary {
+  background: linear-gradient(to right, #f97316, #ea580c);
+  color: #ffffff;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-weight: 600;
+  box-shadow: 0 10px 15px -3px rgba(249, 115, 22, 0.3);
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.btn-primary:hover {
+  filter: brightness(1.05);
+  transform: scale(1.02);
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-secondary {
+  background: #ffffff;
+  color: #191c1e;
+  border: 1px solid #f1f5f9;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-weight: 600;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.btn-secondary:hover {
+  background: #f2f4f6;
+  transform: scale(1.02);
+}
+
+.input-field {
+  border-radius: 12px;
+  border: 1px solid #e0c0b1;
+  background: #ffffff;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: #f97316;
+  box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.2);
+  background: #fff4ed;
 }
 
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-}
-
-.orange-gradient {
-  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-}
-
-.orange-glow {
-  box-shadow: 0 10px 15px -3px rgba(249, 115, 22, 0.25);
 }

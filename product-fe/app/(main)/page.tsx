@@ -7,37 +7,9 @@ import { useAddToCart } from '@/lib/hooks/useCart'
 import { useAddToWishlist } from '@/lib/hooks/useWishlist'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { formatPrice } from '@/lib/utils/formatPrice'
-import { PLACEHOLDER_400 } from '@/lib/utils/placeholder'
 import { useState, useEffect } from 'react'
-
-function CountdownTimer() {
-  const [time, setTime] = useState({ h: '00', m: '00', s: '00' })
-  useEffect(() => {
-    const update = () => {
-      const now = new Date()
-      const diff = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0).getTime() - now.getTime()
-      setTime({
-        h: String(Math.floor((diff / (1000 * 60 * 60)) % 24)).padStart(2, '0'),
-        m: String(Math.floor((diff / (1000 * 60)) % 60)).padStart(2, '0'),
-        s: String(Math.floor((diff / 1000) % 60)).padStart(2, '0'),
-      })
-    }
-    update()
-    const id = setInterval(update, 1000)
-    return () => clearInterval(id)
-  }, [])
-  return (
-    <div className="flex gap-1 items-center">
-      <span className="text-label-md font-bold text-outline">Kết thúc trong:</span>
-      <span className="bg-on-surface text-white px-2 py-1 rounded font-bold text-sm">{time.h}</span>
-      <span className="font-bold text-on-surface">:</span>
-      <span className="bg-on-surface text-white px-2 py-1 rounded font-bold text-sm">{time.m}</span>
-      <span className="font-bold text-on-surface">:</span>
-      <span className="bg-on-surface text-white px-2 py-1 rounded font-bold text-sm">{time.s}</span>
-    </div>
-  )
-}
+import CountdownTimer from '@/components/CountdownTimer'
+import ProductCard from '@/components/ProductCard'
 
 const CATEGORIES = [
   { name: 'Điện Tử', icon: 'devices' },
@@ -238,58 +210,15 @@ export default function HomePage() {
                   </div>
                 ))
               ) : (
-                products?.slice(0, 4).map((product, idx) => {
-                  const minPrice = product.variants.length > 0
-                    ? Math.min(...product.variants.map((v) => product.basePrice + v.extraPrice))
-                    : product.basePrice
-                  const maxPrice = product.variants.length > 0
-                    ? Math.max(...product.variants.map((v) => product.basePrice + v.extraPrice))
-                    : product.basePrice
-                  const totalStock = product.variants.reduce((s, v) => s + v.stock, 0)
-                  const barPercent = Math.min(totalStock * 2, 90)
-                  const discount = maxPrice > minPrice ? Math.round((1 - minPrice / maxPrice) * 100) : 40
-                  const soldCount = [45, 12, 89, 156][idx]
-                  const remainCount = [5, 38, 11, 44][idx]
-                  return (
-                    <div key={product.id} className="bg-white p-4 rounded-2xl shadow-sm hover:shadow-xl transition-all relative overflow-hidden group">
-                      <div className="absolute top-2 left-2 bg-error text-white text-[10px] font-bold px-2 py-1 rounded-full z-10">-{discount}%</div>
-                      <Link href={`/products/${product.id}`}>
-                        <div className="aspect-square rounded-xl overflow-hidden mb-4 bg-surface-variant/20">
-                          {product.images[0] ? (
-                            <img
-                              src={product.images[0].url}
-                              alt={product.productName}
-                              className="w-full h-full object-cover group-hover:scale-110 transition-transform"
-                              onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_400 }}
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-outline">
-                              <span className="material-symbols-outlined text-5xl">image</span>
-                            </div>
-                          )}
-                        </div>
-                      </Link>
-                      <div className="space-y-2">
-                        <Link href={`/products/${product.id}`}>
-                          <h3 className="font-body-md text-body-md text-on-surface-variant line-clamp-1">{product.productName}</h3>
-                        </Link>
-                        <div className="flex items-baseline gap-2">
-                          <span className="text-error font-bold text-price-display">{formatPrice(minPrice)}</span>
-                          {discount > 0 && <span className="text-outline text-caption line-through">{formatPrice(maxPrice)}</span>}
-                        </div>
-                        <div className="pt-2">
-                          <div className="flex justify-between text-[10px] font-bold mb-1 uppercase tracking-tighter">
-                            <span className="text-brand-orange">Đã bán {soldCount}</span>
-                            <span className="text-outline">Còn lại {remainCount}</span>
-                          </div>
-                          <div className="h-2 w-full bg-surface-container rounded-full overflow-hidden">
-                            <div className="h-full bg-brand-orange" style={{ width: `${barPercent}%` }}></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )
-                })
+                products?.slice(0, 4).map((product, idx) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    variant="flash-sale"
+                    soldCount={[45, 12, 89, 156][idx]}
+                    remainCount={[5, 38, 11, 44][idx]}
+                  />
+                ))
               )}
             </div>
           </div>
@@ -321,74 +250,30 @@ export default function HomePage() {
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-              {products?.slice(0, 10).map((product) => {
-                const minPrice = product.variants.length > 0
-                  ? Math.min(...product.variants.map((v) => product.basePrice + v.extraPrice))
-                  : product.basePrice
-                return (
-                  <div key={product.id} className="bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all overflow-hidden group cursor-pointer border border-neutral-50">
-                    <Link href={`/products/${product.id}`}>
-                      <div className="relative aspect-square overflow-hidden">
-                        <div className="absolute top-2 left-2 bg-primary/10 text-primary text-[10px] font-bold px-2 py-1 rounded-full z-10">Bán chạy</div>
-                        {product.images[0] ? (
-                          <img
-                            src={product.images[0].url}
-                            alt={product.productName}
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform"
-                            onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_400 }}
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-outline bg-surface-container-low">
-                            <span className="material-symbols-outlined text-5xl">image</span>
-                          </div>
-                        )}
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                          <button
-                            className="bg-white text-on-surface h-10 w-10 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors"
-                            onClick={(e) => {
-                              e.preventDefault()
-                              if (!isAuthenticated) { router.push('/login?from=/products'); return }
-                              addToWishlist(product.id)
-                            }}
-                          >
-                            <span className="material-symbols-outlined text-[20px]">favorite</span>
-                          </button>
-                          <button
-                            className="bg-white text-on-surface h-10 w-10 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors"
-                            onClick={(e) => {
-                              e.preventDefault()
-                              router.push(`/products/${product.id}`)
-                            }}
-                          >
-                            <span className="material-symbols-outlined text-[20px]">visibility</span>
-                          </button>
-                        </div>
-                      </div>
-                    </Link>
-                    <div className="p-4 space-y-3">
-                      <Link href={`/products/${product.id}`}>
-                        <h3 className="font-body-md text-label-md text-on-surface line-clamp-2 min-h-[40px]">{product.productName}</h3>
-                      </Link>
-                      <div className="flex justify-between items-center">
-                        <span className="text-on-surface font-bold text-headline-sm">{formatPrice(minPrice)}</span>
-                        <button
-                          className="text-on-surface-variant hover:text-primary p-2 transition-colors"
-                          onClick={(e) => {
-                            e.preventDefault()
-                            if (!isAuthenticated) { router.push('/login?from=/products'); return }
-                            const firstVariant = product.variants[0]
-                            if (firstVariant) {
-                              addToCart({ productId: product.id, variantId: firstVariant.id, quantity: 1 })
-                            }
-                          }}
-                        >
-                          <span className="material-symbols-outlined text-[20px]">add_shopping_cart</span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )
-              })}
+              {products?.slice(0, 10).map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  badge="Bán chạy"
+                  onAddToWishlist={(e) => {
+                    e.preventDefault()
+                    if (!isAuthenticated) { router.push('/login?from=/products'); return }
+                    addToWishlist(product.id)
+                  }}
+                  onQuickView={(e) => {
+                    e.preventDefault()
+                    router.push(`/products/${product.id}`)
+                  }}
+                  onAddToCart={(e) => {
+                    e.preventDefault()
+                    if (!isAuthenticated) { router.push('/login?from=/products'); return }
+                    const firstVariant = product.variants[0]
+                    if (firstVariant) {
+                      addToCart({ productId: product.id, variantId: firstVariant.id, quantity: 1 })
+                    }
+                  }}
+                />
+              ))}
             </div>
           )}
 

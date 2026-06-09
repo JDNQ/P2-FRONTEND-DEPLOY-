@@ -98,9 +98,9 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
       <div className="max-w-container-max mx-auto px-gutter py-stack-lg">
         {/* Breadcrumbs */}
         <nav className="flex items-center gap-2 mb-stack-lg font-caption text-caption text-on-surface-variant">
-          <Link href="/" className="hover:text-primary transition-colors">Home</Link>
+          <Link href="/" className="hover:text-primary transition-colors">Trang chủ</Link>
           <span className="material-symbols-outlined text-sm">chevron_right</span>
-          <Link href="/products" className="hover:text-primary transition-colors">Products</Link>
+          <Link href="/products" className="hover:text-primary transition-colors">Sản phẩm</Link>
           <span className="material-symbols-outlined text-sm">chevron_right</span>
           <span className="font-bold text-on-surface">{product.productName}</span>
         </nav>
@@ -144,8 +144,8 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
           {/* Product Details */}
           <div className="lg:col-span-5 flex flex-col gap-5">
             <div>
-              <span className="px-3 py-1 bg-primary-fixed-dim text-sm font-medium mb-2 inline-block rounded-full text-primary">
-                Promoted
+              <span className="px-3 py-1 bg-primary-50 text-sm font-medium mb-2 inline-block rounded-full text-primary">
+                Nổi bật
               </span>
               <h1 className="font-heading text-display-sm text-on-surface mb-1">{product.productName}</h1>
               <div className="flex items-center gap-4 mb-stack-md">
@@ -154,7 +154,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                     <span key={i} className="material-symbols-outlined" style={{ fontVariationSettings: i < 4 ? "'FILL' 1" : "'FILL' 0" }}>star</span>
                   ))}
                 </div>
-                <span className="font-body-md text-body-md text-on-surface-variant">(482 Reviews)</span>
+                <span className="font-body-md text-body-md text-on-surface-variant">(482 đánh giá)</span>
               </div>
               <div className="flex items-baseline gap-3">
                 <span className="font-price-display text-price-display text-primary">{formatPrice(currentPrice || minPrice)}</span>
@@ -167,13 +167,13 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
             <div className="space-y-stack-md">
               <div className="flex items-center gap-2 text-green-600 font-label-md text-label-md">
                 <span className="material-symbols-outlined text-sm">check_circle</span>
-                {currentStock > 0 ? 'In Stock - Ready to ship' : 'Out of Stock'}
+                {currentStock > 0 ? 'Còn hàng — Sẵn sàng giao' : 'Hết hàng'}
               </div>
 
               {product.variants.length > 0 && (
                 <div>
                   <p className="font-label-md text-label-md text-on-surface mb-3">
-                    Variant: <span className="font-bold">{selectedVariant?.variantName || 'Select a variant'}</span>
+                    Phân loại: <span className="font-bold">{selectedVariant?.variantName || 'Chọn phân loại'}</span>
                   </p>
                   <div className="flex flex-wrap gap-3">
                     {product.variants.map((v) => {
@@ -197,7 +197,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
 
               {/* Quantity */}
               <div>
-                <p className="font-label-md text-label-md text-on-surface mb-3">Quantity</p>
+                <p className="font-label-md text-label-md text-on-surface mb-3">Số lượng</p>
                 <div className="flex items-center border border-outline-variant rounded-xl w-fit bg-surface-container-low overflow-hidden">
                   <button onClick={() => setQuantity(Math.max(1, quantity - 1))}
                     className="p-3 hover:bg-surface-variant transition-colors">
@@ -219,11 +219,11 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
               <button onClick={handleAddToCart} disabled={isPending || currentStock === 0}
                 className="flex-1 orange-gradient orange-glow text-white font-label-md py-4 px-8 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50">
                 <span className="material-symbols-outlined">shopping_cart</span>
-                Add to Cart
+                Thêm vào giỏ
               </button>
               <button onClick={handleBuyNow} disabled={currentStock === 0}
                 className="flex-1 bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-md py-4 px-8 rounded-xl active:scale-95 transition-all border border-outline-variant/30 disabled:opacity-50">
-                Buy Now
+                Mua ngay
               </button>
             </div>
 
@@ -231,19 +231,19 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
             <div className="grid grid-cols-2 gap-4 font-caption text-caption text-on-surface-variant pt-stack-md border-t border-outline-variant">
               <div className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-primary">local_shipping</span>
-                Free Express Delivery
+                Giao hàng nhanh miễn phí
               </div>
               <div className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-primary">verified_user</span>
-                2 Year Official Warranty
+                Bảo hành chính hãng 2 năm
               </div>
               <div className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-primary">assignment_return</span>
-                30-Day Easy Returns
+                Đổi trả dễ dàng 30 ngày
               </div>
               <div className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-primary">shield</span>
-                Secure Payment
+                Thanh toán an toàn
               </div>
             </div>
           </div>
@@ -259,9 +259,9 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                     ? 'border-primary text-primary font-bold'
                     : 'border-transparent text-on-surface-variant hover:text-primary'
                 }`}>
-                {tab === 'description' ? 'Description' :
-                 tab === 'specifications' ? 'Specifications' :
-                 tab === 'reviews' ? 'Reviews (482)' : 'Q&A'}
+                {tab === 'description' ? 'Mô tả' :
+                 tab === 'specifications' ? 'Thông số' :
+                 tab === 'reviews' ? 'Đánh giá (482)' : 'Hỏi đáp'}
               </button>
             ))}
           </div>

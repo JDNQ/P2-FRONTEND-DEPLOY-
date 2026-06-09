@@ -4,26 +4,33 @@ import { useAddToCart } from '@/lib/hooks/useCart'
 import { useAddToWishlist } from '@/lib/hooks/useWishlist'
 import { useAuthStore } from '@/lib/stores/authStore'
 import { useRouter } from 'next/navigation'
-import { PLACEHOLDER_400 } from '@/lib/utils/placeholder'
-import { useState, useMemo } from 'react'
-import Link from 'next/link'
-import { formatPrice } from '@/lib/utils/formatPrice'
+import { useState, useMemo, useEffect, Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
+import ProductCard from '@/components/ProductCard'
 import Header from '@/components/Header'
 import SidebarFilter from '@/components/SidebarFilter'
 import Footer from '@/components/Footer'
 
-export default function ProductsPage() {
+function ProductsContent() {
   const { data: products, isLoading } = useProducts()
   const { isAuthenticated } = useAuthStore()
   const { mutate: addToCart } = useAddToCart()
   const { mutate: addToWishlist } = useAddToWishlist()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [searchTerm, setSearchTerm] = useState('')
   const [sortBy, setSortBy] = useState('newest')
   const [minPrice, setMinPrice] = useState(0)
   const [maxPrice, setMaxPrice] = useState(Infinity)
   const [currentPage, setCurrentPage] = useState(1)
   const [rangeValue, setRangeValue] = useState(50)
+
+  useEffect(() => {
+    const q = searchParams.get('search') || searchParams.get('searchTerm') || ''
+    const cat = searchParams.get('category') || ''
+    setSearchTerm(q || cat)
+    setCurrentPage(1)
+  }, [searchParams])
 
   const filteredProducts = useMemo(() => {
     if (!products) return []
@@ -51,8 +58,7 @@ export default function ProductsPage() {
     product.variants.some((v) => v.stock > 0)
 
   return (
-    <div className="min-h-screen bg-background text-on-surface pb-20 md:pb-0">
-      <Header />
+    <>
 
       <main className="max-w-container-max mx-auto px-gutter py-stack-lg">
         <div className="flex flex-col md:flex-row gap-stack-lg">
@@ -106,77 +112,30 @@ export default function ProductsPage() {
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-stack-lg">
                   {paged.map((product) => {
-                    const minP = product.variants.length > 0
-                      ? Math.min(...product.variants.map((v) => product.basePrice + v.extraPrice))
-                      : product.basePrice
                     const inStock = allStocked(product)
                     return (
-                      <div
+                      <ProductCard
                         key={product.id}
-                        className="bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all overflow-hidden group cursor-pointer border border-neutral-50"
-                      >
-                        <Link href={`/products/${product.id}`}>
-                          <div className="relative aspect-square overflow-hidden">
-                            <div className="absolute top-2 left-2 bg-primary/10 text-primary text-[10px] font-bold px-2 py-1 rounded-full z-10">
-                              {inStock ? 'Bán chạy' : 'Hết hàng'}
-                            </div>
-                            {product.images[0] ? (
-                              <img
-                                src={product.images[0].url}
-                                alt={product.productName}
-                                className="w-full h-full object-cover group-hover:scale-110 transition-transform"
-                                onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_400 }}
-                              />
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center text-outline bg-surface-container-low">
-                                <span className="material-symbols-outlined text-5xl">image</span>
-                              </div>
-                            )}
-                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                              <button
-                                className="bg-white text-on-surface h-10 w-10 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors"
-                                onClick={(e) => {
-                                  e.preventDefault()
-                                  if (!isAuthenticated) { router.push('/login?from=/products'); return }
-                                  addToWishlist(product.id)
-                                }}
-                              >
-                                <span className="material-symbols-outlined text-[20px]">favorite</span>
-                              </button>
-                              <button
-                                className="bg-white text-on-surface h-10 w-10 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors"
-                                onClick={(e) => {
-                                  e.preventDefault()
-                                  router.push(`/products/${product.id}`)
-                                }}
-                              >
-                                <span className="material-symbols-outlined text-[20px]">visibility</span>
-                              </button>
-                            </div>
-                          </div>
-                        </Link>
-                        <div className="p-4 space-y-3">
-                          <Link href={`/products/${product.id}`}>
-                            <h3 className="font-body-md text-label-md text-on-surface line-clamp-2 min-h-[40px]">{product.productName}</h3>
-                          </Link>
-                          <div className="flex justify-between items-center">
-                            <span className="text-on-surface font-bold text-headline-sm">{formatPrice(minP)}</span>
-                            <button
-                              className="text-on-surface-variant hover:text-primary p-2 transition-colors"
-                              onClick={(e) => {
-                                e.preventDefault()
-                                if (!isAuthenticated) { router.push('/login?from=/products'); return }
-                                const firstVariant = product.variants[0]
-                                if (firstVariant) {
-                                  addToCart({ productId: product.id, variantId: firstVariant.id, quantity: 1 })
-                                }
-                              }}
-                            >
-                              <span className="material-symbols-outlined text-[20px]">add_shopping_cart</span>
-                            </button>
-                          </div>
-                        </div>
-                      </div>
+                        product={product}
+                        badge={inStock ? 'Bán chạy' : 'Hết hàng'}
+                        onAddToWishlist={(e) => {
+                          e.preventDefault()
+                          if (!isAuthenticated) { router.push('/login?from=/products'); return }
+                          addToWishlist(product.id)
+                        }}
+                        onQuickView={(e) => {
+                          e.preventDefault()
+                          router.push(`/products/${product.id}`)
+                        }}
+                        onAddToCart={(e) => {
+                          e.preventDefault()
+                          if (!isAuthenticated) { router.push('/login?from=/products'); return }
+                          const firstVariant = product.variants[0]
+                          if (firstVariant) {
+                            addToCart({ productId: product.id, variantId: firstVariant.id, quantity: 1 })
+                          }
+                        }}
+                      />
                     )
                   })}
                 </div>
@@ -225,6 +184,24 @@ export default function ProductsPage() {
         </div>
       </main>
 
+    </>
+  )
+}
+
+export default function ProductsPage() {
+  return (
+    <div className="min-h-screen bg-surface-page text-on-surface pb-20 md:pb-0">
+      <Header />
+      <Suspense fallback={
+        <div className="max-w-container-max mx-auto px-gutter py-stack-lg animate-pulse">
+          <div className="h-8 bg-surface-container-high rounded w-1/3 mb-stack-lg" />
+          <div className="grid grid-cols-3 gap-6">
+            {[...Array(6)].map((_, i) => <div key={i} className="aspect-square bg-surface-container-high rounded-2xl" />)}
+          </div>
+        </div>
+      }>
+        <ProductsContent />
+      </Suspense>
       <Footer />
     </div>
   )

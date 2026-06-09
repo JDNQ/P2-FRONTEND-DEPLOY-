@@ -8,27 +8,27 @@ import { useRouter } from 'next/navigation'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 
-const TABS = ['All Orders', 'Pending', 'Confirmed', 'Shipping', 'Delivered', 'Cancelled']
+const TABS = ['Tất cả', 'Chờ xác nhận', 'Đã xác nhận', 'Đang giao', 'Đã giao', 'Đã hủy']
 const TAB_KEY_MAP: Record<string, string | undefined> = {
-  'All Orders': undefined,
-  'Pending': 'PENDING',
-  'Confirmed': 'CONFIRMED',
-  'Shipping': 'SHIPPING',
-  'Delivered': 'DELIVERED',
-  'Cancelled': 'CANCELLED',
+  'Tất cả': undefined,
+  'Chờ xác nhận': 'PENDING',
+  'Đã xác nhận': 'CONFIRMED',
+  'Đang giao': 'SHIPPING',
+  'Đã giao': 'DELIVERED',
+  'Đã hủy': 'CANCELLED',
 }
 
 const STATUS_CONFIG: Record<string, { label: string; bg: string; text: string; icon: string; iconFill?: boolean }> = {
-  PENDING:   { label: 'Pending',   bg: 'bg-yellow-100', text: 'text-yellow-700', icon: 'schedule' },
-  CONFIRMED: { label: 'Confirmed', bg: 'bg-blue-100',   text: 'text-blue-700',   icon: 'check_circle', iconFill: true },
-  SHIPPING:  { label: 'Shipping',  bg: 'bg-primary-container/30', text: 'text-primary',  icon: 'local_shipping', iconFill: true },
-  DELIVERED: { label: 'Delivered', bg: 'bg-green-100',  text: 'text-green-700',  icon: 'check_circle', iconFill: true },
-  CANCELLED: { label: 'Cancelled', bg: 'bg-error-container/20', text: 'text-error',  icon: 'cancel', iconFill: true },
+  PENDING:   { label: 'Chờ xác nhận', bg: 'bg-yellow-100', text: 'text-yellow-700', icon: 'schedule' },
+  CONFIRMED: { label: 'Đã xác nhận', bg: 'bg-primary-50', text: 'text-primary', icon: 'check_circle', iconFill: true },
+  SHIPPING:  { label: 'Đang giao', bg: 'bg-primary-50', text: 'text-primary', icon: 'local_shipping', iconFill: true },
+  DELIVERED: { label: 'Đã giao', bg: 'bg-green-100', text: 'text-green-700', icon: 'check_circle', iconFill: true },
+  CANCELLED: { label: 'Đã hủy', bg: 'bg-error-container/20', text: 'text-error', icon: 'cancel', iconFill: true },
 }
 
 export default function OrdersPage() {
   const { data: orders, isLoading } = useMyOrders()
-  const [activeTab, setActiveTab] = useState('All Orders')
+  const [activeTab, setActiveTab] = useState('Tất cả')
   const router = useRouter()
 
   const orderList = (orders || []).filter((o) => {
@@ -58,8 +58,8 @@ export default function OrdersPage() {
       <Header />
       <div className="max-w-container-max mx-auto px-gutter py-stack-lg">
         <header className="mb-stack-lg">
-          <h1 className="font-heading text-headline-lg text-on-surface mb-1">My Orders</h1>
-          <p className="font-body-md text-body-md text-on-surface-variant">View and track all your purchases and order history.</p>
+          <h1 className="font-heading text-headline-lg text-on-surface mb-1">Đơn hàng của tôi</h1>
+          <p className="font-body-md text-body-md text-on-surface-variant">Theo dõi và quản lý tất cả đơn hàng của bạn.</p>
         </header>
 
         {/* Status Tabs */}
@@ -84,15 +84,15 @@ export default function OrdersPage() {
         {orderList.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-section-gap text-center">
             <span className="material-symbols-outlined text-[80px] text-outline-variant mb-stack-md">package</span>
-            <h2 className="font-heading text-headline-sm text-on-surface mb-1">No orders yet</h2>
+            <h2 className="font-heading text-headline-sm text-on-surface mb-1">Chưa có đơn hàng</h2>
             <p className="font-body-md text-body-md text-on-surface-variant mb-stack-lg">
-              {activeTab === 'All Orders' ? 'Start shopping to see your orders here.' : `No ${activeTab.toLowerCase()} orders found.`}
+              {activeTab === 'Tất cả' ? 'Bắt đầu mua sắm để xem đơn hàng tại đây.' : `Không có đơn hàng "${activeTab.toLowerCase()}".`}
             </p>
             <Link
               href="/products"
               className="inline-flex items-center gap-2 bg-white border-2 border-primary text-primary font-heading font-bold px-8 py-3 rounded-xl hover:bg-primary hover:text-white transition-all"
             >
-              Continue Shopping
+              Tiếp tục mua sắm
             </Link>
           </div>
         ) : (
@@ -123,12 +123,12 @@ export default function OrdersPage() {
                   <div className="p-stack-md border-b border-neutral-100 flex flex-wrap justify-between items-center bg-surface-container-low">
                     <div className="flex gap-4 items-center">
                       <div>
-                        <span className="font-caption text-caption text-on-surface-variant uppercase tracking-wider">Order ID</span>
+                        <span className="font-caption text-caption text-on-surface-variant uppercase tracking-wider">Mã đơn</span>
                         <p className="font-label-md text-label-md font-bold text-on-surface">#{order.id}</p>
                       </div>
                       <div className="w-px h-8 bg-outline-variant" />
                       <div>
-                        <span className="font-caption text-caption text-on-surface-variant uppercase tracking-wider">Date</span>
+                        <span className="font-caption text-caption text-on-surface-variant uppercase tracking-wider">Ngày đặt</span>
                         <p className="font-label-md text-label-md text-on-surface">{formatDate(order.createdAt)}</p>
                       </div>
                     </div>
@@ -170,7 +170,7 @@ export default function OrdersPage() {
 
                     <div className="flex flex-col md:items-end">
                       <span className="font-caption text-caption text-on-surface-variant uppercase tracking-wider">
-                        {isCancelled ? 'Refunded Amount' : 'Total Amount'}
+                        {isCancelled ? 'Số tiền hoàn' : 'Tổng tiền'}
                       </span>
                       <p className="font-price-display text-price-display text-primary">{formatPrice(order.totalPrice)}</p>
                     </div>
@@ -182,7 +182,7 @@ export default function OrdersPage() {
                         else { router.push(`/checkout/success`) }
                       }}
                     >
-                      <span>{isCancelled ? 'Buy Again' : order.status === 'SHIPPING' ? 'Track Order' : 'View Details'}</span>
+                      <span>{isCancelled ? 'Mua lại' : order.status === 'SHIPPING' ? 'Theo dõi' : 'Chi tiết'}</span>
                       <span className="material-symbols-outlined text-[18px]">
                         {isCancelled ? 'replay' : order.status === 'SHIPPING' ? 'map' : 'chevron_right'}
                       </span>
