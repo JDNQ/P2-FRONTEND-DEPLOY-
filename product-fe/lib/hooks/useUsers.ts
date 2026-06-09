@@ -16,8 +16,12 @@ export function useUserStats() {
   return useQuery({
     queryKey: ['users', 'stats'],
     queryFn: async () => {
-      const { data } = await userApi.getStats()
-      return data.data
+      try {
+        const { data } = await userApi.getStats()
+        return data.data
+      } catch {
+        return null
+      }
     },
   })
 }
