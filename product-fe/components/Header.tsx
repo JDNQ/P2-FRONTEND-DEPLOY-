@@ -31,11 +31,11 @@ export default function Header() {
   }, [pathname])
 
   const navLinks = [
-    { href: '/products?category=Electronics', label: 'Điện tử' },
-    { href: '/products?category=Fashion', label: 'Thời trang' },
-    { href: '/products?category=Home', label: 'Gia dụng' },
-    { href: '/products?category=Gifts', label: 'Quà tặng' },
-    { href: '/products?category=Deals', label: 'Khuyến mãi' },
+    { href: '/products', label: 'Điện tử' },
+    { href: '/products', label: 'Thời trang' },
+    { href: '/products', label: 'Gia dụng' },
+    { href: '/products', label: 'Quà tặng' },
+    { href: '/products', label: 'Khuyến mãi' },
   ]
 
   return (
@@ -53,11 +53,10 @@ export default function Header() {
                 <Link
                   key={link.label}
                   href={link.href}
-                  className={`font-label-md text-label-md transition-all relative py-1 ${
-                    isActive
+                  className={`font-label-md text-label-md transition-all relative py-1 ${isActive
                       ? 'text-primary font-bold border-b-2 border-primary'
                       : 'text-on-surface-variant hover:text-primary'
-                  }`}
+                    }`}
                 >
                   {link.label}
                 </Link>
@@ -96,9 +95,8 @@ export default function Header() {
           {/* Wishlist */}
           <Link
             href="/wishlist"
-            className={`p-2 hover:bg-surface-container rounded-full transition-colors text-on-surface-variant hover:text-primary relative ${
-              pathname === '/wishlist' ? 'bg-surface-container text-primary' : ''
-            }`}
+            className={`p-2 hover:bg-surface-container rounded-full transition-colors text-on-surface-variant hover:text-primary relative ${pathname === '/wishlist' ? 'bg-surface-container text-primary' : ''
+              }`}
           >
             <span className="material-symbols-outlined font-normal">favorite</span>
           </Link>
@@ -106,9 +104,8 @@ export default function Header() {
           {/* Cart */}
           <Link
             href="/cart"
-            className={`p-2 hover:bg-surface-container rounded-full transition-colors text-on-surface-variant hover:text-primary relative cursor-pointer group ${
-              pathname === '/cart' ? 'bg-surface-container text-primary' : ''
-            }`}
+            className={`p-2 hover:bg-surface-container rounded-full transition-colors text-on-surface-variant hover:text-primary relative cursor-pointer group ${pathname === '/cart' ? 'bg-surface-container text-primary' : ''
+              }`}
           >
             <span className="material-symbols-outlined font-normal">shopping_cart</span>
             {cartCount > 0 && (
@@ -121,11 +118,10 @@ export default function Header() {
           {/* Account Profile button */}
           <Link
             href={isAuthenticated ? '/profile' : '/login'}
-            className={`flex items-center gap-2 p-1 pl-1 pr-3 hover:bg-surface-container rounded-full transition-all border ${
-              pathname === '/profile'
+            className={`flex items-center gap-2 p-1 pl-1 pr-3 hover:bg-surface-container rounded-full transition-all border ${pathname === '/profile'
                 ? 'border-primary bg-primary-container/10 text-primary'
                 : 'border-outline-variant/30 text-on-surface hover:border-primary/50'
-            }`}
+              }`}
           >
             <div className="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center overflow-hidden border border-white">
               {isAuthenticated && user?.username ? (

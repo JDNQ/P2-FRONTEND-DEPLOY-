@@ -27,10 +27,11 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   const [activeTab, setActiveTab] = useState('description')
 
   const selectedVariant = product?.variants.find((v) => v.id === selectedVariantId) || null
+  const totalStock = product?.variants.reduce((sum, v) => sum + v.stock, 0) ?? 0
   const currentPrice = selectedVariant
     ? product!.basePrice + selectedVariant.extraPrice
     : product?.basePrice || 0
-  const currentStock = selectedVariant?.stock ?? 0
+  const currentStock = selectedVariant ? selectedVariant.stock : totalStock
 
   const hasImages = product?.images && product.images.length > 0
   const safeMainImgIdx = hasImages ? Math.min(mainImgIdx, product.images.length - 1) : 0
@@ -115,9 +116,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
             <div className="flex md:flex-col gap-3 order-2 md:order-1">
               {hasImages ? product.images.slice(0, 4).map((img, idx) => (
                 <button key={idx} onClick={() => setMainImgIdx(idx)}
-                  className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition-all hover:scale-105 ${
-                    idx === safeMainImgIdx ? 'border-primary ring-2 ring-primary-fixed-dim' : 'border-transparent'
-                  }`}>
+                  className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition-all hover:scale-105 ${idx === safeMainImgIdx ? 'border-primary ring-2 ring-primary-fixed-dim' : 'border-transparent'
+                    }`}>
                   <img src={img.url} alt="" className="w-full h-full object-cover"
                     onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_80 }} />
                 </button>
@@ -181,7 +181,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               {product.variants.length > 0 && (
                 <div>
                   <p className="font-label-md text-label-md text-on-surface mb-3">
-                    Phân loại: <span className="font-bold">{selectedVariant?.variantName || 'Chọn phân loại'}</span>
+                    Phân loại: <span className="font-bold">{selectedVariant ? selectedVariant.variantName : `Tất cả (${totalStock} sản phẩm)`}</span>
                   </p>
                   <div className="flex flex-wrap gap-3">
                     {product.variants.map((v) => {
@@ -189,11 +189,10 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                       return (
                         <button key={v.id} onClick={() => { setSelectedVariantId(v.id); setQuantity(1) }}
                           disabled={v.stock === 0}
-                          className={`py-3 px-4 rounded-xl border-2 font-label-md text-label-md transition-all ${
-                            isSelected
+                          className={`py-3 px-4 rounded-xl border-2 font-label-md text-label-md transition-all ${isSelected
                               ? 'border-primary text-primary font-bold bg-primary-container/10'
                               : 'border-outline-variant hover:border-primary text-on-surface-variant'
-                          } ${v.stock === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                            } ${v.stock === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}>
                           {v.variantName}
                           {v.extraPrice > 0 && ` (+${formatPrice(v.extraPrice)})`}
                         </button>
@@ -262,14 +261,13 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
           <div className="flex border-b border-outline-variant mb-stack-lg overflow-x-auto whitespace-nowrap">
             {['description', 'specifications', 'reviews', 'qa'].map((tab) => (
               <button key={tab} onClick={() => setActiveTab(tab)}
-                className={`px-8 py-4 border-b-2 font-label-md text-label-md transition-all ${
-                  activeTab === tab
+                className={`px-8 py-4 border-b-2 font-label-md text-label-md transition-all ${activeTab === tab
                     ? 'border-primary text-primary font-bold'
                     : 'border-transparent text-on-surface-variant hover:text-primary'
-                }`}>
+                  }`}>
                 {tab === 'description' ? 'Mô tả' :
-                 tab === 'specifications' ? 'Thông số' :
-                 tab === 'reviews' ? 'Đánh giá (482)' : 'Hỏi đáp'}
+                  tab === 'specifications' ? 'Thông số' :
+                    tab === 'reviews' ? 'Đánh giá (482)' : 'Hỏi đáp'}
               </button>
             ))}
           </div>

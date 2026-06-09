@@ -15,7 +15,7 @@ const SIDEBAR = [
 ]
 
 export default function ProfilePage() {
-  const { user, clearAuth, isAuthenticated } = useAuthStore()
+  const { user, isAuthenticated } = useAuthStore()
   const router = useRouter()
   const pathname = usePathname()
   const [isSaving, setIsSaving] = useState(false)
@@ -25,13 +25,6 @@ export default function ProfilePage() {
     phone: '',
     bio: 'Tech enthusiast and frequent shopper at TL Market.',
   })
-
-  const handleLogout = () => {
-    clearAuth()
-    document.cookie = 'tl_token=; path=/; max-age=0'
-    document.cookie = 'tl_role=; path=/; max-age=0'
-    router.push('/')
-  }
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -92,11 +85,10 @@ export default function ProfilePage() {
                   const isActive = pathname === item.href
                   return (
                     <Link key={item.label} href={item.href}
-                      className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-label-md ${
-                        isActive
-                          ? 'bg-primary text-on-primary translate-x-1'
-                          : 'text-on-surface-variant hover:bg-primary-container hover:translate-x-1'
-                      }`}>
+                      className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-label-md ${isActive
+                        ? 'bg-primary text-on-primary translate-x-1'
+                        : 'text-on-surface-variant hover:bg-primary-container hover:translate-x-1'
+                        }`}>
                       <span className="material-symbols-outlined">{item.icon}</span>
                       {item.label}
                     </Link>
@@ -107,18 +99,10 @@ export default function ProfilePage() {
               <hr className="my-stack-md border-outline-variant/30" />
 
               <nav className="space-y-1">
-                <Link href="#" className="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-primary-container rounded-lg transition-all hover:translate-x-1 font-label-md">
+                <Link href="/profile" className="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-primary-container rounded-lg transition-all hover:translate-x-1 font-label-md">
                   <span className="material-symbols-outlined">settings</span>
                   Cài đặt
                 </Link>
-                <Link href="#" className="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-primary-container rounded-lg transition-all hover:translate-x-1 font-label-md">
-                  <span className="material-symbols-outlined">help</span>
-                  Hỗ trợ
-                </Link>
-                <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 text-error hover:bg-error-container/20 rounded-lg transition-all hover:translate-x-1 font-label-md">
-                  <span className="material-symbols-outlined">logout</span>
-                  Đăng xuất
-                </button>
               </nav>
             </div>
           </aside>

@@ -49,6 +49,7 @@ export default function ProductCard({
               <img
                 src={product.images[0].url}
                 alt={product.productName}
+                title={product.productName}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_400 }}
               />
@@ -100,6 +101,7 @@ export default function ProductCard({
             <img
               src={product.images[0].url}
               alt={product.productName}
+              title={product.productName}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_400 }}
             />

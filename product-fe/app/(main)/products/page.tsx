@@ -10,6 +10,7 @@ import ProductCard from '@/components/ProductCard'
 import Header from '@/components/Header'
 import SidebarFilter from '@/components/SidebarFilter'
 import Footer from '@/components/Footer'
+import type { Product } from '@/lib/types/product'
 
 function ProductsContent() {
   const { data: products, isLoading } = useProducts()
@@ -27,24 +28,30 @@ function ProductsContent() {
 
   useEffect(() => {
     const q = searchParams.get('search') || searchParams.get('searchTerm') || ''
-    const cat = searchParams.get('category') || ''
-    setSearchTerm(q || cat)
+    setSearchTerm(q)
     setCurrentPage(1)
   }, [searchParams])
+
+  const getMinPrice = (p: Product) =>
+    p.variants.length > 0 ? Math.min(...p.variants.map((v) => p.basePrice + v.extraPrice)) : p.basePrice
+
+  const getMaxPrice = (p: Product) =>
+    p.variants.length > 0 ? Math.max(...p.variants.map((v) => p.basePrice + v.extraPrice)) : p.basePrice
 
   const filteredProducts = useMemo(() => {
     if (!products) return []
     let result = [...products]
     if (searchTerm) {
       result = result.filter((p) =>
-        p.productName.toLowerCase().includes(searchTerm.toLowerCase())
+        p.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (p.description?.toLowerCase() ?? '').includes(searchTerm.toLowerCase())
       )
     }
-    if (minPrice > 0) result = result.filter((p) => p.basePrice >= minPrice)
-    if (maxPrice < Infinity) result = result.filter((p) => p.basePrice <= maxPrice)
+    if (minPrice > 0) result = result.filter((p) => getMinPrice(p) >= minPrice)
+    if (maxPrice < Infinity) result = result.filter((p) => getMaxPrice(p) <= maxPrice)
     switch (sortBy) {
-      case 'price-asc': result.sort((a, b) => a.basePrice - b.basePrice); break
-      case 'price-desc': result.sort((a, b) => b.basePrice - a.basePrice); break
+      case 'price-asc': result.sort((a, b) => getMinPrice(a) - getMinPrice(b)); break
+      case 'price-desc': result.sort((a, b) => getMinPrice(b) - getMinPrice(a)); break
       case 'newest': result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()); break
     }
     return result
@@ -54,7 +61,7 @@ function ProductsContent() {
   const totalPages = Math.max(1, Math.ceil(filteredProducts.length / pageSize))
   const paged = filteredProducts.slice((currentPage - 1) * pageSize, currentPage * pageSize)
 
-  const allStocked = (product: typeof products extends undefined ? never : typeof products[number]) =>
+  const allStocked = (product: Product) =>
     product.variants.some((v) => v.stock > 0)
 
   return (
@@ -86,6 +93,7 @@ function ProductsContent() {
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
                   className="bg-surface-container-low border border-outline-variant rounded-xl py-2 px-4 focus:ring-2 focus:ring-primary focus:border-primary font-body-md text-body-md w-full sm:w-48 outline-none"
+                  title="Sắp xếp sản phẩm"
                 >
                   <option value="newest">Mới nhất</option>
                   <option value="price-asc">Giá: Thấp đến Cao</option>
@@ -147,6 +155,7 @@ function ProductsContent() {
                       onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                       disabled={currentPage === 1}
                       className="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant hover:bg-surface-variant text-on-surface transition-colors disabled:opacity-50"
+                      title="Trang trước"
                     >
                       <span className="material-symbols-outlined">chevron_left</span>
                     </button>
@@ -154,11 +163,11 @@ function ProductsContent() {
                       <button
                         key={page}
                         onClick={() => setCurrentPage(page)}
-                        className={`w-10 h-10 flex items-center justify-center rounded-lg font-label-md transition-all ${
-                          currentPage === page
-                            ? 'orange-gradient text-white shadow-sm'
-                            : 'border border-outline-variant hover:bg-surface-variant text-on-surface'
-                        }`}
+                        className={`w-10 h-10 flex items-center justify-center rounded-lg font-label-md transition-all ${currentPage === page
+                          ? 'orange-gradient text-white shadow-sm'
+                          : 'border border-outline-variant hover:bg-surface-variant text-on-surface'
+                          }`}
+                        title={`Trang ${page}`}
                       >
                         {page}
                       </button>
@@ -168,6 +177,7 @@ function ProductsContent() {
                       onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                       disabled={currentPage === totalPages}
                       className="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant hover:bg-surface-variant text-on-surface transition-colors disabled:opacity-50"
+                      title="Trang sau"
                     >
                       <span className="material-symbols-outlined">chevron_right</span>
                     </button>
