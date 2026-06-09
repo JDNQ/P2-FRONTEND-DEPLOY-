@@ -1,10 +1,9 @@
 import api from './axiosInstance'
 import type { ApiResponse } from '@/lib/types/api'
-import type { UserProfile, DashboardStats } from '@/lib/types/user'
+import type { UserProfile } from '@/lib/types/user'
 
 export const userApi = {
   getAll: () => api.get<ApiResponse<UserProfile[]>>('/users'),
-  getStats: () => api.get<ApiResponse<DashboardStats>>('/users/stats'),
   create: (data: { username: string; email: string; password: string; fullName?: string; role?: string }) =>
     api.post<ApiResponse<UserProfile>>('/auth/create-manager', data),
   updateRole: (id: number, role: string) =>

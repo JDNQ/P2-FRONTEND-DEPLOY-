@@ -1,5 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMemo } from 'react'
 import { userApi } from '@/lib/api/userApi'
+import type { DashboardStats, UserProfile } from '@/lib/types/user'
 import { toast } from 'sonner'
 
 export function useUsers() {
@@ -12,18 +14,25 @@ export function useUsers() {
   })
 }
 
+function computeUserStats(users: UserProfile[]): DashboardStats {
+  const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000
+  return {
+    totalUsers: users.length,
+    activeNow: users.filter((u) => u.status === 'Active').length,
+    newThisWeek: users.filter((u) => new Date(u.createdAt).getTime() >= weekAgo).length,
+    banned: users.filter((u) => u.status === 'Banned').length,
+    totalUsersTrend: 0,
+  }
+}
+
+/** Tính stats từ danh sách users — BE không có endpoint /users/stats */
 export function useUserStats() {
-  return useQuery({
-    queryKey: ['users', 'stats'],
-    queryFn: async () => {
-      try {
-        const { data } = await userApi.getStats()
-        return data.data
-      } catch {
-        return null
-      }
-    },
-  })
+  const { data: users = [], isLoading } = useUsers()
+  const stats = useMemo(
+    () => (users.length > 0 ? computeUserStats(users) : null),
+    [users],
+  )
+  return { data: stats, isLoading }
 }
 
 export function useUpdateUserRole() {

@@ -5,7 +5,7 @@ import { useEffect } from 'react'
 import Link from 'next/link'
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const { user, isAuthenticated } = useAuthStore()
+  const { user, isAuthenticated, clearAuth } = useAuthStore()
   const router = useRouter()
   const pathname = usePathname()
 
@@ -14,6 +14,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       router.push('/login')
     }
   }, [isAuthenticated, router])
+
+  const handleLogout = () => {
+    clearAuth()
+    document.cookie = 'tl_token=; path=/; max-age=0'
+    document.cookie = 'tl_role=; path=/; max-age=0'
+    router.push('/login')
+  }
 
   if (!isAuthenticated) return null
 
@@ -108,9 +115,22 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <span className="material-symbols-outlined">notifications</span>
                 <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-flash-sale" />
               </button>
-              <div className="w-10 h-10 rounded-full flex items-center justify-center font-bold border-2 bg-primary-50 text-primary border-white">
+              <Link
+                href="/profile"
+                className="w-10 h-10 rounded-full flex items-center justify-center font-bold border-2 bg-primary-50 text-primary border-white hover:ring-2 hover:ring-primary/20 transition-all"
+                title="Cài đặt tài khoản"
+              >
                 {user?.username?.charAt(0).toUpperCase() || 'A'}
-              </div>
+              </Link>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="flex items-center gap-1.5 px-3 py-2 text-error hover:bg-error-container/30 rounded-xl transition-all text-sm font-semibold"
+                title="Đăng xuất"
+              >
+                <span className="material-symbols-outlined text-[20px]">logout</span>
+                <span className="hidden sm:inline">Đăng xuất</span>
+              </button>
             </div>
           </div>
         </header>
