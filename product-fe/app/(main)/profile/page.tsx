@@ -62,11 +62,13 @@ export default function ProfilePage() {
       toast.error('Chỉ hỗ trợ định dạng JPG, PNG, WEBP, GIF')
       return
     }
-    const maxSize = file.type === 'image/gif' ? 10 * 1024 * 1024 : 5 * 1024 * 1024
+    const maxSize = file.type === 'image/gif' ? 15 * 1024 * 1024 : 5 * 1024 * 1024
     if (file.size > maxSize) {
       toast.error(`Ảnh không được vượt quá ${maxSize / 1024 / 1024}MB`)
       return
     }
+    // Nếu upload BE thất bại và file > 2MB → base64 quá lớn cho localStorage
+    const isBase64Safe = file.size <= 2 * 1024 * 1024
 
     setUploading(true)
 
@@ -81,14 +83,19 @@ export default function ProfilePage() {
       }
       toast.success('Cập nhật ảnh đại diện thành công!')
     } catch {
-      // Fallback: lưu local base64 nếu BE không có endpoint upload avatar
+      if (!isBase64Safe) {
+        toast.error('File quá lớn để lưu tạm. Vui lòng thử lại sau hoặc chọn ảnh nhỏ hơn 2MB.')
+        setUploading(false)
+        if (fileInputRef.current) fileInputRef.current.value = ''
+        return
+      }
       const reader = new FileReader()
       reader.onload = () => {
         const base64 = reader.result as string
         if (user) {
           updateUser({ avatarUrl: base64 })
         }
-        toast.success('Đã lưu ảnh đại diện (local)')
+        toast.success('Đã lưu ảnh đại diện tạm thời')
       }
       reader.onerror = () => {
         toast.error('Đọc file thất bại, vui lòng thử lại')

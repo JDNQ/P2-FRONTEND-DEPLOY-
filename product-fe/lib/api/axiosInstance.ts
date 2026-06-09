@@ -3,7 +3,7 @@ import { config } from '@/lib/config'
 
 const api = axios.create({
   baseURL: config.apiUrl,
-  timeout: 30000, // 30s - Render free tier có cold start mất 30-60s
+  timeout: 120000, // 120s - Render free tier cold start có thể mất 30-60s
   headers: { 'Content-Type': 'application/json' },
 })
 
@@ -25,10 +25,8 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && typeof window !== 'undefined') {
       localStorage.removeItem('tl_access_token')
       localStorage.removeItem('tl_user')
-      // Xóa cookie để middleware cũng đồng bộ
       document.cookie = 'tl_token=; path=/; max-age=0'
       document.cookie = 'tl_role=; path=/; max-age=0'
-      // Chỉ redirect nếu đang ở trang protected (không phải login/register)
       const path = window.location.pathname
       const authPaths = ['/login', '/register', '/forgot-password']
       if (!authPaths.some((p) => path.startsWith(p))) {

@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 export const variantSchema = z.object({
   variantName: z.string().min(1, 'Không được để trống'),
-  extraPrice: z.coerce.number().min(0, 'Phải >= 0'),
+  extraPrice: z.coerce.number(),
   stock: z.coerce.number().min(0, 'Phải >= 0'),
   image: z.string().url().optional().or(z.literal('')),
 })
