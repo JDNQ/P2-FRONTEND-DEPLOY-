@@ -88,6 +88,17 @@ export default function AdminProductsPage() {
         {/* Header Actions */}
         <div className="px-6 py-4 border-b border-[#c4c5d9]/30 flex justify-between items-center" style={{ backgroundColor: '#f5f2ff' }}>
           <div className="flex gap-2">
+            <Link
+              href="/dashboard/admin/products/new"
+              className="px-4 py-2 rounded-lg flex items-center gap-2 text-[14px] leading-[20px] font-bold text-white transition-all active:scale-95"
+              style={{
+                background: 'linear-gradient(135deg, #0035d1 0%, #3432c8 100%)',
+                boxShadow: '0 4px 14px 0 rgba(30, 76, 253, 0.25)',
+              }}
+            >
+              <span className="material-symbols-outlined text-[18px]">add</span>
+              Add Product
+            </Link>
             <button className="px-4 py-2 rounded-lg border border-[#c4c5d9] hover:bg-[#e1dfff] transition-colors flex items-center gap-2 text-[14px] leading-[20px] font-medium text-[#444656]" style={{ backgroundColor: '#fcf8ff' }}>
               <span className="material-symbols-outlined text-[18px]">filter_alt</span>
               Filters

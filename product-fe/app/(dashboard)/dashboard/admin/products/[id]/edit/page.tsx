@@ -8,6 +8,7 @@ import { useProduct, useUpdateProduct } from '@/lib/hooks/useProducts'
 import { PLACEHOLDER_150 } from '@/lib/utils/placeholder'
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
+import { toast } from 'sonner'
 import type { ProductImageDto } from '@/lib/types/product'
 
 const editProductSchema = z.object({
@@ -159,31 +160,6 @@ export default function EditProductPage() {
     setVariantImages((prev) => prev.filter((_, i) => i !== index))
   }
 
-  const onSubmit = async (data: EditProductValues) => {
-    const imageDtos: ProductImageDto[] = [
-      ...(product?.images.map((img) => ({ url: img.url, isPrimary: img.isPrimary })) || []),
-      ...(await Promise.all(
-        newMainImages.map(async (file, i) => ({
-          url: await fileToBase64(file),
-          isPrimary: !product?.images?.length && i === 0,
-        }))
-      )),
-    ]
-    const variantDtos = await Promise.all(
-      data.variants.map(async (v, i) => ({
-        ...v,
-        image:
-          variantImages[i]
-            ? await fileToBase64(variantImages[i]!)
-            : product?.variants[i]?.image || undefined,
-      }))
-    )
-    updateMutation.mutate(
-      { id, data: { ...data, images: imageDtos, variants: variantDtos } },
-      { onSuccess: () => router.push('/dashboard/admin/products') }
-    )
-  }
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -207,12 +183,42 @@ export default function EditProductPage() {
     )
   }
 
+  const handleUpdate = handleSubmit(async (data: EditProductValues) => {
+    try {
+      const imageDtos: ProductImageDto[] = [
+        ...(product?.images.map((img) => ({ url: img.url, isPrimary: img.isPrimary })) || []),
+        ...(await Promise.all(
+          newMainImages.map(async (file, i) => ({
+            url: await fileToBase64(file),
+            isPrimary: !product?.images?.length && i === 0,
+          }))
+        )),
+      ]
+      const variantDtos = await Promise.all(
+        data.variants.map(async (v, i) => ({
+          ...v,
+          image:
+            variantImages[i]
+              ? await fileToBase64(variantImages[i]!)
+              : product?.variants[i]?.image || undefined,
+        }))
+      )
+      updateMutation.mutate(
+        { id, data: { ...data, images: imageDtos, variants: variantDtos } },
+        { onSuccess: () => router.push('/dashboard/admin/products') }
+      )
+    } catch {
+      toast.error('Có lỗi xảy ra khi xử lý ảnh')
+    }
+  })
+
   return (
-    <div className="space-y-6">
+    <form onSubmit={handleUpdate} className="space-y-6">
       {/* Top Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <button
+            type="button"
             onClick={() => router.back()}
             className="text-[#747688] hover:text-[#0035d1] transition-colors flex items-center gap-2 text-sm font-medium"
           >
@@ -230,7 +236,7 @@ export default function EditProductPage() {
             Xem trước
           </button>
           <button
-            onClick={handleSubmit(onSubmit)}
+            type="submit"
             disabled={updateMutation.isPending}
             className="px-4 py-2 text-white rounded-lg text-sm font-bold transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             style={{
@@ -526,7 +532,7 @@ export default function EditProductPage() {
           Hủy bỏ
         </Link>
         <button
-          onClick={handleSubmit(onSubmit)}
+          type="submit"
           disabled={updateMutation.isPending}
           className="px-8 py-2.5 text-white rounded-lg text-sm font-semibold transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           style={{
@@ -540,6 +546,6 @@ export default function EditProductPage() {
           Cập nhật sản phẩm
         </button>
       </div>
-    </div>
+    </form>
   )
 }

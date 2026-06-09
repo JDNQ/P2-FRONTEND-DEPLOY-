@@ -3,6 +3,7 @@ import { useProducts } from '@/lib/hooks/useProducts'
 import { formatPrice } from '@/lib/utils/formatPrice'
 import { PLACEHOLDER_48 } from '@/lib/utils/placeholder'
 import { useState } from 'react'
+import Link from 'next/link'
 
 function getSupplyStatus(totalStock: number): { label: string; bg: string; text: string; dot: string } {
   if (totalStock === 0) return { label: 'Hết hàng', bg: 'bg-[#ffdad6]/10', text: 'text-[#ba1a1a]', dot: 'bg-[#ba1a1a]' }
@@ -82,6 +83,17 @@ export default function ManagerInventoryPage() {
       <div className="bg-white rounded-2xl border border-[#c4c5d9]/30 shadow-sm overflow-hidden">
         <div className="p-6 border-b border-[#c4c5d9]/30 flex flex-col md:flex-row gap-4 items-end md:items-center justify-between">
           <div className="flex flex-wrap gap-4 w-full md:w-auto">
+            <Link
+              href="/dashboard/admin/products/new"
+              className="px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-bold text-white transition-all active:scale-95"
+              style={{
+                background: 'linear-gradient(135deg, #0035d1 0%, #3432c8 100%)',
+                boxShadow: '0 4px 14px 0 rgba(30, 76, 253, 0.25)',
+              }}
+            >
+              <span className="material-symbols-outlined text-[18px]">add</span>
+              Add Product
+            </Link>
             <div className="flex flex-col gap-1">
               <label className="text-[12px] text-[#747688]">Lọc theo Shop</label>
               <select className="bg-[#f5f2ff] border-none rounded-xl text-sm py-2 px-4 focus:ring-2 focus:ring-[#0035d1] min-w-[160px] outline-none">
