@@ -1,11 +1,22 @@
 'use client'
-import { useVouchers, useDeactivateVoucher } from '@/lib/hooks/useVouchers'
+import { useVouchers, useCreateVoucher, useDeactivateVoucher } from '@/lib/hooks/useVouchers'
 import { useState } from 'react'
 
 export default function AdminVouchersPage() {
   const { data: vouchers = [], isLoading } = useVouchers()
+  const { mutate: createVoucher, isPending: isCreating } = useCreateVoucher()
   const { mutate: deactivate } = useDeactivateVoucher()
   const [page, setPage] = useState(0)
+  const [form, setForm] = useState({
+    code: '',
+    discountType: 'PERCENT',
+    discountValue: '',
+    minOrderValue: '',
+    maxDiscount: '',
+    startDate: '',
+    endDate: '',
+    usageLimit: '',
+  })
 
   const activeVouchers = vouchers.filter(v => v.isActive)
   const totalUsage = vouchers.reduce((s, v) => s + v.usageCount, 0)
@@ -21,12 +32,25 @@ export default function AdminVouchersPage() {
             <span className="material-symbols-outlined text-[#0035d1]" style={{ fontVariationSettings: "'FILL' 1" }}>add_circle</span>
             <h3 className="text-[20px] font-semibold leading-[28px]">Create New Voucher</h3>
           </div>
-          <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-6" onSubmit={(e) => {
+            e.preventDefault()
+            createVoucher({
+              code: form.code,
+              discountType: form.discountType as 'PERCENT' | 'FIXED',
+              discountValue: Number(form.discountValue),
+              minOrderValue: form.minOrderValue ? Number(form.minOrderValue) : undefined,
+              maxDiscount: form.maxDiscount ? Number(form.maxDiscount) : undefined,
+              usageLimit: form.usageLimit ? Number(form.usageLimit) : undefined,
+              expiresAt: form.endDate || undefined,
+            })
+          }}>
             <div className="space-y-2">
               <label className="text-[14px] leading-[20px] font-medium text-[#444656] block">Voucher Code</label>
               <input
                 type="text"
                 placeholder="e.g. SUMMER24"
+                value={form.code}
+                onChange={(e) => setForm(f => ({ ...f, code: e.target.value.toUpperCase() }))}
                 className="w-full rounded-xl p-3 text-[16px] leading-[24px] focus:ring-2 focus:ring-[#0035d1] transition-all uppercase placeholder:normal-case outline-none border border-[#c4c5d9]"
                 style={{ backgroundColor: '#f5f2ff' }}
               />
@@ -34,48 +58,53 @@ export default function AdminVouchersPage() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="text-[14px] leading-[20px] font-medium text-[#444656] block">Discount Type</label>
-                <select className="w-full rounded-xl p-3 text-[16px] leading-[24px] focus:ring-2 focus:ring-[#0035d1] transition-all outline-none border border-[#c4c5d9]" style={{ backgroundColor: '#f5f2ff' }}>
-                  <option>Percentage (%)</option>
-                  <option>Fixed Amount ($)</option>
-                  <option>Free Shipping</option>
+                <select
+                  value={form.discountType}
+                  onChange={(e) => setForm(f => ({ ...f, discountType: e.target.value }))}
+                  className="w-full rounded-xl p-3 text-[16px] leading-[24px] focus:ring-2 focus:ring-[#0035d1] transition-all outline-none border border-[#c4c5d9]"
+                  style={{ backgroundColor: '#f5f2ff' }}
+                >
+                  <option value="PERCENT">Percentage (%)</option>
+                  <option value="FIXED">Fixed Amount ($)</option>
                 </select>
               </div>
               <div className="space-y-2">
                 <label className="text-[14px] leading-[20px] font-medium text-[#444656] block">Discount Value</label>
-                <input type="number" placeholder="15" className="w-full rounded-xl p-3 text-[16px] leading-[24px] focus:ring-2 focus:ring-[#0035d1] transition-all outline-none border border-[#c4c5d9]" style={{ backgroundColor: '#f5f2ff' }} />
+                <input type="number" placeholder="15" value={form.discountValue} onChange={(e) => setForm(f => ({ ...f, discountValue: e.target.value }))} className="w-full rounded-xl p-3 text-[16px] leading-[24px] focus:ring-2 focus:ring-[#0035d1] transition-all outline-none border border-[#c4c5d9]" style={{ backgroundColor: '#f5f2ff' }} />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="text-[14px] leading-[20px] font-medium text-[#444656] block">Min. Order ($)</label>
-                <input type="number" placeholder="50" className="w-full rounded-xl p-3 text-[16px] leading-[24px] focus:ring-2 focus:ring-[#0035d1] transition-all outline-none border border-[#c4c5d9]" style={{ backgroundColor: '#f5f2ff' }} />
+                <input type="number" placeholder="50" value={form.minOrderValue} onChange={(e) => setForm(f => ({ ...f, minOrderValue: e.target.value }))} className="w-full rounded-xl p-3 text-[16px] leading-[24px] focus:ring-2 focus:ring-[#0035d1] transition-all outline-none border border-[#c4c5d9]" style={{ backgroundColor: '#f5f2ff' }} />
               </div>
               <div className="space-y-2">
                 <label className="text-[14px] leading-[20px] font-medium text-[#444656] block">Max. Discount ($)</label>
-                <input type="number" placeholder="100" className="w-full rounded-xl p-3 text-[16px] leading-[24px] focus:ring-2 focus:ring-[#0035d1] transition-all outline-none border border-[#c4c5d9]" style={{ backgroundColor: '#f5f2ff' }} />
+                <input type="number" placeholder="100" value={form.maxDiscount} onChange={(e) => setForm(f => ({ ...f, maxDiscount: e.target.value }))} className="w-full rounded-xl p-3 text-[16px] leading-[24px] focus:ring-2 focus:ring-[#0035d1] transition-all outline-none border border-[#c4c5d9]" style={{ backgroundColor: '#f5f2ff' }} />
               </div>
             </div>
             <div className="space-y-2">
               <label className="text-[14px] leading-[20px] font-medium text-[#444656] block">Validity Period</label>
               <div className="grid grid-cols-2 gap-2">
-                <input type="date" className="rounded-xl p-3 text-[16px] leading-[24px] outline-none border border-[#c4c5d9]" style={{ backgroundColor: '#f5f2ff' }} />
-                <input type="date" className="rounded-xl p-3 text-[16px] leading-[24px] outline-none border border-[#c4c5d9]" style={{ backgroundColor: '#f5f2ff' }} />
+                <input type="date" value={form.startDate} onChange={(e) => setForm(f => ({ ...f, startDate: e.target.value }))} className="rounded-xl p-3 text-[16px] leading-[24px] outline-none border border-[#c4c5d9]" style={{ backgroundColor: '#f5f2ff' }} />
+                <input type="date" value={form.endDate} onChange={(e) => setForm(f => ({ ...f, endDate: e.target.value }))} className="rounded-xl p-3 text-[16px] leading-[24px] outline-none border border-[#c4c5d9]" style={{ backgroundColor: '#f5f2ff' }} />
               </div>
             </div>
             <div className="space-y-2">
               <label className="text-[14px] leading-[20px] font-medium text-[#444656] block">Usage Limit</label>
-              <input type="number" placeholder="500 total redemptions" className="w-full rounded-xl p-3 text-[16px] leading-[24px] focus:ring-2 focus:ring-[#0035d1] transition-all outline-none border border-[#c4c5d9]" style={{ backgroundColor: '#f5f2ff' }} />
+              <input type="number" placeholder="500 total redemptions" value={form.usageLimit} onChange={(e) => setForm(f => ({ ...f, usageLimit: e.target.value }))} className="w-full rounded-xl p-3 text-[16px] leading-[24px] focus:ring-2 focus:ring-[#0035d1] transition-all outline-none border border-[#c4c5d9]" style={{ backgroundColor: '#f5f2ff' }} />
             </div>
             <div className="pt-4">
               <button
                 type="submit"
-                className="w-full text-white py-4 rounded-xl font-bold shadow-lg transition-all active:scale-[0.99] flex items-center justify-center gap-2"
+                disabled={isCreating}
+                className="w-full text-white py-4 rounded-xl font-bold shadow-lg transition-all active:scale-[0.99] flex items-center justify-center gap-2 disabled:opacity-50"
                 style={{
                   background: 'linear-gradient(135deg, #0035d1 0%, #4958a9 100%)',
                   boxShadow: '0 4px 14px 0 rgba(0, 53, 209, 0.25)'
                 }}
               >
-                Generate Voucher Code
+                {isCreating ? 'Creating...' : 'Generate Voucher Code'}
               </button>
               <p className="text-center text-[12px] leading-[16px] text-[#747688] mt-3">Preview: 15% OFF for orders over $50</p>
             </div>

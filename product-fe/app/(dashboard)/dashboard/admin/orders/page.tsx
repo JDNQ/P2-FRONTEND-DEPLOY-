@@ -3,7 +3,7 @@ import { useAllOrders } from '@/lib/hooks/useOrders'
 import { formatPrice } from '@/lib/utils/formatPrice'
 import { formatDate } from '@/lib/utils/formatDate'
 import { useState } from 'react'
-import type { OrderStatus } from '@/types/order'
+import type { OrderStatus } from '@/lib/types/order'
 
 const STATUS_CONFIG: Record<OrderStatus, { label: string; className: string }> = {
   PENDING:   { label: 'Chờ xác nhận', className: 'bg-amber-100 text-gold border border-gold/20' },

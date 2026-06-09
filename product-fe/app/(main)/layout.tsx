@@ -7,7 +7,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   const { data: cart } = useCart(isAuthenticated)
 
   return (
-    <div className="min-h-screen bg-surface-page text-on-background font-body-md antialiased">
+    <div className="min-h-screen bg-surface-page text-on-background font-body antialiased">
       {/* Header */}
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-outline-variant shadow-sm"
         style={{ backdropFilter: 'blur(8px)', background: 'rgba(252, 248, 255, 0.85)' }}

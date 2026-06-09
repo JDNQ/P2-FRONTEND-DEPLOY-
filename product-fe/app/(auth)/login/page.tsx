@@ -235,7 +235,7 @@ export default function LoginPage() {
               border: '1px solid rgba(255,255,255,0.2)'
             }}
           >
-            <div className="w-full h-full rounded-[1.5rem] bg-gradient-to-br from-primary-300 to-primary-600 flex items-center justify-center shadow-inner">
+            <div className="w-full h-full rounded-[1.5rem] bg-gradient-to-br from-[#fda86b] to-[#ea580c] flex items-center justify-center shadow-inner">
               <span className="material-symbols-outlined text-white text-8xl opacity-40">shopping_bag</span>
             </div>
             {/* Floating Badge */}

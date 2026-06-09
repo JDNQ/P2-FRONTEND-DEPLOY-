@@ -191,8 +191,7 @@ export default function OrdersPage() {
                       <p className="text-[20px] font-semibold leading-[28px] text-[#0035d1]">{formatPrice(order.totalPrice)}</p>
                     </div>
 
-                    <Link
-                      href={`/orders/${order.id}`}
+                    <button
                       className="w-full md:w-auto px-6 py-3 border rounded-xl font-bold transition-all active:scale-95 flex items-center justify-center gap-2 text-[14px] leading-[20px] font-medium"
                       style={{
                         backgroundColor: '#ffffff',
@@ -214,7 +213,7 @@ export default function OrdersPage() {
                       <span className="material-symbols-outlined text-[18px]">
                         {isCancelled ? 'replay' : order.status === 'SHIPPING' ? 'map' : 'chevron_right'}
                       </span>
-                    </Link>
+                    </button>
                   </div>
                 </div>
               )
