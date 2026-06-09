@@ -5,6 +5,7 @@ import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useCreateProduct } from '@/lib/hooks/useProducts'
 import { useRef, useState, useEffect } from 'react'
+import { toast } from 'sonner'
 import { productSchema } from '@/lib/validations/productSchema'
 import type { ProductImageDto } from '@/lib/types/product'
 import type { z } from 'zod'
@@ -103,26 +104,30 @@ export default function NewProductPage() {
   }
 
   const onSubmit = async (data: NewProductValues) => {
-    const imageDtos: ProductImageDto[] = await Promise.all(
-      mainImages.map(async (file, i) => ({
-        url: await fileToBase64(file),
-        isPrimary: i === 0,
-      }))
-    )
-    const variantDtos = await Promise.all(
-      data.variants.map(async (v, i) => ({
-        ...v,
-        image: variantImages[i] ? await fileToBase64(variantImages[i]!) : undefined,
-      }))
-    )
-    createProduct.mutate(
-      {
-        ...data,
-        ...(imageDtos.length ? { images: imageDtos } : {}),
-        variants: variantDtos,
-      },
-      { onSuccess: () => router.push('/dashboard/admin/products') }
-    )
+    try {
+      const imageDtos: ProductImageDto[] = await Promise.all(
+        mainImages.map(async (file, i) => ({
+          url: await fileToBase64(file),
+          isPrimary: i === 0,
+        }))
+      )
+      const variantDtos = await Promise.all(
+        data.variants.map(async (v, i) => ({
+          ...v,
+          image: variantImages[i] ? await fileToBase64(variantImages[i]!) : undefined,
+        }))
+      )
+      createProduct.mutate(
+        {
+          ...data,
+          ...(imageDtos.length ? { images: imageDtos } : {}),
+          variants: variantDtos,
+        },
+        { onSuccess: () => router.push('/dashboard/admin/products') }
+      )
+    } catch {
+      toast.error('Có lỗi xảy ra khi xử lý ảnh')
+    }
   }
 
   return (
@@ -334,6 +339,9 @@ export default function NewProductPage() {
                             type="number"
                             className="w-full px-3 py-1.5 border border-[#c4c5d9] rounded-md text-sm text-center focus:border-[#0035d1] focus:ring-1 focus:ring-[#0035d1] outline-none"
                           />
+                          {errors.variants?.[index]?.extraPrice && (
+                            <p className="text-[#ba1a1a] text-xs mt-0.5 text-center">{errors.variants[index]?.extraPrice?.message}</p>
+                          )}
                         </td>
                         <td className="px-4 py-3">
                           <input
@@ -341,6 +349,9 @@ export default function NewProductPage() {
                             type="number"
                             className="w-full px-3 py-1.5 border border-[#c4c5d9] rounded-md text-sm text-center focus:border-[#0035d1] focus:ring-1 focus:ring-[#0035d1] outline-none"
                           />
+                          {errors.variants?.[index]?.stock && (
+                            <p className="text-[#ba1a1a] text-xs mt-0.5 text-center">{errors.variants[index]?.stock?.message}</p>
+                          )}
                         </td>
                         <td className="px-4 py-3 text-center">
                           <button

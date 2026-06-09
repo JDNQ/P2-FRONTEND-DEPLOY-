@@ -484,6 +484,9 @@ export default function EditProductPage() {
                         type="number"
                         className="w-full border border-[#c4c5d9] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#0035d1]/20 focus:border-[#0035d1] outline-none transition-all h-9"
                       />
+                      {errors.variants?.[index]?.extraPrice && (
+                        <p className="text-[#ba1a1a] text-xs mt-1">{errors.variants[index]?.extraPrice?.message}</p>
+                      )}
                     </td>
                     <td className="px-4 py-4">
                       <input
@@ -491,6 +494,9 @@ export default function EditProductPage() {
                         type="number"
                         className="w-full border border-[#c4c5d9] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#0035d1]/20 focus:border-[#0035d1] outline-none transition-all h-9"
                       />
+                      {errors.variants?.[index]?.stock && (
+                        <p className="text-[#ba1a1a] text-xs mt-1">{errors.variants[index]?.stock?.message}</p>
+                      )}
                     </td>
                     <td className="px-4 py-4 text-center">
                       <button
