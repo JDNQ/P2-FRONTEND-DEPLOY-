@@ -7,7 +7,7 @@ import { useAddToCart } from '@/lib/hooks/useCart'
 import { useAddToWishlist } from '@/lib/hooks/useWishlist'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import CountdownTimer from '@/components/CountdownTimer'
 import ProductCard from '@/components/ProductCard'
 
@@ -49,6 +49,23 @@ export default function HomePage() {
   const { mutate: addToCart } = useAddToCart()
   const { mutate: addToWishlist } = useAddToWishlist()
   const [heroIdx, setHeroIdx] = useState(0)
+  const [activeTab, setActiveTab] = useState<'all' | 'popular' | 'newest'>('all')
+
+  const filteredProducts = useMemo(() => {
+    if (!products) return []
+    switch (activeTab) {
+      case 'popular':
+        return [...products].sort((a, b) => {
+          const stockA = a.variants.reduce((s, v) => s + v.stock, 0)
+          const stockB = b.variants.reduce((s, v) => s + v.stock, 0)
+          return stockA - stockB
+        }).slice(0, 10)
+      case 'newest':
+        return [...products].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 10)
+      default:
+        return products.slice(0, 10)
+    }
+  }, [products, activeTab])
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -229,9 +246,9 @@ export default function HomePage() {
           <div className="text-center mb-12">
             <h2 className="font-heading text-display-lg text-on-surface mb-4">Gợi Ý Hôm Nay</h2>
             <div className="flex justify-center gap-8 border-b border-neutral-100">
-              <button className="pb-4 text-primary font-bold border-b-2 border-primary">Tất cả</button>
-              <button className="pb-4 text-outline font-medium hover:text-primary transition-colors">Phổ biến</button>
-              <button className="pb-4 text-outline font-medium hover:text-primary transition-colors">Mới nhất</button>
+              <button onClick={() => setActiveTab('all')} className={`pb-4 font-bold border-b-2 transition-colors ${activeTab === 'all' ? 'text-primary border-primary' : 'text-outline font-medium border-transparent hover:text-primary'}`}>Tất cả</button>
+              <button onClick={() => setActiveTab('popular')} className={`pb-4 font-bold border-b-2 transition-colors ${activeTab === 'popular' ? 'text-primary border-primary' : 'text-outline font-medium border-transparent hover:text-primary'}`}>Phổ biến</button>
+              <button onClick={() => setActiveTab('newest')} className={`pb-4 font-bold border-b-2 transition-colors ${activeTab === 'newest' ? 'text-primary border-primary' : 'text-outline font-medium border-transparent hover:text-primary'}`}>Mới nhất</button>
             </div>
           </div>
 
@@ -250,7 +267,7 @@ export default function HomePage() {
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-              {products?.slice(0, 10).map((product) => (
+              {filteredProducts.map((product) => (
                 <ProductCard
                   key={product.id}
                   product={product}

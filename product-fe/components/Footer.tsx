@@ -17,19 +17,19 @@ export default function Footer() {
         <div>
           <h4 className="font-heading text-label-md font-bold text-on-surface mb-stack-md">Khám phá</h4>
           <ul className="space-y-2">
-            <li><Link className="font-body-md text-caption text-on-surface-variant hover:text-primary transition-all" href="/products">Về chúng tôi</Link></li>
+            <li><Link className="font-body-md text-caption text-on-surface-variant hover:text-primary transition-all" href="/about">Về chúng tôi</Link></li>
             <li><Link className="font-body-md text-caption text-on-surface-variant hover:text-primary transition-all" href="/products">Tin tức công nghệ</Link></li>
-            <li><Link className="font-body-md text-caption text-on-surface-variant hover:text-primary transition-all" href="/products">Khuyến mãi cực sốc</Link></li>
-            <li><Link className="font-body-md text-caption text-on-surface-variant hover:text-primary transition-all" href="/products">Cửa hàng gần nhất</Link></li>
+            <li><Link className="font-body-md text-caption text-on-surface-variant hover:text-primary transition-all" href="/products">Khuyến mãi</Link></li>
+            <li><Link className="font-body-md text-caption text-on-surface-variant hover:text-primary transition-all" href="/contact">Liên hệ</Link></li>
           </ul>
         </div>
         <div>
           <h4 className="font-heading text-label-md font-bold text-on-surface mb-stack-md">Hỗ trợ khách hàng</h4>
           <ul className="space-y-2">
-            <li><Link className="font-body-md text-caption text-on-surface-variant hover:text-primary transition-all" href="/products">Chính sách bảo hành</Link></li>
-            <li><Link className="font-body-md text-caption text-on-surface-variant hover:text-primary transition-all" href="/products">Đổi trả & Hoàn tiền</Link></li>
-            <li><Link className="font-body-md text-caption text-on-surface-variant hover:text-primary transition-all" href="/products">Hướng dẫn mua hàng</Link></li>
-            <li><Link className="font-body-md text-caption text-on-surface-variant hover:text-primary transition-all" href="/products">Liên hệ chúng tôi</Link></li>
+            <li><Link className="font-body-md text-caption text-on-surface-variant hover:text-primary transition-all" href="/policy">Chính sách bảo hành</Link></li>
+            <li><Link className="font-body-md text-caption text-on-surface-variant hover:text-primary transition-all" href="/policy">Đổi trả & Hoàn tiền</Link></li>
+            <li><Link className="font-body-md text-caption text-on-surface-variant hover:text-primary transition-all" href="/guide">Hướng dẫn mua hàng</Link></li>
+            <li><Link className="font-body-md text-caption text-on-surface-variant hover:text-primary transition-all" href="/contact">Liên hệ chúng tôi</Link></li>
           </ul>
         </div>
         <div>

@@ -73,10 +73,6 @@ export const useAuthStore = create<AuthStore>()(
         });
       },
       clearAuth: () => {
-        const currentUser = get().user;
-        if (currentUser) {
-          removeLocalAvatar(currentUser.id);
-        }
         localStorage.removeItem("tl_access_token");
         delete api.defaults.headers.common["Authorization"];
         set({ user: null, token: null, isAuthenticated: false });

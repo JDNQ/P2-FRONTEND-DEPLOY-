@@ -11,4 +11,8 @@ export const userApi = {
   toggleStatus: (id: number) =>
     api.patch<ApiResponse<UserProfile>>(`/users/${id}/toggle-status`),
   delete: (id: number) => api.delete<ApiResponse<void>>(`/users/${id}`),
+  updateProfile: (id: number, data: { username?: string; email?: string; avatarUrl?: string }) =>
+    api.patch<ApiResponse<{ id: number; username: string; email?: string; avatarUrl?: string }>>(`/users/${id}`, data),
+  getProfile: () =>
+    api.get<ApiResponse<{ id: number; username: string; email?: string; role: string; avatarUrl?: string }>>('/auth/profile'),
 }

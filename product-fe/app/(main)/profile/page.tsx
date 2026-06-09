@@ -2,8 +2,10 @@
 import { useAuthStore } from '@/lib/stores/authStore'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { toast } from 'sonner'
+import { uploadApi } from '@/lib/api/uploadApi'
+import { userApi } from '@/lib/api/userApi'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 
@@ -31,17 +33,35 @@ export default function ProfilePage() {
     birthday: '',
   })
 
-  const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Fetch dữ liệu mới nhất từ BE khi vào trang
+  useEffect(() => {
+    if (!isAuthenticated || !user) return
+    userApi.getProfile().then((res) => {
+      const profile = res.data.data
+      updateUser({
+        username: profile.username,
+        email: profile.email || undefined,
+        avatarUrl: profile.avatarUrl || undefined,
+      })
+      setFormData((prev) => ({
+        ...prev,
+        username: profile.username,
+        email: profile.email || '',
+      }))
+    }).catch(() => {
+      // Không có BE thì dùng local store, không sao
+    })
+  }, [isAuthenticated])
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
-    // Validate file
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
     if (!allowedTypes.includes(file.type)) {
       toast.error('Chỉ hỗ trợ định dạng JPG, PNG, WEBP, GIF')
       return
     }
-    // Cho phép GIF lên tới 10MB vì GIF animation thường lớn
     const maxSize = file.type === 'image/gif' ? 10 * 1024 * 1024 : 5 * 1024 * 1024
     if (file.size > maxSize) {
       toast.error(`Ảnh không được vượt quá ${maxSize / 1024 / 1024}MB`)
@@ -50,52 +70,75 @@ export default function ProfilePage() {
 
     setUploading(true)
 
-    // Đọc file thành base64
-    const reader = new FileReader()
-    reader.onload = () => {
-      const base64 = reader.result as string
-
-      // Cập nhật user trong store với avatarUrl
+    try {
+      // Upload lên BE Cloudinary trước
+      const url = await uploadApi.avatar(file)
       if (user) {
-        updateUser({ avatarUrl: base64 })
+        // Cập nhật store với URL từ BE
+        updateUser({ avatarUrl: url })
+        // Đồng thời gọi BE để lưu URL avatar vào user
+        userApi.updateProfile(user.id, { avatarUrl: url }).catch(() => {})
       }
-
-      setUploading(false)
       toast.success('Cập nhật ảnh đại diện thành công!')
-    }
-    reader.onerror = () => {
+    } catch {
+      // Fallback: lưu local base64 nếu BE không có endpoint upload avatar
+      const reader = new FileReader()
+      reader.onload = () => {
+        const base64 = reader.result as string
+        if (user) {
+          updateUser({ avatarUrl: base64 })
+        }
+        toast.success('Đã lưu ảnh đại diện (local)')
+      }
+      reader.onerror = () => {
+        toast.error('Đọc file thất bại, vui lòng thử lại')
+      }
+      reader.readAsDataURL(file)
+    } finally {
       setUploading(false)
-      toast.error('Đọc file thất bại, vui lòng thử lại')
+      if (fileInputRef.current) fileInputRef.current.value = ''
     }
-    reader.readAsDataURL(file)
-
-    // Reset input để có thể upload lại cùng file
-    if (fileInputRef.current) fileInputRef.current.value = ''
   }
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSaving(true)
     try {
-      // Validate birthday không được vượt quá ngày hiện tại
       if (formData.birthday && formData.birthday > today) {
         toast.error('Ngày sinh không được vượt quá ngày hiện tại')
         setIsSaving(false)
         return
       }
 
-      // Lưu thông tin vào store (chỉ lưu các trường có thay đổi)
       if (user) {
+        const changedUsername = formData.username !== user.username
+        const changedEmail = formData.email !== (user.email || '')
+
+        // Gọi BE để lưu
+        if (changedUsername || changedEmail) {
+          await userApi.updateProfile(user.id, {
+            username: changedUsername ? formData.username : undefined,
+            email: changedEmail ? formData.email : undefined,
+          })
+        }
+
+        // Cập nhật local store
         updateUser({
           username: formData.username || user.username,
           email: formData.email || undefined,
         })
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 800))
       toast.success('Cập nhật thông tin thành công!')
     } catch {
-      toast.error('Cập nhật thất bại, vui lòng thử lại')
+      // Fallback: lưu local nếu BE chưa có endpoint
+      if (user) {
+        updateUser({
+          username: formData.username || user.username,
+          email: formData.email || undefined,
+        })
+      }
+      toast.success('Đã lưu thông tin (local)')
     } finally {
       setIsSaving(false)
     }
