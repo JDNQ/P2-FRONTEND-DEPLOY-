@@ -21,7 +21,7 @@ export default function WishlistPage() {
         <header className="mb-stack-lg">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
-              <h1 className="font-headline-sm text-headline-sm text-on-surface mb-1">My Favorites</h1>
+              <h1 className="font-heading text-headline-lg text-on-surface mb-1">My Favorites</h1>
               <p className="font-body-md text-body-md text-on-surface-variant">Manage your saved items and add them to your cart whenever you&apos;re ready.</p>
             </div>
             <div className="flex gap-3">
@@ -56,9 +56,9 @@ export default function WishlistPage() {
             <div className="w-32 h-32 rounded-full flex items-center justify-center mb-stack-lg bg-surface-container-low">
               <span className="material-symbols-outlined text-6xl text-outline-variant">favorite</span>
             </div>
-            <h2 className="font-headline-sm text-headline-sm text-on-surface mb-1">Your wishlist is empty</h2>
+            <h2 className="font-heading text-headline-sm text-on-surface mb-1">Your wishlist is empty</h2>
             <p className="font-body-md text-body-md text-on-surface-variant mb-stack-lg">Save items you love and they will appear here.</p>
-            <Link href="/products" className="bg-primary text-on-primary font-label-md px-8 py-3 rounded-xl shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all">
+            <Link href="/products" className="inline-flex items-center gap-2 bg-white border-2 border-primary text-primary font-heading font-bold px-8 py-3 rounded-xl hover:bg-primary hover:text-white transition-all">
               Start Shopping
             </Link>
           </div>
@@ -67,7 +67,7 @@ export default function WishlistPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-stack-lg mb-section-gap">
               {items.map((item) => (
                 <div key={item.id}
-                  className="group relative rounded-xl shadow-sm overflow-hidden border border-transparent hover:border-primary/30 transition-all duration-300 hover:-translate-y-1 bg-surface">
+                  className="group relative rounded-2xl shadow-sm overflow-hidden border border-neutral-50 transition-all hover:-translate-y-1 hover:shadow-lg bg-white">
                   <div className="aspect-square relative overflow-hidden bg-surface-container-high">
                     <Link href={`/products/${item.productId}`}>
                       <img src={item.image} alt={item.name}
@@ -79,8 +79,8 @@ export default function WishlistPage() {
                       <span className="material-symbols-outlined">delete</span>
                     </button>
                     <div className="absolute bottom-0 inset-x-0 p-stack-md opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 z-10 bg-gradient-to-t from-black/50 to-transparent">
-                      <button onClick={() => router.push(`/products/${item.productId}`)}
-                        className="w-full py-2 rounded-lg font-label-md shadow-lg flex items-center justify-center gap-2 bg-primary text-on-primary hover:brightness-110 transition-all">
+                        <button onClick={() => router.push(`/products/${item.productId}`)}
+                          className="w-full py-2 rounded-lg font-label-md shadow-lg flex items-center justify-center gap-2 bg-white text-on-surface hover:bg-primary hover:text-white transition-all">
                         <span className="material-symbols-outlined text-[18px]">visibility</span>
                         View Details
                       </button>
@@ -89,7 +89,7 @@ export default function WishlistPage() {
                   <div className="p-stack-md">
                     <div className="flex justify-between items-start mb-1">
                       <Link href={`/products/${item.productId}`}>
-                        <h3 className="font-headline-sm text-headline-sm text-on-surface truncate hover:text-primary cursor-pointer">{item.name}</h3>
+                        <h3 className="font-heading text-headline-sm text-on-surface truncate hover:text-primary cursor-pointer">{item.name}</h3>
                       </Link>
                       <div className="flex items-center gap-1 text-primary">
                         <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
@@ -117,7 +117,7 @@ export default function WishlistPage() {
               <div className="lg:col-span-8 rounded-3xl overflow-hidden relative min-h-[400px] flex items-center p-12 bg-primary">
                 <div className="relative z-10 max-w-md">
                   <span className="inline-block px-4 py-1 rounded-full font-label-md text-label-md mb-stack-lg bg-white/20 backdrop-blur-sm text-white">Exclusive Offer</span>
-                  <h2 className="font-display-lg text-display-lg text-white mb-stack-lg">Level up your setup.</h2>
+                  <h2 className="font-heading text-display-lg text-white mb-stack-lg">Level up your setup.</h2>
                   <p className="font-body-md text-body-md mb-stack-lg text-white/90">Get 20% off when you buy 2 or more items from your wishlist today. Limited time only.</p>
                   <button onClick={() => { toast.success('Mã giảm giá 20% đã được lưu vào ví của bạn!') }}
                     className="px-8 py-4 rounded-xl font-label-md shadow-xl hover:shadow-2xl transition-all active:scale-[0.98] bg-surface text-primary">
@@ -133,12 +133,12 @@ export default function WishlistPage() {
               <div className="lg:col-span-4 grid grid-rows-2 gap-stack-lg">
                 <div className="rounded-3xl p-8 flex flex-col justify-center border border-outline-variant/30 bg-surface-container-low">
                   <span className="material-symbols-outlined text-primary text-4xl mb-stack-md">local_shipping</span>
-                  <h4 className="font-headline-sm text-headline-sm text-on-surface mb-1">Fast Delivery</h4>
+                  <h4 className="font-heading text-headline-sm text-on-surface mb-1">Fast Delivery</h4>
                   <p className="font-body-md text-body-md text-on-surface-variant">Free shipping on orders over $150.</p>
                 </div>
                 <div className="rounded-3xl p-8 flex flex-col justify-center border border-outline-variant/30 bg-surface-variant">
                   <span className="material-symbols-outlined text-primary text-4xl mb-stack-md">verified_user</span>
-                  <h4 className="font-headline-sm text-headline-sm text-on-surface mb-1">Secure Payment</h4>
+                  <h4 className="font-heading text-headline-sm text-on-surface mb-1">Secure Payment</h4>
                   <p className="font-body-md text-body-md text-on-surface-variant">We support all major credit cards and digital wallets.</p>
                 </div>
               </div>

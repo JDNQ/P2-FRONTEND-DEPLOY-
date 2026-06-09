@@ -70,18 +70,18 @@ export default function CartPage() {
       <Header />
       <div className="max-w-container-max mx-auto px-gutter py-stack-lg">
         <header className="mb-stack-lg">
-          <h1 className="font-headline-sm text-headline-sm text-on-surface mb-1">Giỏ hàng của bạn</h1>
+          <h1 className="font-heading text-headline-lg text-on-surface mb-1">Giỏ hàng của bạn</h1>
           <p className="font-body-md text-body-md text-on-surface-variant">Xem lại sản phẩm trước khi thanh toán.</p>
         </header>
 
         {items.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-section-gap text-center">
             <span className="material-symbols-outlined text-[80px] text-outline-variant mb-stack-md">shopping_basket</span>
-            <h2 className="font-headline-sm text-headline-sm text-on-surface mb-1">Giỏ hàng trống</h2>
+            <h2 className="font-heading text-headline-sm text-on-surface mb-1">Giỏ hàng trống</h2>
             <p className="font-body-md text-body-md text-on-surface-variant mb-stack-lg">Có vẻ như bạn chưa thêm sản phẩm nào.</p>
             <Link
               href="/products"
-              className="inline-flex items-center gap-2 bg-primary text-on-primary font-label-md px-8 py-3 rounded-xl shadow-[0_10px_15px_-3px_rgba(30,76,253,0.25)] hover:scale-[1.02] active:scale-[0.98] transition-all"
+              className="inline-flex items-center gap-2 bg-white border-2 border-primary text-primary font-heading font-bold px-8 py-3 rounded-xl hover:bg-primary hover:text-white transition-all"
             >
               Tiếp tục mua sắm
             </Link>
@@ -95,7 +95,7 @@ export default function CartPage() {
                 return (
                   <div
                     key={item.id}
-                    className="flex gap-4 items-center group rounded-xl p-stack-md shadow-sm bg-surface/80 backdrop-blur-md border border-outline-variant/30"
+                    className="flex gap-4 items-center group rounded-2xl p-stack-md shadow-sm bg-white border border-neutral-50"
                     style={{
                       opacity: isRemoving ? 0 : 1,
                       transform: isRemoving ? 'translateX(50px)' : 'none',
@@ -119,7 +119,7 @@ export default function CartPage() {
                     <div className="flex-grow">
                       <div className="flex justify-between items-start">
                         <div>
-                          <h3 className="font-headline-sm text-headline-sm text-on-surface">{item.product.productName}</h3>
+                          <h3 className="font-heading text-headline-sm text-on-surface">{item.product.productName}</h3>
                           <p className="font-body-md text-body-md text-on-surface-variant">{item.variant.variantName}</p>
                         </div>
                         <button
@@ -154,8 +154,8 @@ export default function CartPage() {
             </div>
 
             <div className="lg:col-span-4 sticky top-28">
-              <div className="rounded-xl p-stack-lg shadow-lg bg-surface/80 backdrop-blur-md border border-outline-variant/30">
-                <h2 className="font-headline-sm text-headline-sm text-on-surface mb-stack-lg">Tổng đơn hàng</h2>
+              <div className="rounded-2xl p-stack-lg shadow-lg bg-white border border-neutral-50">
+                <h2 className="font-heading text-headline-sm text-on-surface mb-stack-lg">Tổng đơn hàng</h2>
 
                 <div className="mb-stack-lg">
                   <label className="block font-label-md text-label-md text-on-surface-variant mb-stack-sm">Mã khuyến mãi</label>
@@ -194,7 +194,7 @@ export default function CartPage() {
                   </div>
                   <div className="pt-stack-md border-t border-outline-variant">
                     <div className="flex justify-between items-center">
-                      <span className="font-headline-sm text-headline-sm text-on-surface">Tổng cộng</span>
+                      <span className="font-heading text-headline-sm text-on-surface">Tổng cộng</span>
                       <span className="font-price-display text-price-display text-primary">{formatPrice(total)}</span>
                     </div>
                   </div>

@@ -78,7 +78,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
         <Header />
         <div className="text-center space-y-4">
           <span className="material-symbols-outlined text-6xl text-outline-variant">search_off</span>
-          <h1 className="font-headline-sm text-headline-sm text-on-surface">Sản phẩm không tìm thấy</h1>
+          <h1 className="font-heading text-headline-sm text-on-surface">Sản phẩm không tìm thấy</h1>
           <Link href="/products" className="text-primary hover:underline font-semibold inline-block">Quay lại trang sản phẩm</Link>
         </div>
       </div>
@@ -147,7 +147,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
               <span className="px-3 py-1 bg-primary-fixed-dim text-sm font-medium mb-2 inline-block rounded-full text-primary">
                 Promoted
               </span>
-              <h1 className="font-display-sm text-display-sm text-on-surface mb-1">{product.productName}</h1>
+              <h1 className="font-heading text-display-sm text-on-surface mb-1">{product.productName}</h1>
               <div className="flex items-center gap-4 mb-stack-md">
                 <div className="flex text-yellow-500">
                   {[...Array(5)].map((_, i) => (
@@ -269,7 +269,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
           {activeTab === 'description' && (
             <div className="grid md:grid-cols-2 gap-stack-lg">
               <div className="space-y-stack-md">
-                <h3 className="font-headline-sm text-headline-sm text-on-surface">{product.productName}</h3>
+                <h3 className="font-heading text-headline-sm text-on-surface">{product.productName}</h3>
                 <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
                   {product.description || 'Experience premium quality and cutting-edge design with this TL Market exclusive product. Crafted with precision and built to last.'}
                 </p>
@@ -294,7 +294,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                   </div>
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-stack-lg">
-                  <p className="text-white font-bold font-headline-sm text-headline-sm">Premium Design</p>
+                  <p className="text-white font-bold font-heading text-headline-sm">Premium Design</p>
                 </div>
               </div>
             </div>

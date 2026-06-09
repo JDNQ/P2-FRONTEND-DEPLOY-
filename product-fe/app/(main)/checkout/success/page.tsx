@@ -38,7 +38,7 @@ export default function CheckoutSuccessPage() {
           </div>
 
           <div className="space-y-2">
-            <h1 className="font-display-lg text-display-lg text-on-surface">Order Successful!</h1>
+            <h1 className="font-heading text-display-lg text-on-surface">Order Successful!</h1>
             <p className="font-body-lg text-body-lg text-on-surface-variant max-w-md mx-auto">
               Thank you for your purchase. We&apos;ve received your order and we&apos;re getting it ready for shipment.
             </p>
@@ -48,7 +48,7 @@ export default function CheckoutSuccessPage() {
             <div className="p-6 rounded-xl text-left shadow-sm bg-surface/80 backdrop-blur-md border border-outline-variant/30">
               <span className="font-label-md text-label-md text-outline mb-1 block uppercase tracking-wider">Order ID</span>
               <div className="flex items-center justify-between">
-                <span className="font-headline-sm text-headline-sm text-on-surface">#TLM-8829410</span>
+                <span className="font-heading text-headline-sm text-on-surface">#TLM-8829410</span>
                 <button className="p-2 hover:bg-surface-variant rounded-lg transition-colors" title="Copy Order ID"
                   onClick={() => navigator.clipboard.writeText('TLM-8829410')}>
                   <span className="material-symbols-outlined text-primary text-[20px]">content_copy</span>
@@ -59,7 +59,7 @@ export default function CheckoutSuccessPage() {
               <span className="font-label-md text-label-md text-outline mb-1 block uppercase tracking-wider">Estimated Delivery</span>
               <div className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-[20px] text-secondary">local_shipping</span>
-                <span className="font-headline-sm text-headline-sm text-on-surface">3-5 business days</span>
+                <span className="font-heading text-headline-sm text-on-surface">3-5 business days</span>
               </div>
             </div>
           </div>

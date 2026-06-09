@@ -71,7 +71,7 @@ export default function ProductsPage() {
             {/* Sorting and Meta */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-stack-lg gap-stack-sm">
               <div>
-                <h1 className="font-headline-md text-headline-md text-on-surface">Sản phẩm</h1>
+                <h1 className="font-heading text-headline-lg text-on-surface">Sản phẩm</h1>
                 <p className="font-body-md text-body-md text-on-surface-variant">Tìm thấy {filteredProducts.length} sản phẩm</p>
               </div>
               <div className="flex items-center gap-stack-md w-full sm:w-auto">
@@ -113,79 +113,67 @@ export default function ProductsPage() {
                     return (
                       <div
                         key={product.id}
-                        className="group bg-white rounded-xl shadow-sm border border-transparent hover:border-primary/20 transition-all duration-300 relative overflow-hidden flex flex-col hover:-translate-y-1 hover:shadow-lg"
+                        className="bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all overflow-hidden group cursor-pointer border border-neutral-50"
                       >
                         <Link href={`/products/${product.id}`}>
-                          <div className="relative aspect-square overflow-hidden bg-surface-container-lowest">
+                          <div className="relative aspect-square overflow-hidden">
+                            <div className="absolute top-2 left-2 bg-primary/10 text-primary text-[10px] font-bold px-2 py-1 rounded-full z-10">
+                              {inStock ? 'Bán chạy' : 'Hết hàng'}
+                            </div>
                             {product.images[0] ? (
                               <img
                                 src={product.images[0].url}
                                 alt={product.productName}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                className="w-full h-full object-cover group-hover:scale-110 transition-transform"
                                 onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_400 }}
                               />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center text-outline">
+                              <div className="w-full h-full flex items-center justify-center text-outline bg-surface-container-low">
                                 <span className="material-symbols-outlined text-5xl">image</span>
                               </div>
                             )}
-                            <span className="absolute top-3 left-3 bg-tertiary/10 text-tertiary font-label-md px-2 py-1 rounded-full text-[10px] uppercase font-bold tracking-wider">
-                              {inStock ? 'Promoted' : 'Hết hàng'}
-                            </span>
-                            <button
-                              className="absolute top-3 right-3 p-2 bg-white/80 backdrop-blur-sm rounded-full text-on-surface-variant hover:text-error transition-colors shadow-sm"
-                              onClick={(e) => {
-                                e.preventDefault()
-                                if (!isAuthenticated) { router.push('/login?from=/products'); return }
-                                addToWishlist(product.id)
-                              }}
-                            >
-                              <span className="material-symbols-outlined text-[20px]">favorite</span>
-                            </button>
-                            <div className="absolute inset-x-0 bottom-0 p-stack-sm bg-white/90 backdrop-blur-md flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
                               <button
-                                className="flex-1 orange-gradient orange-glow text-white font-label-md py-2 rounded-lg hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2"
+                                className="bg-white text-on-surface h-10 w-10 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors"
                                 onClick={(e) => {
                                   e.preventDefault()
                                   if (!isAuthenticated) { router.push('/login?from=/products'); return }
-                                  const firstVariant = product.variants[0]
-                                  if (firstVariant) {
-                                    addToCart({ productId: product.id, variantId: firstVariant.id, quantity: 1 })
-                                  }
+                                  addToWishlist(product.id)
                                 }}
                               >
-                                <span className="material-symbols-outlined text-sm">shopping_cart</span>
-                                Thêm giỏ
+                                <span className="material-symbols-outlined text-[20px]">favorite</span>
                               </button>
                               <button
-                                className="w-10 h-10 flex items-center justify-center bg-surface-container-highest rounded-lg text-on-surface hover:bg-surface-variant transition-colors"
+                                className="bg-white text-on-surface h-10 w-10 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors"
                                 onClick={(e) => {
                                   e.preventDefault()
                                   router.push(`/products/${product.id}`)
                                 }}
                               >
-                                <span className="material-symbols-outlined">visibility</span>
+                                <span className="material-symbols-outlined text-[20px]">visibility</span>
                               </button>
                             </div>
                           </div>
                         </Link>
-                        <div className="p-stack-md flex flex-col flex-1">
-                          <span className="text-caption font-caption text-on-surface-variant mb-1">TL Market</span>
+                        <div className="p-4 space-y-3">
                           <Link href={`/products/${product.id}`}>
-                            <h3 className="font-headline-sm text-headline-sm text-on-surface mb-2 line-clamp-2">{product.productName}</h3>
+                            <h3 className="font-body-md text-label-md text-on-surface line-clamp-2 min-h-[40px]">{product.productName}</h3>
                           </Link>
-                          <div className="mt-auto">
-                            <div className="flex items-center justify-between mb-2">
-                              <span className="font-price-display text-price-display text-primary">{formatPrice(minP)}</span>
-                              <span className={`text-caption font-caption px-2 py-0.5 rounded ${inStock ? 'text-green-600 bg-green-50' : 'text-error bg-error-container/10'}`}>
-                                {inStock ? 'Còn hàng' : 'Hết hàng'}
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-1 text-yellow-500">
-                              <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-                              <span className="font-label-md text-label-md text-on-surface">4.8</span>
-                              <span className="text-caption font-caption text-on-surface-variant">(128 đánh giá)</span>
-                            </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-primary font-bold text-headline-sm">{formatPrice(minP)}</span>
+                            <button
+                              className="bg-primary/5 text-primary p-2 rounded-lg hover:bg-primary hover:text-white transition-all"
+                              onClick={(e) => {
+                                e.preventDefault()
+                                if (!isAuthenticated) { router.push('/login?from=/products'); return }
+                                const firstVariant = product.variants[0]
+                                if (firstVariant) {
+                                  addToCart({ productId: product.id, variantId: firstVariant.id, quantity: 1 })
+                                }
+                              }}
+                            >
+                              <span className="material-symbols-outlined text-[20px]">add_shopping_cart</span>
+                            </button>
                           </div>
                         </div>
                       </div>

@@ -257,7 +257,7 @@ export default function HomePage() {
                         <div className="aspect-square rounded-xl overflow-hidden mb-4 bg-surface-variant/20">
                           {product.images[0] ? (
                             <img
-                              src={BANNERS[(idx + 1) % BANNERS.length]}
+                              src={product.images[0].url}
                               alt={product.productName}
                               className="w-full h-full object-cover group-hover:scale-110 transition-transform"
                               onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_400 }}

@@ -51,12 +51,12 @@ export default function ProfilePage() {
       <div className="min-h-screen bg-background">
         <Header />
         <div className="max-w-xl mx-auto px-gutter py-stack-lg text-center">
-          <div className="rounded-2xl shadow-sm border border-outline-variant/30 p-12 bg-surface">
+          <div className="rounded-2xl shadow-sm border border-neutral-50 p-12 bg-white">
             <span className="material-symbols-outlined text-6xl text-outline-variant mb-stack-md">person</span>
-            <h1 className="font-headline-sm text-headline-sm text-on-surface mb-1">Tài khoản</h1>
+            <h1 className="font-heading text-headline-sm text-on-surface mb-1">Tài khoản</h1>
             <p className="font-body-md text-body-md text-on-surface-variant mb-stack-lg">Vui lòng đăng nhập để xem thông tin tài khoản của bạn.</p>
             <div className="flex gap-4 justify-center">
-              <Link href="/login?from=/profile" className="bg-primary text-on-primary font-label-md px-8 py-3 rounded-xl shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all">
+              <Link href="/login?from=/profile" className="inline-flex items-center gap-2 bg-white border-2 border-primary text-primary font-heading font-bold px-8 py-3 rounded-xl hover:bg-primary hover:text-white transition-all">
                 Đăng nhập
               </Link>
               <Link href="/register" className="px-8 py-3 rounded-xl border-2 border-primary text-primary font-label-md hover:bg-primary hover:text-on-primary transition-all">
@@ -76,13 +76,13 @@ export default function ProfilePage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-stack-lg">
           {/* Sidebar */}
           <aside className="lg:col-span-3">
-            <div className="rounded-xl p-stack-md sticky top-24 border border-outline-variant/30 bg-surface-container-low">
+            <div className="rounded-xl p-stack-md sticky top-24 border border-neutral-50 bg-white shadow-sm">
               <div className="flex items-center gap-4 mb-stack-lg px-2">
                 <div className="w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg bg-primary-container text-primary">
                   {user.username.charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <h2 className="font-headline-sm text-headline-sm text-on-surface">{user.username}</h2>
+                  <h2 className="font-heading text-headline-sm text-on-surface">{user.username}</h2>
                   <p className="font-caption text-caption text-on-surface-variant">Member since 2024</p>
                 </div>
               </div>
@@ -125,7 +125,7 @@ export default function ProfilePage() {
 
           {/* Main Content */}
           <div className="lg:col-span-9">
-            <div className="rounded-xl shadow-sm border border-outline-variant/20 p-stack-lg lg:p-12 bg-surface">
+            <div className="rounded-xl shadow-sm border border-neutral-50 p-stack-lg lg:p-12 bg-white">
               <div className="flex flex-col md:flex-row items-center gap-6 mb-section-gap">
                 <div className="relative group">
                   <div className="w-32 h-32 rounded-full p-1 bg-gradient-to-tr from-primary to-secondary shadow-primary-container/25 shadow-[0_10px_15px_-3px]">
@@ -140,7 +140,7 @@ export default function ProfilePage() {
                   </button>
                 </div>
                 <div className="text-center md:text-left">
-                  <h1 className="font-headline-sm text-headline-sm text-on-surface mb-1">Personal Information</h1>
+                  <h1 className="font-heading text-headline-sm text-on-surface mb-1">Personal Information</h1>
                   <p className="font-body-md text-body-md text-on-surface-variant">Update your photo and personal details here.</p>
                 </div>
               </div>
@@ -202,7 +202,7 @@ export default function ProfilePage() {
                     </div>
                     <span className="material-symbols-outlined text-on-surface-variant group-hover:text-primary group-hover:translate-x-1 transition-all">arrow_forward</span>
                   </div>
-                  <h3 className="font-headline-sm text-headline-sm text-on-surface mb-1">Account Security</h3>
+                  <h3 className="font-heading text-headline-sm text-on-surface mb-1">Account Security</h3>
                   <p className="font-body-md text-body-md text-on-surface-variant">Manage your password, 2FA settings, and connected devices.</p>
                 </div>
                 <div className="rounded-xl p-stack-lg group hover:shadow-lg transition-all duration-300 cursor-pointer bg-surface-container-low">
@@ -212,7 +212,7 @@ export default function ProfilePage() {
                     </div>
                     <span className="material-symbols-outlined text-on-surface-variant group-hover:text-tertiary group-hover:translate-x-1 transition-all">arrow_forward</span>
                   </div>
-                  <h3 className="font-headline-sm text-headline-sm text-on-surface mb-1">Payment Methods</h3>
+                  <h3 className="font-heading text-headline-sm text-on-surface mb-1">Payment Methods</h3>
                   <p className="font-body-md text-body-md text-on-surface-variant">Edit your stored credit cards and digital wallets for faster checkout.</p>
                 </div>
               </div>

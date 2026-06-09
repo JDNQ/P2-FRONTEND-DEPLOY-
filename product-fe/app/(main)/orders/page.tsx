@@ -58,7 +58,7 @@ export default function OrdersPage() {
       <Header />
       <div className="max-w-container-max mx-auto px-gutter py-stack-lg">
         <header className="mb-stack-lg">
-          <h1 className="font-headline-sm text-headline-sm text-on-surface mb-1">My Orders</h1>
+          <h1 className="font-heading text-headline-lg text-on-surface mb-1">My Orders</h1>
           <p className="font-body-md text-body-md text-on-surface-variant">View and track all your purchases and order history.</p>
         </header>
 
@@ -84,13 +84,13 @@ export default function OrdersPage() {
         {orderList.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-section-gap text-center">
             <span className="material-symbols-outlined text-[80px] text-outline-variant mb-stack-md">package</span>
-            <h2 className="font-headline-sm text-headline-sm text-on-surface mb-1">No orders yet</h2>
+            <h2 className="font-heading text-headline-sm text-on-surface mb-1">No orders yet</h2>
             <p className="font-body-md text-body-md text-on-surface-variant mb-stack-lg">
               {activeTab === 'All Orders' ? 'Start shopping to see your orders here.' : `No ${activeTab.toLowerCase()} orders found.`}
             </p>
             <Link
               href="/products"
-              className="bg-primary text-on-primary font-label-md px-8 py-3 rounded-xl shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all inline-block"
+              className="inline-flex items-center gap-2 bg-white border-2 border-primary text-primary font-heading font-bold px-8 py-3 rounded-xl hover:bg-primary hover:text-white transition-all"
             >
               Continue Shopping
             </Link>
@@ -107,7 +107,7 @@ export default function OrdersPage() {
               return (
                 <div
                   key={order.id}
-                  className="rounded-xl shadow-sm border border-transparent hover:border-primary/30 hover:shadow-lg transition-all duration-300 overflow-hidden bg-surface"
+                  className="rounded-2xl shadow-sm border border-neutral-50 transition-all overflow-hidden bg-white"
                   style={{
                     opacity: isCancelled ? 0.75 : 1,
                     filter: isCancelled ? 'grayscale(0.5)' : 'none',
@@ -120,7 +120,7 @@ export default function OrdersPage() {
                   }}
                 >
                   {/* Card Header */}
-                  <div className="p-stack-md border-b border-outline-variant/20 flex flex-wrap justify-between items-center bg-surface-container-low">
+                  <div className="p-stack-md border-b border-neutral-100 flex flex-wrap justify-between items-center bg-surface-container-low">
                     <div className="flex gap-4 items-center">
                       <div>
                         <span className="font-caption text-caption text-on-surface-variant uppercase tracking-wider">Order ID</span>
@@ -176,7 +176,7 @@ export default function OrdersPage() {
                     </div>
 
                     <button
-                      className="w-full md:w-auto px-6 py-3 border border-outline-variant rounded-xl font-label-md transition-all active:scale-95 flex items-center justify-center gap-2 bg-surface hover:bg-primary hover:text-on-primary hover:border-transparent"
+                      className="w-full md:w-auto px-6 py-3 border-2 border-neutral-100 rounded-xl font-label-md transition-all active:scale-95 flex items-center justify-center gap-2 bg-white hover:bg-primary hover:text-white hover:border-transparent"
                       onClick={() => {
                         if (isCancelled) { router.push('/products') }
                         else { router.push(`/checkout/success`) }

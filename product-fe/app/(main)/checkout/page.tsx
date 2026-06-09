@@ -93,7 +93,7 @@ export default function CheckoutPage() {
         <div className="max-w-container-max mx-auto px-gutter py-stack-lg">
           <div className="flex flex-col items-center justify-center py-section-gap text-center">
             <span className="material-symbols-outlined text-[80px] text-outline-variant mb-stack-md">shopping_cart_off</span>
-            <h2 className="font-headline-sm text-headline-sm text-on-surface mb-1">Giỏ hàng trống</h2>
+            <h2 className="font-heading text-headline-sm text-on-surface mb-1">Giỏ hàng trống</h2>
             <p className="font-body-md text-body-md text-on-surface-variant mb-stack-lg">Vui lòng thêm sản phẩm trước khi thanh toán.</p>
             <Link href="/cart" className="bg-primary text-on-primary font-label-md px-8 py-3 rounded-xl shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all">
               Quay lại giỏ hàng
@@ -117,7 +117,7 @@ export default function CheckoutPage() {
           <span className="font-bold text-on-surface">Checkout</span>
         </nav>
 
-        <h1 className="font-display-lg text-display-lg text-on-surface mb-stack-lg">Checkout</h1>
+        <h1 className="font-heading text-display-lg text-on-surface mb-stack-lg">Checkout</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-stack-lg items-start">
           {/* Left: Shipping + Payment */}
@@ -126,7 +126,7 @@ export default function CheckoutPage() {
             <section className="bg-surface rounded-xl p-stack-lg shadow-sm border border-outline-variant/30">
               <div className="flex items-center gap-3 mb-stack-lg">
                 <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>local_shipping</span>
-                <h2 className="font-headline-sm text-headline-sm text-on-surface">Thông tin giao hàng</h2>
+                <h2 className="font-heading text-headline-sm text-on-surface">Thông tin giao hàng</h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-stack-lg">
                 <div className="flex flex-col gap-2">
@@ -156,7 +156,7 @@ export default function CheckoutPage() {
             <section className="bg-surface rounded-xl p-stack-lg shadow-sm border border-outline-variant/30">
               <div className="flex items-center gap-3 mb-stack-lg">
                 <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>payments</span>
-                <h2 className="font-headline-sm text-headline-sm text-on-surface">Phương thức thanh toán</h2>
+                <h2 className="font-heading text-headline-sm text-on-surface">Phương thức thanh toán</h2>
               </div>
               <div className="space-y-stack-md">
                 {[
@@ -194,7 +194,7 @@ export default function CheckoutPage() {
           {/* Right: Order Summary */}
           <aside className="lg:col-span-5 sticky top-24">
             <div className="rounded-2xl p-stack-lg shadow-lg bg-primary-container/20 border border-primary/20">
-              <h2 className="font-headline-sm text-headline-sm text-on-surface mb-stack-lg">Tóm tắt đơn hàng</h2>
+              <h2 className="font-heading text-headline-sm text-on-surface mb-stack-lg">Tóm tắt đơn hàng</h2>
 
               <div className="space-y-stack-lg mb-stack-lg max-h-[400px] overflow-y-auto pr-2 [&::-webkit-scrollbar-thumb]:bg-outline-variant [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent">
                 {items.map((item) => {
@@ -247,7 +247,7 @@ export default function CheckoutPage() {
                   <span className="font-price-display text-price-display text-error">{appliedDiscount > 0 ? `-${formatPrice(appliedDiscount)}` : '-0đ'}</span>
                 </div>
                 <div className="flex justify-between items-center pt-stack-md border-t border-outline-variant">
-                  <span className="font-headline-sm text-headline-sm text-on-surface">Tổng cộng</span>
+                  <span className="font-heading text-headline-sm text-on-surface">Tổng cộng</span>
                   <span className="font-price-display text-price-display text-primary">{formatPrice(finalPrice)}</span>
                 </div>
               </div>

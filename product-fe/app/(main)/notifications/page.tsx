@@ -35,7 +35,7 @@ export default function NotificationsPage() {
               <span className="material-symbols-outlined text-sm">chevron_right</span>
               <span className="font-bold text-primary">Notifications</span>
             </nav>
-            <h1 className="font-headline-sm text-headline-sm text-on-surface">Your Notifications</h1>
+            <h1 className="font-heading text-headline-lg text-on-surface">Your Notifications</h1>
             <p className="font-body-md text-body-md text-on-surface-variant">Stay updated with your orders and latest offers.</p>
           </div>
           <div className="flex items-center gap-3">
@@ -74,7 +74,7 @@ export default function NotificationsPage() {
         ) : visibleNotifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-section-gap text-center">
             <span className="material-symbols-outlined text-[80px] text-outline-variant mb-stack-md">notifications_off</span>
-            <h2 className="font-headline-sm text-headline-sm text-on-surface mb-1">No notifications</h2>
+            <h2 className="font-heading text-headline-sm text-on-surface mb-1">No notifications</h2>
             <p className="font-body-md text-body-md text-on-surface-variant mb-stack-lg">You&apos;re all caught up!</p>
             <Link href="/products" className="bg-primary text-on-primary font-label-md px-8 py-3 rounded-xl shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all inline-block">
               Continue Shopping
@@ -101,7 +101,7 @@ export default function NotificationsPage() {
                           {new Date(n.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                         </span>
                       </div>
-                      <h3 className="font-headline-sm text-headline-sm text-on-surface mb-1">{n.title}</h3>
+                      <h3 className="font-heading text-headline-sm text-on-surface mb-1">{n.title}</h3>
                       <p className="font-body-md text-body-md text-on-surface-variant">{n.message}</p>
                     </div>
                   </div>
