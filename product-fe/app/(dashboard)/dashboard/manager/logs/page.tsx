@@ -1,20 +1,15 @@
 'use client'
-
-const LOGS = [
-  { time: '14:23:45', date: '28/10/2023', user: 'minh.nguyen', role: 'Super Admin', actionDot: 'bg-[#0035d1]', action: 'Thay đổi giá sản phẩm', note: 'Tăng giá niêm yết +10%', target: 'iPhone 15 Pro Max', targetIcon: 'inventory', ip: '192.168.1.42', device: 'Chrome (MacOS)', status: 'Thành công', statusBg: 'bg-green-100', statusText: 'text-green-700', border: 'border-green-200' },
-  { time: '13:10:02', date: '28/10/2023', user: 'hoang.le', role: 'Manager', actionDot: 'bg-[#ba1a1a]', action: 'Xóa người dùng', target: 'customer_id_9921', targetIcon: 'person_remove', targetError: true, ip: '203.113.168.21', device: 'Firefox (Windows)', status: 'Thành công', statusBg: 'bg-green-100', statusText: 'text-green-700', border: 'border-green-200' },
-  { time: '10:45:12', date: '28/10/2023', user: 'trang.dang', role: 'Operator', actionDot: 'bg-[#c4c5d9]', action: 'Cập nhật cấu hình site', target: 'Giao diện (Dark Mode)', targetIcon: 'settings', ip: '118.69.190.154', device: 'Safari (iPhone)', status: 'Thất bại', statusBg: 'bg-red-100', statusText: 'text-red-700', border: 'border-red-200' },
-  { time: '09:12:33', date: '28/10/2023', user: 'security_bot', role: 'System Automated', actionDot: 'bg-[#4958a9]', action: 'Khóa phiên đăng nhập', target: 'U_ID_4522', targetIcon: 'lock', ip: 'N/A', device: 'Cron Job #12', status: 'Hệ thống', statusBg: 'bg-blue-100', statusText: 'text-blue-700', border: 'border-blue-200' },
-]
-
-const STATS = [
-  { icon: 'history', bg: 'bg-blue-100', color: 'text-blue-600', label: 'Hành động 24h', value: '1,284' },
-  { icon: 'check_circle', bg: 'bg-green-100', color: 'text-green-600', label: 'Thành công', value: '99.8%' },
-  { icon: 'warning', bg: 'bg-red-100', color: 'text-red-600', label: 'Cảnh báo bảo mật', value: '3' },
-  { icon: 'shield', bg: 'bg-purple-100', color: 'text-purple-600', label: 'Địa chỉ IP lạ', value: '0' },
-]
+import { useState } from 'react'
+import { useActivityLogs, useLogStats } from '@/lib/hooks/useActivityLogs'
 
 export default function ManagerLogsPage() {
+  const [search, setSearch] = useState('')
+  const [actionFilter, setActionFilter] = useState('Tất cả')
+  const { data: logs = [], isLoading } = useActivityLogs(
+    actionFilter !== 'Tất cả' ? { action: actionFilter } : undefined
+  )
+  const { data: stats } = useLogStats()
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -38,13 +33,19 @@ export default function ManagerLogsPage() {
               <input
                 type="text"
                 placeholder="Nhập tên người dùng hoặc đối tượng..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[#c4c5d9] focus:ring-2 focus:ring-[#0035d1]/20 focus:border-[#0035d1] bg-[#fcf8ff]/50 text-sm outline-none transition-all"
               />
             </div>
           </div>
           <div className="w-48">
             <label className="block text-sm text-[#747688] mb-2">Loại hành động</label>
-            <select className="w-full py-2.5 px-4 rounded-xl border border-[#c4c5d9] bg-[#fcf8ff]/50 text-sm outline-none appearance-none">
+            <select
+              value={actionFilter}
+              onChange={(e) => setActionFilter(e.target.value)}
+              className="w-full py-2.5 px-4 rounded-xl border border-[#c4c5d9] bg-[#fcf8ff]/50 text-sm outline-none appearance-none"
+            >
               <option>Tất cả</option>
               <option>Sửa đổi</option>
               <option>Xóa bỏ</option>
@@ -77,7 +78,12 @@ export default function ManagerLogsPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-        {STATS.map((s) => (
+        {[
+          { icon: 'history', bg: 'bg-blue-100', color: 'text-blue-600', label: 'Hành động 24h', value: stats?.total24h?.toLocaleString() ?? '—' },
+          { icon: 'check_circle', bg: 'bg-green-100', color: 'text-green-600', label: 'Thành công', value: stats ? `${stats.successRate}%` : '—' },
+          { icon: 'warning', bg: 'bg-red-100', color: 'text-red-600', label: 'Cảnh báo bảo mật', value: stats?.securityWarnings?.toLocaleString() ?? '—' },
+          { icon: 'shield', bg: 'bg-purple-100', color: 'text-purple-600', label: 'Địa chỉ IP lạ', value: stats?.unknownIps?.toLocaleString() ?? '—' },
+        ].map((s) => (
           <div key={s.label} className="bg-[#f5f2ff] p-6 rounded-xl border border-[#c4c5d9]/30 flex items-center gap-4">
             <div className={`w-12 h-12 rounded-full ${s.bg} flex items-center justify-center ${s.color}`}>
               <span className="material-symbols-outlined">{s.icon}</span>
@@ -102,72 +108,82 @@ export default function ManagerLogsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[#c4c5d9]/30">
-              {LOGS.map((log, i) => (
-                <tr key={i} className="hover:bg-[#f5f2ff] transition-all cursor-default">
-                  <td className="px-6 py-5 align-top">
-                    <p className="text-sm text-[#08006c]">{log.time}</p>
-                    <p className="text-[12px] text-[#747688]">{log.date}</p>
-                  </td>
-                  <td className="px-6 py-5">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-lg overflow-hidden shrink-0 bg-[#eeecff] flex items-center justify-center text-sm font-bold text-[#4958a9]">
-                        {log.user.charAt(0).toUpperCase()}
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold">{log.user}</p>
-                        <p className="text-[12px] text-[#747688]">{log.role}</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-5">
-                    <div className="flex items-center gap-2">
-                      <span className={`w-2 h-2 rounded-full shrink-0 ${log.actionDot}`} />
-                      <span className="text-sm font-medium">{log.action}</span>
-                    </div>
-                    {log.note && <p className="text-[12px] text-[#747688] mt-1 italic">{log.note}</p>}
-                  </td>
-                  <td className="px-6 py-5">
-                    <div className={`px-3 py-1 rounded-lg inline-flex items-center gap-2 ${log.targetError ? 'bg-[#ffdad6]' : 'bg-[#e8e6ff]'}`}>
-                      <span className={`material-symbols-outlined text-sm ${log.targetError ? 'text-[#ba1a1a]' : 'text-[#08006c]'}`}>
-                        {log.targetIcon}
-                      </span>
-                      <span className={`text-sm ${log.targetError ? 'text-[#ba1a1a]' : 'text-[#08006c]'}`}>
-                        {log.target}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-5">
-                    <p className="text-sm">{log.ip}</p>
-                    <p className="text-[12px] text-[#747688]">{log.device}</p>
-                  </td>
-                  <td className="px-6 py-5 text-right">
-                    <span className={`px-3 py-1 text-sm rounded-full border ${log.statusBg} ${log.statusText} ${log.border}`}>
-                      {log.status}
-                    </span>
-                  </td>
+              {isLoading ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-12 text-center text-sm text-[#747688]">Đang tải...</td>
                 </tr>
-              ))}
+              ) : logs.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-12 text-center text-sm text-[#747688]">Không có dữ liệu</td>
+                </tr>
+              ) : (
+                logs.map((log) => (
+                  <tr key={log.id} className="hover:bg-[#f5f2ff] transition-all cursor-default">
+                    <td className="px-6 py-5 align-top">
+                      <p className="text-sm text-[#08006c]">{new Date(log.timestamp).toLocaleTimeString('vi-VN')}</p>
+                      <p className="text-[12px] text-[#747688]">{new Date(log.timestamp).toLocaleDateString('vi-VN')}</p>
+                    </td>
+                    <td className="px-6 py-5">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-lg overflow-hidden shrink-0 bg-[#eeecff] flex items-center justify-center text-sm font-bold text-[#4958a9]">
+                          {log.user.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold">{log.user}</p>
+                          <p className="text-[12px] text-[#747688]">{log.role}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-5">
+                      <div className="flex items-center gap-2">
+                        <span className={`w-2 h-2 rounded-full shrink-0 ${
+                          log.action.includes('giá') || log.action.includes('Thay đổi') ? 'bg-[#0035d1]' :
+                          log.action.includes('Xóa') ? 'bg-[#ba1a1a]' :
+                          log.action.includes('Khóa') ? 'bg-[#4958a9]' :
+                          'bg-[#c4c5d9]'
+                        }`} />
+                        <span className="text-sm font-medium">{log.action}</span>
+                      </div>
+                      {log.note && <p className="text-[12px] text-[#747688] mt-1 italic">{log.note}</p>}
+                    </td>
+                    <td className="px-6 py-5">
+                      <div className={`px-3 py-1 rounded-lg inline-flex items-center gap-2 ${log.status === 'Failed' ? 'bg-[#ffdad6]' : 'bg-[#e8e6ff]'}`}>
+                        <span className={`material-symbols-outlined text-sm ${log.status === 'Failed' ? 'text-[#ba1a1a]' : 'text-[#08006c]'}`}>
+                          {log.target.includes('U_ID') ? 'lock' : log.target.includes('iPhone') ? 'inventory' : 'settings'}
+                        </span>
+                        <span className={`text-sm ${log.status === 'Failed' ? 'text-[#ba1a1a]' : 'text-[#08006c]'}`}>
+                          {log.target}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-5">
+                      <p className="text-sm">{log.ip}</p>
+                      <p className="text-[12px] text-[#747688]">{log.device}</p>
+                    </td>
+                    <td className="px-6 py-5 text-right">
+                      <span className={`px-3 py-1 text-sm rounded-full border ${
+                        log.status === 'Success' ? 'bg-green-100 text-green-700 border-green-200' :
+                        log.status === 'Failed' ? 'bg-red-100 text-red-700 border-red-200' :
+                        'bg-blue-100 text-blue-700 border-blue-200'
+                      }`}>
+                        {log.status === 'Success' ? 'Thành công' : log.status === 'Failed' ? 'Thất bại' : 'Hệ thống'}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
 
         {/* Pagination */}
         <div className="px-6 py-4 bg-[#f5f2ff] flex items-center justify-between border-t border-[#c4c5d9]">
-          <p className="text-[12px] text-[#747688]">Hiển thị 1 - 20 trong tổng số 1,284 hành động</p>
+          <p className="text-[12px] text-[#747688]">Hiển thị {logs.length} trong tổng số {stats?.total24h ?? 0} hành động</p>
           <div className="flex items-center gap-2">
             <button className="w-9 h-9 flex items-center justify-center rounded-lg border border-[#c4c5d9] text-[#747688] hover:bg-white transition-colors">
               <span className="material-symbols-outlined">chevron_left</span>
             </button>
-            {[1, 2, 3].map((n) => (
-              <button
-                key={n}
-                className={`w-9 h-9 flex items-center justify-center rounded-lg font-bold text-sm ${
-                  n === 1 ? 'bg-[#0035d1] text-white' : 'text-[#08006c] hover:bg-white transition-colors'
-                }`}
-              >
-                {n}
-              </button>
-            ))}
+            <button className="w-9 h-9 flex items-center justify-center rounded-lg bg-[#0035d1] text-white font-bold text-sm">1</button>
             <button className="w-9 h-9 flex items-center justify-center rounded-lg border border-[#c4c5d9] text-[#747688] hover:bg-white transition-colors">
               <span className="material-symbols-outlined">chevron_right</span>
             </button>

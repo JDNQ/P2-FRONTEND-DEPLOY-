@@ -11,29 +11,6 @@ const STATUS_MAP: Record<string, { label: string; bg: string; text: string }> = 
   CANCELLED: { label: 'ĐÃ HỦY',         bg: 'bg-red-100',    text: 'text-red-700' },
 }
 
-const CUSTOMERS = [
-  { name: 'Nguyễn Thành Trung', email: 'trung.nt@email.com', initials: 'NT', bg: '#9aa8ff', color: '#2a3a8a' },
-  { name: 'Lê Anh Đào', email: 'dao.le@email.com', initials: 'LA', bg: '#4e4fe0', color: '#ffffff' },
-  { name: 'Vương Hoàng Nam', email: 'nam.v@email.com', initials: 'VH', bg: '#bac3ff', color: '#001159' },
-  { name: 'Trần Phương', email: 'phuong.t@email.com', initials: 'TP', bg: '#ffdad6', color: '#93000a' },
-  { name: 'Phạm Minh Tâm', email: 'tam.pm@email.com', initials: 'PT', bg: '#9aa8ff', color: '#2a3a8a' },
-  { name: 'Hoàng Kim Ngân', email: 'ngan.hk@email.com', initials: 'HN', bg: '#4e4fe0', color: '#ffffff' },
-]
-
-const BRANCHES = ['TL Flagship', 'TL Quận 1', 'TL Cầu Giấy', 'TL Đà Nẵng', 'TP HCM Hub']
-
-function getCustomer(index: number) {
-  return CUSTOMERS[index % CUSTOMERS.length]
-}
-
-function getBranch(index: number) {
-  return BRANCHES[index % BRANCHES.length]
-}
-
-function getProfit(total: number) {
-  return total * 0.25
-}
-
 export default function ManagerOrdersPage() {
   const { data: orders, isLoading } = useAllOrders()
   const [page, setPage] = useState(1)
@@ -42,6 +19,7 @@ export default function ManagerOrdersPage() {
   const paged = list.slice((page - 1) * 10, page * 10)
   const todayRevenue = list.filter((o) => o.status !== 'CANCELLED').reduce((s, o) => s + o.totalPrice, 0)
   const cancelledRate = list.length ? ((list.filter((o) => o.status === 'CANCELLED').length / list.length) * 100).toFixed(2) : '0'
+  const newOrdersCount = list.filter((o) => o.status === 'PENDING').length
 
   return (
     <div className="space-y-6">
@@ -122,7 +100,7 @@ export default function ManagerOrdersPage() {
         {[
           { label: 'Tổng doanh thu', value: formatPrice(todayRevenue), extra: '+5.4%', border: '#0035d1', extraGreen: true },
           { label: 'Lợi nhuận ước tính', value: formatPrice(todayRevenue * 0.25), extra: '+2.1%', border: '#3432c8', extraGreen: true },
-          { label: 'Đơn hàng mới', value: list.length.toLocaleString(), extra: 'Live', border: '#4958a9', extraBlue: true },
+          { label: 'Đơn hàng mới', value: newOrdersCount.toLocaleString(), extra: 'Live', border: '#4958a9', extraBlue: true },
           { label: 'Tỷ lệ hủy đơn', value: `${cancelledRate}%`, extra: '-0.3%', border: '#ba1a1a', extraRed: true },
         ].map((kpi) => (
           <div
@@ -184,9 +162,8 @@ export default function ManagerOrdersPage() {
               <tbody className="divide-y divide-[#c4c5d9]/30">
                 {paged.map((order, i) => {
                   const status = STATUS_MAP[order.status] || STATUS_MAP.PENDING
-                  const customer = getCustomer(order.id)
-                  const branch = getBranch(order.id)
-                  const profit = getProfit(order.totalPrice)
+                  const customerInitials = `KH${String(order.id).slice(0, 2)}`
+                  const profit = order.totalPrice * 0.25
                   return (
                     <tr key={order.id} className="hover:bg-[#0035d1]/5 transition-colors duration-150">
                       <td className="px-6 py-4">
@@ -199,17 +176,19 @@ export default function ManagerOrdersPage() {
                         <div className="flex items-center gap-3">
                           <div
                             className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-[12px]"
-                            style={{ backgroundColor: customer.bg, color: customer.color }}
+                            style={{ backgroundColor: i % 2 === 0 ? '#9aa8ff' : '#4e4fe0', color: '#ffffff' }}
                           >
-                            {customer.initials}
+                            {customerInitials}
                           </div>
                           <div>
-                            <p className="text-sm font-semibold">{customer.name}</p>
-                            <p className="text-[12px] text-[#747688]">{customer.email}</p>
+                            <p className="text-sm font-semibold">Customer #{order.id}</p>
+                            <p className="text-[12px] text-[#747688]">{order.items.length} items</p>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-sm">{branch}</td>
+                      <td className="px-6 py-4 text-sm">
+                        {['TL Flagship', 'TL Quận 1', 'TL Cầu Giấy', 'TL Đà Nẵng', 'TP HCM Hub'][i % 5]}
+                      </td>
                       <td className="px-6 py-4 font-bold">{formatPrice(order.totalPrice)}</td>
                       <td className="px-6 py-4 text-green-600 font-semibold">+{formatPrice(profit)}</td>
                       <td className="px-6 py-4">

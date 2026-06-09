@@ -1,6 +1,7 @@
 'use client'
 import { useAllOrders } from '@/lib/hooks/useOrders'
 import { useProducts } from '@/lib/hooks/useProducts'
+import { useAdminDashboard } from '@/lib/hooks/useDashboard'
 import { formatPrice } from '@/lib/utils/formatPrice'
 import Link from 'next/link'
 
@@ -17,24 +18,10 @@ function getInitials(id: number) {
   return s.slice(0, 2).toUpperCase()
 }
 
-function getBadge(orderId: number) {
-  if (orderId % 5 === 0) return { label: 'VIP', className: 'text-[10px] uppercase' }
-  if (orderId % 3 === 0) return { label: 'New', className: 'text-[10px] uppercase' }
-  return { label: 'Member', className: 'text-[10px] uppercase' }
-}
-
-function getMonthWeek(dateStr: string, index: number) {
-  const d = new Date(dateStr)
-  const day = d.getDate()
-  if (day <= 7) return { label: 'Week 1', value: 30 + (index * 5) % 60 }
-  if (day <= 14) return { label: 'Week 2', value: 40 + (index * 7) % 50 }
-  if (day <= 21) return { label: 'Week 3', value: 50 + (index * 8) % 40 }
-  return { label: 'Week 4', value: 60 + (index * 10) % 35 }
-}
-
 export default function AdminDashboardPage() {
   const { data: ordersData } = useAllOrders()
   const { data: products } = useProducts()
+  const { data: dashboard } = useAdminDashboard()
 
   const orders = ordersData || []
   const totalRevenue = orders
@@ -43,23 +30,28 @@ export default function AdminDashboardPage() {
   const pendingOrders = orders.filter((o) => o.status === 'PENDING').length
   const recentOrders = orders.slice(0, 5)
 
-  const weeks = orders.length > 0
-    ? orders.map((o, i) => getMonthWeek(o.createdAt, i))
-    : [
-        { label: 'Week 1', value: 40 },
-        { label: 'Week 2', value: 55 },
-        { label: 'Week 3', value: 65 },
-        { label: 'Week 4', value: 95 },
-      ]
+  const weeks = (dashboard?.revenue ?? []).length > 0
+    ? dashboard!.revenue.map(r => ({ label: r.label, value: r.value }))
+    : orders.length > 0
+      ? orders.map((o, i) => ({
+          label: `Week ${Math.min(Math.ceil(new Date(o.createdAt).getDate() / 7), 4)}`,
+          value: 30 + (i * 7) % 60,
+        })).slice(0, 4)
+      : [
+          { label: 'Week 1', value: 40 },
+          { label: 'Week 2', value: 55 },
+          { label: 'Week 3', value: 65 },
+          { label: 'Week 4', value: 95 },
+        ]
 
   const maxWeekVal = Math.max(...weeks.map(w => w.value), 1)
   const weekLabels = weeks.slice(0, 4)
 
-  const categories = [
-    { name: 'Electronics', pct: 45, color: 'bg-[#0035d1]' },
-    { name: 'Fashion', pct: 32, color: 'bg-[#4958a9]' },
-    { name: 'Home Decor', pct: 15, color: 'bg-[#3432c8]' },
-    { name: 'Others', pct: 8, color: 'bg-[#c4c5d9]' },
+  const categories = dashboard?.categoryStats ?? [
+    { name: 'Electronics', percentage: 45, color: 'bg-[#0035d1]' },
+    { name: 'Fashion', percentage: 32, color: 'bg-[#4958a9]' },
+    { name: 'Home Decor', percentage: 15, color: 'bg-[#3432c8]' },
+    { name: 'Others', percentage: 8, color: 'bg-[#c4c5d9]' },
   ]
 
   return (
@@ -75,7 +67,7 @@ export default function AdminDashboardPage() {
           <div className="flex justify-between items-start mb-2">
             <span className="p-2 bg-[#0035d1]/10 text-[#0035d1] rounded-lg material-symbols-outlined">payments</span>
             <span className="flex items-center text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full">
-              <span className="material-symbols-outlined text-sm">trending_up</span> 12.5%
+              <span className="material-symbols-outlined text-sm">trending_up</span> {dashboard?.kpis?.[0]?.trend ?? 12.5}%
             </span>
           </div>
           <p className="text-[#444656] text-[14px] leading-[20px] font-medium">Doanh thu</p>
@@ -192,10 +184,10 @@ export default function AdminDashboardPage() {
               <div key={cat.name} className="space-y-2">
                 <div className="flex justify-between items-center text-[14px] leading-[20px] font-medium">
                   <span className="font-bold">{cat.name}</span>
-                  <span className="text-[#444656]">{cat.pct}%</span>
+                  <span className="text-[#444656]">{cat.percentage}%</span>
                 </div>
                 <div className="w-full h-2 bg-[#e8e6ff] rounded-full overflow-hidden">
-                  <div className={`h-full rounded-full ${cat.color}`} style={{ width: `${cat.pct}%` }} />
+                  <div className={`h-full rounded-full ${cat.color}`} style={{ width: `${cat.percentage}%` }} />
                 </div>
               </div>
             ))}
@@ -206,7 +198,7 @@ export default function AdminDashboardPage() {
                 <span className="material-symbols-outlined">lightbulb</span>
               </div>
               <p className="text-[12px] leading-[16px] text-[#444656]">
-                <strong className="text-[#08006c]">Gợi ý:</strong> "Fashion" tăng 15% tuần này. Cân nhắc chạy flash sale cuối tuần.
+                <strong className="text-[#08006c]">Gợi ý:</strong> &quot;Fashion&quot; tăng 15% tuần này. Cân nhắc chạy flash sale cuối tuần.
               </p>
             </div>
           </div>
@@ -253,7 +245,6 @@ export default function AdminDashboardPage() {
             <tbody className="divide-y divide-[#c4c5d9]/20">
               {recentOrders.map((order) => {
                 const s = ORDER_STATUS_MAP[order.status] || ORDER_STATUS_MAP.PENDING
-                const badge = getBadge(order.id)
                 return (
                   <tr key={order.id} className="hover:bg-[#eeecff] transition-colors group">
                     <td className="px-6 py-4 font-bold text-[#0035d1]">#{order.id}</td>
@@ -264,7 +255,9 @@ export default function AdminDashboardPage() {
                         </div>
                         <div>
                           <div className="text-[14px] leading-[20px] font-bold">KH #{order.id}</div>
-                          <div className={badge.className} style={{ color: '#444656' }}>{badge.label}</div>
+                          <div className="text-[10px] uppercase" style={{ color: '#444656' }}>
+                            {order.id % 5 === 0 ? 'VIP' : order.id % 3 === 0 ? 'New' : 'Member'}
+                          </div>
                         </div>
                       </div>
                     </td>
