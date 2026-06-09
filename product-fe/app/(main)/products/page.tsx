@@ -8,6 +8,8 @@ import { PLACEHOLDER_400 } from '@/lib/utils/placeholder'
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { formatPrice } from '@/lib/utils/formatPrice'
+import Header from '@/components/Header'
+import SidebarFilter from '@/components/SidebarFilter'
 
 export default function ProductsPage() {
   const { data: products, isLoading } = useProducts()
@@ -49,107 +51,19 @@ export default function ProductsPage() {
 
   return (
     <div className="min-h-screen bg-background text-on-surface pb-20 md:pb-0">
-      {/* TopNavBar */}
-      <header className="bg-surface sticky top-0 z-50 shadow-sm">
-        <div className="flex justify-between items-center w-full px-gutter py-stack-md max-w-container-max mx-auto">
-          <div className="flex items-center gap-stack-lg">
-            <Link href="/" className="flex-shrink-0">
-              <img alt="TL Market Logo" className="h-10" src="/logo-removebg-preview.png" />
-            </Link>
-            <nav className="hidden md:flex items-center gap-stack-lg">
-              <Link href="/products" className="font-label-md text-label-md text-primary border-b-2 border-primary pb-1">Electronics</Link>
-              <Link href="/products" className="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors duration-200 pb-1">Fashion</Link>
-              <Link href="/products" className="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors duration-200 pb-1">Home</Link>
-              <Link href="/products" className="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors duration-200 pb-1">Gifts</Link>
-              <Link href="/products" className="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors duration-200 pb-1">Deals</Link>
-            </nav>
-          </div>
-          <div className="flex items-center gap-stack-md flex-1 max-w-md mx-gutter">
-            <div className="relative w-full">
-              <input
-                className="w-full bg-surface-container-low border border-outline-variant rounded-xl py-2 pl-10 pr-4 focus:ring-2 focus:ring-primary focus:border-primary font-body-md text-body-md outline-none"
-                placeholder="Search for products..."
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-            </div>
-          </div>
-          <div className="flex items-center gap-stack-md">
-            <button className="p-2 text-on-surface-variant hover:text-primary transition-colors">
-              <span className="material-symbols-outlined">favorite</span>
-            </button>
-            <Link href="/cart" className="p-2 text-on-surface-variant hover:text-primary transition-colors relative">
-              <span className="material-symbols-outlined">shopping_cart</span>
-              <span className="absolute top-1 right-1 bg-error text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">3</span>
-            </Link>
-            <Link href={isAuthenticated ? '/profile' : '/login'} className="p-2 text-on-surface-variant hover:text-primary transition-colors">
-              <span className="material-symbols-outlined">person</span>
-            </Link>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       <main className="max-w-container-max mx-auto px-gutter py-stack-lg">
         <div className="flex flex-col md:flex-row gap-stack-lg">
-          {/* Side Filter */}
-          <aside className="w-full md:w-64 flex-shrink-0">
-            <div className="bg-surface-container-low p-stack-md rounded-xl shadow-sm sticky top-24">
-              <div className="flex items-center justify-between mb-stack-md">
-                <h2 className="font-headline-sm text-headline-sm text-on-surface">Bộ lọc</h2>
-                <button
-                  onClick={() => { setMinPrice(0); setMaxPrice(Infinity); setSearchTerm(''); setRangeValue(50) }}
-                  className="text-primary font-label-md text-label-md hover:underline"
-                >
-                  Xóa tất cả
-                </button>
-              </div>
-
-              {/* Price Range */}
-              <div className="mb-stack-lg">
-                <h3 className="font-label-md text-label-md font-bold text-on-surface mb-stack-sm">Khoảng giá</h3>
-                <div className="space-y-3">
-                  <input
-                    type="range"
-                    min="0"
-                    max="50"
-                    value={rangeValue}
-                    onChange={(e) => { setRangeValue(Number(e.target.value)); setMaxPrice(Number(e.target.value) * 1000000) }}
-                    className="w-full accent-primary"
-                  />
-                  <div className="flex items-center gap-2">
-                    <input
-                      className="w-1/2 rounded-lg border-outline-variant bg-surface text-label-md py-1 px-2 outline-none"
-                      placeholder="Từ"
-                      type="text"
-                      value={minPrice > 0 ? minPrice.toLocaleString() : ''}
-                      onChange={(e) => {
-                        const val = Number(e.target.value.replace(/\D/g, ''))
-                        setMinPrice(val || 0)
-                      }}
-                    />
-                    <input
-                      className="w-1/2 rounded-lg border-outline-variant bg-surface text-label-md py-1 px-2 outline-none"
-                      placeholder="Đến"
-                      type="text"
-                      value={maxPrice < Infinity ? maxPrice.toLocaleString() : ''}
-                      onChange={(e) => {
-                        const val = Number(e.target.value.replace(/\D/g, ''))
-                        setMaxPrice(val || Infinity)
-                      }}
-                    />
-                  </div>
-                  <button
-                    onClick={() => { setMinPrice(minPrice); setMaxPrice(maxPrice) }}
-                    className="w-full bg-primary-container text-on-primary font-label-md py-2 rounded-lg hover:brightness-110 transition-all"
-                  >
-                    Áp dụng
-                  </button>
-                </div>
-              </div>
-            </div>
-          </aside>
+          <SidebarFilter
+            minPrice={minPrice}
+            maxPrice={maxPrice}
+            rangeValue={rangeValue}
+            onMinPriceChange={setMinPrice}
+            onMaxPriceChange={setMaxPrice}
+            onRangeValueChange={setRangeValue}
+            onClearAll={() => { setMinPrice(0); setMaxPrice(Infinity); setSearchTerm(''); setRangeValue(50) }}
+          />
 
           {/* Product Listing */}
           <div className="flex-1">
