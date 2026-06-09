@@ -3,6 +3,8 @@ import { persist } from "zustand/middleware";
 import type { User } from "@/lib/types/auth";
 import api from "@/lib/api/axiosInstance";
 
+const AVATAR_STORAGE_KEY = "tl_avatar";
+
 interface AuthStore {
   user: User | null;
   token: string | null;
@@ -21,12 +23,24 @@ export const useAuthStore = create<AuthStore>()(
       setAuth: (user, token) => {
         localStorage.setItem("tl_access_token", token);
         api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-        set({ user, token, isAuthenticated: true });
+        // Merge avatar từ localStorage riêng nếu user từ BE không có avatarUrl
+        // (vì avatar chỉ lưu local base64, chưa upload lên BE)
+        const localAvatar = localStorage.getItem(AVATAR_STORAGE_KEY);
+        const mergedUser =
+          localAvatar && !user.avatarUrl
+            ? { ...user, avatarUrl: localAvatar }
+            : user;
+        set({ user: mergedUser, token, isAuthenticated: true });
       },
       updateUser: (partial) => {
-        set((state) => ({
-          user: state.user ? { ...state.user, ...partial } : null,
-        }));
+        set((state) => {
+          const updatedUser = state.user ? { ...state.user, ...partial } : null;
+          // Lưu avatarUrl riêng vào localStorage để persist sau logout/login
+          if (partial.avatarUrl) {
+            localStorage.setItem(AVATAR_STORAGE_KEY, partial.avatarUrl);
+          }
+          return { user: updatedUser };
+        });
       },
       clearAuth: () => {
         localStorage.removeItem("tl_access_token");
