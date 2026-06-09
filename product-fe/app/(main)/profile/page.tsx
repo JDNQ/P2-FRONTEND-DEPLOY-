@@ -223,6 +223,7 @@ export default function ProfilePage() {
                   <div className="space-y-2">
                     <label className="font-label-md text-label-md text-on-surface-variant px-1">Username</label>
                     <input type="text" value={formData.username} onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                      placeholder="Tên đăng nhập"
                       className="w-full rounded-xl py-3 px-4 font-body-md text-body-md outline-none border border-outline-variant bg-surface-container-low focus:border-primary focus:ring-1 focus:ring-primary transition-all" />
                   </div>
                   <div className="space-y-2">
@@ -241,6 +242,7 @@ export default function ProfilePage() {
                     <label className="font-label-md text-label-md text-on-surface-variant px-1">Birthday</label>
                     <input type="date" value={formData.birthday} onChange={(e) => setFormData({ ...formData, birthday: e.target.value })}
                       max={today}
+                      title="Ngày sinh"
                       className="w-full rounded-xl py-3 px-4 font-body-md text-body-md outline-none border border-outline-variant bg-surface-container-low focus:border-primary focus:ring-1 focus:ring-primary transition-all" />
                   </div>
                 </div>
@@ -248,6 +250,7 @@ export default function ProfilePage() {
                   <label className="font-label-md text-label-md text-on-surface-variant px-1">Biography (Optional)</label>
                   <textarea value={formData.bio} onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
                     rows={4}
+                    placeholder="Viết tiểu sử của bạn..."
                     className="w-full rounded-xl py-3 px-4 font-body-md text-body-md outline-none border border-outline-variant bg-surface-container-low resize-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" />
                 </div>
                 <div className="flex flex-col sm:flex-row gap-4 pt-stack-lg border-t border-outline-variant/30">
