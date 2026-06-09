@@ -22,12 +22,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     ? [
         { href: '/dashboard/manager', label: 'Dashboard', icon: 'dashboard' },
         { href: '/dashboard/manager/orders', label: 'Orders', icon: 'package' },
-        { href: '/dashboard/manager/users', label: 'Users', icon: 'group' },
+        { href: '/dashboard/manager/inventory', label: 'Inventory', icon: 'inventory_2' },
+        { href: '/dashboard/manager/health', label: 'System Health', icon: 'monitoring' },
+        { href: '/dashboard/manager/logs', label: 'Activity Log', icon: 'history' },
       ]
     : [
         { href: '/dashboard/admin', label: 'Dashboard', icon: 'dashboard' },
         { href: '/dashboard/admin/orders', label: 'Orders', icon: 'package' },
         { href: '/dashboard/admin/products', label: 'Inventory', icon: 'inventory_2' },
+        { href: '/dashboard/admin/users', label: 'Customers', icon: 'group' },
         { href: '/dashboard/admin/vouchers', label: 'Discounts', icon: 'monetization_on' },
       ]
 
@@ -66,17 +69,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </nav>
 
         <div className="mt-auto space-y-1 pt-4 border-t border-[#c4c5d9]">
-          <Link
-            href="/dashboard/admin/products/new"
-            className="w-full flex items-center justify-center gap-2 mb-4 py-2.5 rounded-xl font-bold transition-transform active:scale-[0.98]"
-            style={{
-              background: 'linear-gradient(135deg, #0035d1 0%, #3432c8 100%)',
-              boxShadow: '0 4px 14px 0 rgba(30, 76, 253, 0.25)'
-            }}
-          >
-            <span className="material-symbols-outlined text-white">add</span>
-            <span className="text-white">Add Product</span>
-          </Link>
+          {role !== 'MANAGER' && (
+            <Link
+              href="/dashboard/admin/products/new"
+              className="w-full flex items-center justify-center gap-2 mb-4 py-2.5 rounded-xl font-bold transition-transform active:scale-[0.98]"
+              style={{
+                background: 'linear-gradient(135deg, #0035d1 0%, #3432c8 100%)',
+                boxShadow: '0 4px 14px 0 rgba(30, 76, 253, 0.25)'
+              }}
+            >
+              <span className="material-symbols-outlined text-white">add</span>
+              <span className="text-white">Add Product</span>
+            </Link>
+          )}
           <Link href="/profile" className="flex items-center gap-3 px-3 py-2 text-[#444656] hover:bg-[#e1dfff] rounded-lg transition-all text-sm">
             <span className="material-symbols-outlined">settings</span>
             <span className="text-[14px] leading-[20px] font-medium">Settings</span>
