@@ -6,7 +6,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import { useCart } from '@/lib/hooks/useCart'
 
 export default function Header() {
-  const { isAuthenticated, user } = useAuthStore()
+  const { isAuthenticated, user, clearAuth } = useAuthStore()
   const router = useRouter()
   const pathname = usePathname()
   const [search, setSearch] = useState('')
@@ -21,6 +21,13 @@ export default function Header() {
     }
   }
 
+  const handleLogout = () => {
+    clearAuth()
+    document.cookie = 'tl_token=; path=/; max-age=0'
+    document.cookie = 'tl_role=; path=/; max-age=0'
+    router.push('/login')
+  }
+
   // Pre-fill search input if on search page
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -31,11 +38,11 @@ export default function Header() {
   }, [pathname])
 
   const navLinks = [
-    { href: '/products', label: 'Điện tử' },
-    { href: '/products', label: 'Thời trang' },
-    { href: '/products', label: 'Gia dụng' },
-    { href: '/products', label: 'Quà tặng' },
-    { href: '/products', label: 'Khuyến mãi' },
+    { href: '/', label: 'Trang chủ' },
+    { href: '/products', label: 'Sản phẩm' },
+    { href: '/about', label: 'Giới thiệu' },
+    { href: '/news', label: 'Tin tức' },
+    { href: '/promotions', label: 'Khuyến mãi' },
   ]
 
   return (
@@ -54,8 +61,8 @@ export default function Header() {
                   key={link.label}
                   href={link.href}
                   className={`font-label-md text-label-md transition-all relative py-1 ${isActive
-                      ? 'text-primary font-bold border-b-2 border-primary'
-                      : 'text-on-surface-variant hover:text-primary'
+                    ? 'text-primary font-bold border-b-2 border-primary'
+                    : 'text-on-surface-variant hover:text-primary'
                     }`}
                 >
                   {link.label}
@@ -91,7 +98,7 @@ export default function Header() {
         </form>
 
         {/* User Utilities */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
           {/* Wishlist */}
           <Link
             href="/wishlist"
@@ -119,8 +126,8 @@ export default function Header() {
           <Link
             href={isAuthenticated ? '/profile' : '/login'}
             className={`flex items-center gap-2 p-1 pl-1 pr-3 hover:bg-surface-container rounded-full transition-all border ${pathname === '/profile'
-                ? 'border-primary bg-primary-container/10 text-primary'
-                : 'border-outline-variant/30 text-on-surface hover:border-primary/50'
+              ? 'border-primary bg-primary-container/10 text-primary'
+              : 'border-outline-variant/30 text-on-surface hover:border-primary/50'
               }`}
           >
             <div className="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center overflow-hidden border border-white">
@@ -136,6 +143,19 @@ export default function Header() {
               {isAuthenticated ? (user?.username || 'Tài khoản') : 'Tài khoản'}
             </span>
           </Link>
+
+          {/* Logout button - only when authenticated */}
+          {isAuthenticated && (
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="flex items-center gap-1.5 px-3 py-2 text-error hover:bg-error-container/30 rounded-xl transition-all text-sm font-semibold"
+              title="Đăng xuất"
+            >
+              <span className="material-symbols-outlined text-[20px]">logout</span>
+              <span className="hidden sm:inline">Đăng xuất</span>
+            </button>
+          )}
         </div>
       </nav>
     </header>
