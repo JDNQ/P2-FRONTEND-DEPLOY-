@@ -2,6 +2,7 @@
 import { useCart } from '@/lib/hooks/useCart'
 import { useCreateOrder } from '@/lib/hooks/useOrders'
 import { formatPrice } from '@/lib/utils/formatPrice'
+import { PLACEHOLDER_80 } from '@/lib/utils/placeholder'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -259,7 +260,7 @@ export default function CheckoutPage() {
                             src={item.product.images[0].url}
                             alt={item.product.productName}
                             className="w-full h-full object-contain"
-                            onError={(e) => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/80?text=Product' }}
+                            onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_80 }}
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-[#747688]">

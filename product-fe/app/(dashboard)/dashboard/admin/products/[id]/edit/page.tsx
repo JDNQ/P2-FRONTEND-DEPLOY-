@@ -5,6 +5,7 @@ import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useProduct, useUpdateProduct } from '@/lib/hooks/useProducts'
+import { PLACEHOLDER_150 } from '@/lib/utils/placeholder'
 import { useState } from 'react'
 import Link from 'next/link'
 
@@ -30,7 +31,7 @@ interface EditProductValues {
   variants: { variantName: string; extraPrice: number; stock: number }[]
 }
 
-const PLACEHOLDER = 'https://via.placeholder.com/150?text=Product'
+const PLACEHOLDER = PLACEHOLDER_150
 
 export default function EditProductPage() {
   const params = useParams()

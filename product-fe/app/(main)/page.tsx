@@ -4,6 +4,7 @@ import { useAuthStore } from '@/lib/stores/authStore'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { formatPrice } from '@/lib/utils/formatPrice'
+import { PLACEHOLDER_400 } from '@/lib/utils/placeholder'
 import { useState, useEffect } from 'react'
 
 function CountdownTimer() {
@@ -190,7 +191,7 @@ export default function HomePage() {
                           src={product.images[0].url}
                           alt={product.productName}
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                          onError={(e) => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400?text=Product' }}
+                          onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_400 }}
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-m3-outline">
@@ -305,7 +306,7 @@ export default function HomePage() {
                           src={product.images[0].url}
                           alt={product.productName}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                          onError={(e) => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400?text=Product' }}
+                           onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_400 }}
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-m3-outline">

@@ -61,8 +61,8 @@ export default function RegisterPage() {
           {/* Floating Logo */}
           <div className="mb-12 animate-float">
             <div className="h-48 md:h-64 flex items-center justify-center">
-              <div className="w-40 h-40 md:w-56 md:h-56 rounded-3xl cta-gradient flex items-center justify-center shadow-2xl shadow-m3-primary/30">
-                <span className="text-white font-sora font-extrabold text-5xl md:text-7xl">TL</span>
+              <div className="w-40 h-40 md:w-56 md:h-56 rounded-3xl bg-white/10 flex items-center justify-center shadow-2xl shadow-m3-primary/30 p-4">
+                <img src="/logo-removebg-preview.png" alt="TL Market" className="w-full h-full object-contain" />
               </div>
             </div>
           </div>
@@ -114,8 +114,8 @@ export default function RegisterPage() {
         <div className="max-w-md w-full mx-auto" ref={formRef}>
           {/* Mobile Logo */}
           <div className="md:hidden flex justify-center mb-8 animate-entrance">
-            <div className="w-20 h-20 rounded-2xl cta-gradient flex items-center justify-center shadow-lg shadow-m3-primary/30">
-              <span className="text-white font-sora font-extrabold text-3xl">TL</span>
+            <div className="w-20 h-20 rounded-2xl bg-white/10 flex items-center justify-center shadow-lg shadow-m3-primary/30 p-2">
+              <img src="/logo-removebg-preview.png" alt="TL Market" className="w-full h-full object-contain" />
             </div>
           </div>
 

@@ -5,6 +5,7 @@ import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useCreateProduct } from '@/lib/hooks/useProducts'
+import { PLACEHOLDER_150 } from '@/lib/utils/placeholder'
 
 const newProductSchema = z.object({
   productName: z.string().min(1, 'Tên sản phẩm không được để trống'),
@@ -28,10 +29,7 @@ interface NewProductValues {
   variants: { variantName: string; extraPrice: number; stock: number }[]
 }
 
-const IMAGE_PREVIEWS = [
-  'https://via.placeholder.com/150/0035d1/ffffff?text=IMG+1',
-  'https://via.placeholder.com/150/3432c8/ffffff?text=IMG+2',
-]
+const IMAGE_PREVIEWS = [PLACEHOLDER_150, PLACEHOLDER_150]
 
 export default function NewProductPage() {
   const router = useRouter()

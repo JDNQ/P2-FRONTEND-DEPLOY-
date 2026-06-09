@@ -1,6 +1,7 @@
 'use client'
 import Link from 'next/link'
 import { formatPrice } from '@/lib/utils/formatPrice'
+import { PLACEHOLDER_400 } from '@/lib/utils/placeholder'
 import { useWishlist, useRemoveFromWishlist, useAddAllWishlistToCart } from '@/lib/hooks/useWishlist'
 
 export default function WishlistPage() {
@@ -76,7 +77,7 @@ export default function WishlistPage() {
                       src={item.image}
                       alt={item.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      onError={(e) => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400?text=Product' }}
+                      onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_400 }}
                     />
                     <button
                       onClick={() => removeItem(item.id)}

@@ -1,6 +1,7 @@
 'use client'
 import { useCart, useRemoveCartItem, useUpdateCartItem } from '@/lib/hooks/useCart'
 import { formatPrice } from '@/lib/utils/formatPrice'
+import { PLACEHOLDER_96 } from '@/lib/utils/placeholder'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 
@@ -101,7 +102,7 @@ export default function CartPage() {
                           src={item.product.images[0].url}
                           alt={item.product.productName}
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                          onError={(e) => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/96?text=Product' }}
+                          onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_96 }}
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-[#747688]">

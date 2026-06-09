@@ -1,6 +1,7 @@
 'use client'
 import { useProducts } from '@/lib/hooks/useProducts'
 import { formatPrice } from '@/lib/utils/formatPrice'
+import { PLACEHOLDER_48 } from '@/lib/utils/placeholder'
 import { useState } from 'react'
 
 function getSupplyStatus(totalStock: number): { label: string; bg: string; text: string; dot: string } {
@@ -10,7 +11,7 @@ function getSupplyStatus(totalStock: number): { label: string; bg: string; text:
   return { label: 'Ổn định', bg: 'bg-[#0035d1]/10', text: 'text-[#0035d1]', dot: 'bg-[#0035d1]' }
 }
 
-const PLACEHOLDER = 'https://via.placeholder.com/48?text=Product'
+const PLACEHOLDER = PLACEHOLDER_48
 
 export default function ManagerInventoryPage() {
   const { data: products, isLoading } = useProducts()

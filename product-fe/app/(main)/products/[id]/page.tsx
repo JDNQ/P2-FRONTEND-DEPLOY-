@@ -3,6 +3,7 @@ import { useProduct } from '@/lib/hooks/useProducts'
 import { useAddToCart } from '@/lib/hooks/useCart'
 import { useAuthStore } from '@/lib/stores/authStore'
 import { formatPrice, calcDiscount } from '@/lib/utils/formatPrice'
+import { PLACEHOLDER_80, PLACEHOLDER_600 } from '@/lib/utils/placeholder'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
@@ -116,7 +117,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                     src={img.url}
                     alt=""
                     className="w-full h-full object-cover"
-                    onError={(e) => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/80?text=.' }}
+                    onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_80 }}
                   />
                 </button>
               ))}
@@ -127,7 +128,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                   src={product.images[mainImgIdx].url}
                   alt={product.productName}
                   className="max-w-full h-auto object-contain transition-transform duration-500 group-hover:scale-105"
-                  onError={(e) => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/600?text=Product' }}
+                  onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_600 }}
                 />
               ) : (
                 <div className="flex items-center justify-center text-m3-outline">
