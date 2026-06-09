@@ -1,62 +1,144 @@
 'use client'
 import { useAuthStore } from '@/lib/stores/authStore'
 import Link from 'next/link'
-import { useState, type FormEvent } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, type FormEvent, useEffect } from 'react'
+import { useRouter, usePathname } from 'next/navigation'
+import { useCart } from '@/lib/hooks/useCart'
 
 export default function Header() {
   const { isAuthenticated, user } = useAuthStore()
   const router = useRouter()
+  const pathname = usePathname()
   const [search, setSearch] = useState('')
+  const { data: cart } = useCart(isAuthenticated)
+
+  const cartCount = cart?.items?.reduce((acc, item) => acc + item.quantity, 0) || 0
 
   const handleSearch = (e: FormEvent) => {
     e.preventDefault()
-    if (search.trim()) router.push(`/products?search=${encodeURIComponent(search.trim())}`)
+    if (search.trim()) {
+      router.push(`/products?search=${encodeURIComponent(search.trim())}`)
+    }
   }
 
+  // Pre-fill search input if on search page
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      const query = params.get('search') || params.get('searchTerm') || ''
+      setSearch(query)
+    }
+  }, [pathname])
+
+  const navLinks = [
+    { href: '/products?category=Electronics', label: 'Điện tử' },
+    { href: '/products?category=Fashion', label: 'Thời trang' },
+    { href: '/products?category=Home', label: 'Gia dụng' },
+    { href: '/products?category=Gifts', label: 'Quà tặng' },
+    { href: '/products?category=Deals', label: 'Khuyến mãi' },
+  ]
+
   return (
-    <header className="bg-surface sticky top-0 z-50 shadow-sm">
-      <nav className="flex justify-between items-center w-full px-gutter py-stack-md max-w-container-max mx-auto">
+    <header className="bg-surface/90 backdrop-blur-md sticky top-0 z-50 border-b border-outline-variant/20 shadow-sm transition-all duration-300">
+      <nav className="flex justify-between items-center w-full px-gutter py-3.5 max-w-container-max mx-auto">
+        {/* Brand & Nav links */}
         <div className="flex items-center gap-8">
-          <Link href="/" className="flex-shrink-0">
+          <Link href="/" className="flex-shrink-0 transition-transform hover:scale-102">
             <img alt="TL Market Logo" className="h-10 w-auto" src="/logo-removebg-preview.png" />
           </Link>
           <div className="hidden lg:flex items-center gap-6">
-            <Link href="/products" className="text-primary border-b-2 border-primary pb-1 font-label-md text-label-md">Electronics</Link>
-            <Link href="/products" className="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md">Fashion</Link>
-            <Link href="/products" className="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md">Home</Link>
-            <Link href="/products" className="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md">Gifts</Link>
-            <Link href="/products" className="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md">Deals</Link>
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href
+              return (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className={`font-label-md text-label-md transition-all relative py-1 ${
+                    isActive
+                      ? 'text-primary font-bold border-b-2 border-primary'
+                      : 'text-on-surface-variant hover:text-primary'
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              )
+            })}
           </div>
         </div>
-        <form onSubmit={handleSearch} className="flex-1 max-w-md mx-8 hidden md:block">
+
+        {/* Search Bar */}
+        <form onSubmit={handleSearch} className="flex-1 max-w-md mx-6 hidden md:block">
           <div className="relative group">
             <input
-              className="w-full bg-surface-container border-none rounded-xl py-2 pl-10 pr-4 focus:ring-2 focus:ring-primary/20 transition-all outline-none"
-              placeholder="Tìm kiếm sản phẩm..."
+              className="w-full bg-surface-container/60 border border-outline-variant/30 rounded-xl py-2 pl-10 pr-4 font-body-md text-body-md text-on-surface placeholder:text-outline/60 focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
+              placeholder="Tìm kiếm sản phẩm, thương hiệu..."
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline/70 group-focus-within:text-primary transition-colors">
+              search
+            </span>
+            {search && (
+              <button
+                type="button"
+                onClick={() => setSearch('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface transition-colors"
+              >
+                <span className="material-symbols-outlined text-[16px]">close</span>
+              </button>
+            )}
           </div>
         </form>
+
+        {/* User Utilities */}
         <div className="flex items-center gap-4">
-          <button className="p-2 hover:bg-surface-container rounded-full transition-colors text-on-surface-variant">
-            <span className="material-symbols-outlined">favorite</span>
-          </button>
-          <Link href="/cart" className="relative p-2 hover:bg-surface-container rounded-full transition-colors text-on-surface-variant cursor-pointer group">
-            <span className="material-symbols-outlined">shopping_cart</span>
-            <span className="absolute top-0 right-0 bg-error text-white text-[10px] px-1.5 py-0.5 rounded-full">3</span>
+          {/* Wishlist */}
+          <Link
+            href="/wishlist"
+            className={`p-2 hover:bg-surface-container rounded-full transition-colors text-on-surface-variant hover:text-primary relative ${
+              pathname === '/wishlist' ? 'bg-surface-container text-primary' : ''
+            }`}
+          >
+            <span className="material-symbols-outlined font-normal">favorite</span>
           </Link>
+
+          {/* Cart */}
+          <Link
+            href="/cart"
+            className={`p-2 hover:bg-surface-container rounded-full transition-colors text-on-surface-variant hover:text-primary relative cursor-pointer group ${
+              pathname === '/cart' ? 'bg-surface-container text-primary' : ''
+            }`}
+          >
+            <span className="material-symbols-outlined font-normal">shopping_cart</span>
+            {cartCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 orange-gradient orange-glow text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold transition-transform group-hover:scale-110">
+                {cartCount}
+              </span>
+            )}
+          </Link>
+
+          {/* Account Profile button */}
           <Link
             href={isAuthenticated ? '/profile' : '/login'}
-            className="flex items-center gap-2 p-1.5 pr-3 hover:bg-surface-container rounded-full transition-colors border border-outline-variant"
+            className={`flex items-center gap-2 p-1 pl-1 pr-3 hover:bg-surface-container rounded-full transition-all border ${
+              pathname === '/profile'
+                ? 'border-primary bg-primary-container/10 text-primary'
+                : 'border-outline-variant/30 text-on-surface hover:border-primary/50'
+            }`}
           >
-            <div className="w-7 h-7 rounded-full bg-primary-fixed flex items-center justify-center">
-              <span className="material-symbols-outlined text-[18px] text-primary">person</span>
+            <div className="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center overflow-hidden border border-white">
+              {isAuthenticated && user?.username ? (
+                <span className="font-bold text-sm text-primary uppercase">
+                  {user.username.charAt(0)}
+                </span>
+              ) : (
+                <span className="material-symbols-outlined text-[18px] text-primary">person</span>
+              )}
             </div>
-            <span className="font-label-md text-label-md hidden sm:block">{isAuthenticated ? (user?.username || 'Tài khoản') : 'Tài khoản'}</span>
+            <span className="font-label-md text-label-md font-semibold hidden sm:block truncate max-w-[100px]">
+              {isAuthenticated ? (user?.username || 'Tài khoản') : 'Tài khoản'}
+            </span>
           </Link>
         </div>
       </nav>

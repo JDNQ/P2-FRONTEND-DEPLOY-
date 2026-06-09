@@ -2,6 +2,7 @@
 import { useProducts } from '@/lib/hooks/useProducts'
 import { useAuthStore } from '@/lib/stores/authStore'
 import Header from '@/components/Header'
+import Footer from '@/components/Footer'
 import { useAddToCart } from '@/lib/hooks/useCart'
 import { useAddToWishlist } from '@/lib/hooks/useWishlist'
 import { useRouter } from 'next/navigation'
@@ -358,7 +359,7 @@ export default function HomePage() {
           <div className="mt-12 text-center">
             <Link
               href="/products"
-              className="border-2 border-primary text-primary px-10 py-3 rounded-xl font-headline-sm hover:bg-primary hover:text-white transition-all inline-block"
+              className="border-2 border-primary hover:border-transparent text-primary hover:text-white px-10 py-3 rounded-xl font-headline-sm hover:orange-gradient hover:orange-glow transition-all duration-300 inline-block"
             >
               Xem Thêm Sản Phẩm
             </Link>
@@ -366,57 +367,7 @@ export default function HomePage() {
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="bg-surface-container-highest border-t border-outline-variant">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-section-gap px-gutter py-section-gap max-w-container-max mx-auto">
-          <div className="col-span-1 md:col-span-1">
-            <img alt="TL Market Logo" className="h-10 w-auto mb-6" src="/logo-removebg-preview.png" />
-            <p className="text-on-surface-variant font-body-md text-body-md mb-6">Hệ thống bán lẻ hàng đầu Việt Nam, cung cấp giải pháp mua sắm hiện đại và tin cậy.</p>
-            <div className="flex gap-4">
-              <a className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary hover:orange-gradient hover:text-white transition-all" href="#">
-                <span className="material-symbols-outlined">public</span>
-              </a>
-              <a className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary hover:orange-gradient hover:text-white transition-all" href="#">
-                <span className="material-symbols-outlined">alternate_email</span>
-              </a>
-              <a className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary hover:orange-gradient hover:text-white transition-all" href="#">
-                <span className="material-symbols-outlined">phone_in_talk</span>
-              </a>
-            </div>
-          </div>
-          <div>
-            <h4 className="font-headline-sm text-headline-sm mb-6">Về TL Market</h4>
-            <ul className="space-y-4">
-              <li><a className="text-on-surface-variant hover:text-primary transition-colors font-body-md text-body-md" href="#">About Us</a></li>
-              <li><a className="text-on-surface-variant hover:text-primary transition-colors font-body-md text-body-md" href="#">Tin tức công ty</a></li>
-              <li><a className="text-on-surface-variant hover:text-primary transition-colors font-body-md text-body-md" href="#">Cơ hội nghề nghiệp</a></li>
-              <li><a className="text-on-surface-variant hover:text-primary transition-colors font-body-md text-body-md" href="#">Hệ thống cửa hàng</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-headline-sm text-headline-sm mb-6">Hỗ Trợ Khách Hàng</h4>
-            <ul className="space-y-4">
-              <li><a className="text-on-surface-variant hover:text-primary transition-colors font-body-md text-body-md" href="#">Contact</a></li>
-              <li><a className="text-on-surface-variant hover:text-primary transition-colors font-body-md text-body-md" href="#">Privacy Policy</a></li>
-              <li><a className="text-on-surface-variant hover:text-primary transition-colors font-body-md text-body-md" href="#">Terms of Service</a></li>
-              <li><a className="text-on-surface-variant hover:text-primary transition-colors font-body-md text-body-md" href="#">Shipping Info</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-headline-sm text-headline-sm mb-6">Đăng Ký Nhận Tin</h4>
-            <p className="text-on-surface-variant font-body-md text-body-md mb-4">Newsletter Signup - Nhận ngay voucher 100k cho đơn hàng đầu tiên.</p>
-            <div className="flex gap-2">
-              <input className="bg-surface border-none rounded-xl py-2.5 px-4 focus:ring-2 focus:ring-primary w-full outline-none" placeholder="Email của bạn" type="email" />
-              <button className="orange-gradient text-white p-2.5 rounded-xl flex items-center justify-center">
-                <span className="material-symbols-outlined">send</span>
-              </button>
-            </div>
-          </div>
-        </div>
-        <div className="border-t border-outline-variant/30 py-6 text-center">
-          <p className="text-outline font-caption text-caption">© 2024 TL Market. All rights reserved.</p>
-        </div>
-      </footer>
+      <Footer />
     </>
   )
 }
