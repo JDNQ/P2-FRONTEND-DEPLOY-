@@ -25,6 +25,6 @@ export const uploadApi = {
     const { data } = await api.post<any>('/upload/avatar', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
-    return data.url
+    return data.data?.url ?? data.url
   },
 }
