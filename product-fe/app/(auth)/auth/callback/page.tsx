@@ -9,32 +9,16 @@ function CallbackHandler() {
 
   useEffect(() => {
     const idToken = searchParams.get('id_token')
-    const code = searchParams.get('code')
-    const state = searchParams.get('state')
     const error = searchParams.get('error')
 
     if (error) {
-      window.opener?.postMessage({ provider: 'oauth', error }, window.location.origin)
+      window.opener?.postMessage({ provider: 'google', token: '' }, window.location.origin)
       window.close()
       return
     }
 
     if (idToken) {
       window.opener?.postMessage({ provider: 'google', token: idToken }, window.location.origin)
-      window.close()
-      return
-    }
-
-    if (code) {
-      const savedState = sessionStorage.getItem('twitter_state')
-      if (state && savedState && state === savedState) {
-        window.opener?.postMessage({ provider: 'twitter', token: code }, window.location.origin)
-        sessionStorage.removeItem('twitter_state')
-        sessionStorage.removeItem('twitter_code_verifier')
-        window.close()
-        return
-      }
-      window.opener?.postMessage({ provider: 'instagram', token: code }, window.location.origin)
       window.close()
       return
     }

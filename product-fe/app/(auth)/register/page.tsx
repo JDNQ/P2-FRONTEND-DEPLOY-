@@ -3,12 +3,15 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { registerSchema, type RegisterValues } from '@/lib/validations/authSchema'
 import { authApi } from '@/lib/api/authApi'
+import { useAuthStore } from '@/lib/stores/authStore'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import { googleLogin, facebookLogin } from '@/lib/utils/socialLogin'
 
 export default function RegisterPage() {
+  const { setAuth } = useAuthStore()
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
@@ -30,6 +33,45 @@ export default function RegisterPage() {
       router.push('/login')
     } catch (err: any) {
       toast.error(err.response?.data?.message || 'Tạo tài khoản thất bại')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleSocialLogin = async (provider: string, loginFn: (cb: (token: string) => void) => void | Promise<void>) => {
+    if (!agreeTerms) { toast.error('Vui lòng đồng ý với điều khoản dịch vụ'); return }
+    setIsLoading(true)
+    try {
+      const token = await new Promise<string>((resolve, reject) => {
+        try {
+          const result = loginFn((t) => {
+            if (t) resolve(t)
+            else reject(new Error('No token received'))
+          })
+          if (result instanceof Promise) result.catch(reject)
+        } catch (err) {
+          reject(err)
+        }
+        setTimeout(() => reject(new Error('Login timeout')), 120000)
+      })
+
+      if (!token) throw new Error('No token received')
+
+      const res = await authApi.socialLogin(provider, token)
+      const { access_token, user } = res.data.data
+      setAuth(user, access_token)
+      document.cookie = `tl_token=${access_token}; path=/; max-age=${7 * 24 * 3600}`
+      document.cookie = `tl_role=${user.role}; path=/; max-age=${7 * 24 * 3600}`
+      toast.success(`Chào mừng ${user.username}!`)
+      if (user.role === 'MANAGER') router.push('/dashboard/manager')
+      else if (user.role === 'ADMIN') router.push('/dashboard/admin')
+      else router.push('/')
+    } catch (err: any) {
+      if (err?.response?.status === 404) {
+        toast.error('Đăng nhập xã hội chưa được hỗ trợ. Vui lòng đăng ký bằng tài khoản.')
+      } else {
+        toast.error(err?.response?.data?.message || 'Đăng nhập thất bại')
+      }
     } finally {
       setIsLoading(false)
     }
@@ -189,8 +231,8 @@ export default function RegisterPage() {
             </div>
 
             <div className="grid grid-cols-2 gap-3 animate-entrance">
-              <button type="button" onClick={() => toast.info('Tính năng Google đang phát triển')}
-                className="flex items-center justify-center py-2 px-3 border border-outline-variant rounded-xl hover:bg-surface-container-low transition-all text-xs font-semibold text-on-surface">
+              <button type="button" disabled={isLoading} onClick={() => handleSocialLogin('google', googleLogin)}
+                className="flex items-center justify-center py-2 px-3 border border-outline-variant rounded-xl hover:bg-surface-container-low transition-all text-xs font-semibold text-on-surface disabled:opacity-50">
                 <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />
                   <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
@@ -199,8 +241,8 @@ export default function RegisterPage() {
                 </svg>
                 Google
               </button>
-              <button type="button" onClick={() => toast.info('Tính năng Facebook đang phát triển')}
-                className="flex items-center justify-center py-2 px-3 border border-outline-variant rounded-xl hover:bg-surface-container-low transition-all text-xs font-semibold text-on-surface">
+              <button type="button" disabled={isLoading} onClick={() => handleSocialLogin('facebook', facebookLogin)}
+                className="flex items-center justify-center py-2 px-3 border border-outline-variant rounded-xl hover:bg-surface-container-low transition-all text-xs font-semibold text-on-surface disabled:opacity-50">
                 <svg className="w-4 h-4 mr-2 fill-[#1877F2]" viewBox="0 0 24 24">
                   <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                 </svg>

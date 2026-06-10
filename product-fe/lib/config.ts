@@ -6,7 +6,5 @@ export const config = {
   oauth: {
     googleClientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '',
     facebookAppId: process.env.NEXT_PUBLIC_FACEBOOK_APP_ID || '',
-    instagramClientId: process.env.NEXT_PUBLIC_INSTAGRAM_CLIENT_ID || '',
-    twitterClientId: process.env.NEXT_PUBLIC_TWITTER_CLIENT_ID || '',
   },
 } as const
