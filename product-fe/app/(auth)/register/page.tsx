@@ -39,23 +39,21 @@ export default function RegisterPage() {
   }
 
   const handleSocialLogin = async (provider: string, loginFn: (cb: (token: string) => void) => void | Promise<void>) => {
-    if (!agreeTerms) { toast.error('Vui lòng đồng ý với điều khoản dịch vụ'); return }
     setIsLoading(true)
     try {
       const token = await new Promise<string>((resolve, reject) => {
+        let settled = false
+        const done = (err?: any) => { if (!settled) { settled = true; reject(err || new Error('cancelled')) } }
         try {
           const result = loginFn((t) => {
-            if (t) resolve(t)
-            else reject(new Error('No token received'))
+            if (!settled) { settled = true; if (t) resolve(t); else reject(new Error('No token received')) }
           })
-          if (result instanceof Promise) result.catch(reject)
+          if (result instanceof Promise) result.catch((e) => done(e))
         } catch (err) {
-          reject(err)
+          done(err)
         }
-        setTimeout(() => reject(new Error('Login timeout')), 120000)
+        setTimeout(() => done(new Error('Login timeout')), 120000)
       })
-
-      if (!token) throw new Error('No token received')
 
       const res = await authApi.socialLogin(provider, token)
       const { access_token, user } = res.data.data
@@ -67,10 +65,13 @@ export default function RegisterPage() {
       else if (user.role === 'ADMIN') router.push('/dashboard/admin')
       else router.push('/')
     } catch (err: any) {
-      if (err?.response?.status === 404) {
+      if (err?.message?.includes('timeout') || err?.message?.includes('cancelled')) {
+        toast.error('Đăng nhập không hoàn tất hoặc đã bị hủy')
+      } else if (err?.response?.status === 404) {
         toast.error('Đăng nhập xã hội chưa được hỗ trợ. Vui lòng đăng ký bằng tài khoản.')
       } else {
-        toast.error(err?.response?.data?.message || 'Đăng nhập thất bại')
+        const msg = err?.response?.data?.message || err?.message || 'Đăng nhập thất bại'
+        toast.error(msg)
       }
     } finally {
       setIsLoading(false)

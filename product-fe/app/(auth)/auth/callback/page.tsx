@@ -1,15 +1,26 @@
 'use client'
 import { useEffect } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 
-function CallbackHandler() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
+function getHashValue(key: string): string | null {
+  if (typeof window === 'undefined') return null
+  const hash = window.location.hash.replace(/^#/, '')
+  for (const part of hash.split('&')) {
+    const [k, v] = part.split('=')
+    if (k === key) return decodeURIComponent(v)
+  }
+  return null
+}
 
+function CallbackHandler() {
   useEffect(() => {
-    const idToken = searchParams.get('id_token')
-    const error = searchParams.get('error')
+    // Google implicit flow trả token trong URL fragment (#id_token=xxx), không phải query string
+    const idToken =
+      getHashValue('id_token')
+
+    const error =
+      new URLSearchParams(window.location.search).get('error') ||
+      getHashValue('error')
 
     if (error) {
       window.opener?.postMessage({ provider: 'google', token: '' }, window.location.origin)
@@ -23,8 +34,16 @@ function CallbackHandler() {
       return
     }
 
-    router.push('/login')
-  }, [router, searchParams])
+    // Fallback: đọc từ query string (cho provider khác dùng code flow)
+    const code = new URLSearchParams(window.location.search).get('code')
+    if (code) {
+      window.opener?.postMessage({ provider: 'google', token: code }, window.location.origin)
+      window.close()
+      return
+    }
+
+    window.close()
+  }, [])
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">

@@ -6,6 +6,12 @@ const redirectUri = `${config.appUrl}/auth/callback`
 const popupW = 600
 const popupH = 700
 
+function openPopup(url: string, name: string): Window | null {
+  const left = (screen.width - popupW) / 2
+  const top = (screen.height - popupH) / 2
+  return window.open(url, name, `width=${popupW},height=${popupH},left=${left},top=${top}`)
+}
+
 export function googleLogin(onToken: SocialCallback) {
   const clientId = config.oauth.googleClientId
   if (!clientId) { throw new Error('Missing NEXT_PUBLIC_GOOGLE_CLIENT_ID') }
@@ -30,9 +36,8 @@ export function googleLogin(onToken: SocialCallback) {
     if (e.data?.token) onToken(e.data.token)
   })
 
-  const left = (screen.width - popupW) / 2
-  const top = (screen.height - popupH) / 2
-  window.open(url, 'google-login', `width=${popupW},height=${popupH},left=${left},top=${top}`)
+  const popup = openPopup(url, 'google-login')
+  if (!popup || popup.closed) throw new Error('Popup bị chặn. Vui lòng cho phép popup.')
 }
 
 export function facebookLogin(onToken: SocialCallback) {
