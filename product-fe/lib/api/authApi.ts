@@ -17,4 +17,7 @@ export const authApi = {
 
   createManager: (data: { username: string; password: string; email?: string }) =>
     api.post('/auth/create-manager', data),
+
+  socialLogin: (provider: string, token: string) =>
+    api.post<ApiResponse<LoginResponse>>(`/auth/social/${provider}`, { token }),
 }

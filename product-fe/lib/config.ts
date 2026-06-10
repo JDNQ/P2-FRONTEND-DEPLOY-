@@ -3,4 +3,10 @@ export const config = {
   apiUrl: process.env.NEXT_PUBLIC_API_URL || 'https://p2-backend-1fme.onrender.com',
   appName: process.env.NEXT_PUBLIC_APP_NAME || 'TL Market',
   appUrl: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+  oauth: {
+    googleClientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '',
+    facebookAppId: process.env.NEXT_PUBLIC_FACEBOOK_APP_ID || '',
+    instagramClientId: process.env.NEXT_PUBLIC_INSTAGRAM_CLIENT_ID || '',
+    twitterClientId: process.env.NEXT_PUBLIC_TWITTER_CLIENT_ID || '',
+  },
 } as const
