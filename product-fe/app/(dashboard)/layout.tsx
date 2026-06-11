@@ -25,21 +25,22 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   if (!isAuthenticated) return null
 
   const role = user?.role || 'ADMIN'
-  const navItems = role === 'MANAGER'
-    ? [
-        { href: '/dashboard/manager', label: 'Tổng quan', icon: 'dashboard' },
-        { href: '/dashboard/manager/orders', label: 'Đơn hàng', icon: 'package' },
-        { href: '/dashboard/manager/inventory', label: 'Kho hàng', icon: 'inventory_2' },
-        { href: '/dashboard/manager/health', label: 'Hệ thống', icon: 'monitoring' },
-        { href: '/dashboard/manager/logs', label: 'Nhật ký', icon: 'history' },
-      ]
-    : [
-        { href: '/dashboard/admin', label: 'Tổng quan', icon: 'dashboard' },
-        { href: '/dashboard/admin/orders', label: 'Đơn hàng', icon: 'package' },
-        { href: '/dashboard/admin/products', label: 'Sản phẩm', icon: 'inventory_2' },
-        { href: '/dashboard/admin/users', label: 'Khách hàng', icon: 'group' },
-        { href: '/dashboard/admin/vouchers', label: 'Voucher', icon: 'monetization_on' },
-      ]
+  const base = '/dashboard/admin'
+  const navItems = [
+    { href: `${base}`, label: 'Tổng quan', icon: 'dashboard' },
+    { href: `${base}/orders`, label: 'Đơn hàng', icon: 'package' },
+    { href: `${base}/products`, label: 'Sản phẩm', icon: 'inventory_2' },
+    { href: `${base}/users`, label: 'Khách hàng', icon: 'group' },
+    { href: `${base}/content`, label: 'Nội dung', icon: 'campaign' },
+    ...(role === 'MANAGER'
+      ? [
+          { href: `${base}/vouchers`, label: 'Voucher', icon: 'monetization_on' },
+          { href: `${base}/reports`, label: 'Báo cáo', icon: 'bar_chart' },
+          { href: `/dashboard/manager/logs`, label: 'Nhật ký', icon: 'history' },
+          { href: `/dashboard/manager/health`, label: 'Cấu hình', icon: 'settings' },
+        ]
+      : []),
+  ]
 
   return (
     <div className="flex h-screen overflow-hidden bg-surface-page text-on-surface">
@@ -75,16 +76,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </nav>
 
         <div className="mt-auto space-y-1 pt-4 border-t border-border-subtle">
-          {role !== 'MANAGER' && (
-            <Link
-              href="/dashboard/admin/products/new"
-              className="w-full flex items-center justify-center gap-2 mb-4 py-2.5 rounded-xl font-bold orange-gradient orange-glow text-white transition-transform active:scale-[0.98]"
-            >
-              <span className="material-symbols-outlined">add</span>
-              Thêm sản phẩm
-            </Link>
-          )}
-          <Link href={role === 'MANAGER' ? '/profile' : '/dashboard/admin/settings'} className="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-primary-50 rounded-xl transition-all text-sm">
+          <Link
+            href="/dashboard/admin/products/new"
+            className="w-full flex items-center justify-center gap-2 mb-4 py-2.5 rounded-xl font-bold orange-gradient orange-glow text-white transition-transform active:scale-[0.98]"
+          >
+            <span className="material-symbols-outlined">add</span>
+            Thêm sản phẩm
+          </Link>
+          <Link href="/dashboard/admin/settings" className="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-primary-50 rounded-xl transition-all text-sm">
             <span className="material-symbols-outlined">settings</span>
             <span>Cài đặt</span>
           </Link>
@@ -116,7 +115,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-flash-sale" />
               </button>
               <Link
-                href={role === 'MANAGER' ? '/profile' : '/dashboard/admin/settings'}
+                href="/dashboard/admin/settings"
                 className="w-10 h-10 rounded-full flex items-center justify-center font-bold border-2 bg-primary-50 text-primary border-white hover:ring-2 hover:ring-primary/20 transition-all"
                 title="Cài đặt tài khoản"
               >

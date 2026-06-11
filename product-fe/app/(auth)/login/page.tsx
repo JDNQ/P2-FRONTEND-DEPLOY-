@@ -33,8 +33,7 @@ function LoginForm() {
       document.cookie = `tl_token=${access_token}; path=/; max-age=${7 * 24 * 3600}`
       document.cookie = `tl_role=${user.role}; path=/; max-age=${7 * 24 * 3600}`
       toast.success(`Chào mừng ${user.username}!`)
-      if (user.role === 'MANAGER') router.push('/dashboard/manager')
-      else if (user.role === 'ADMIN') router.push('/dashboard/admin')
+      if (user.role === 'MANAGER' || user.role === 'ADMIN') router.push('/dashboard/admin')
       else router.push(from)
     } catch (err: any) {
       toast.error(err.response?.data?.message || 'Sai tên đăng nhập hoặc mật khẩu')
@@ -66,8 +65,7 @@ function LoginForm() {
       document.cookie = `tl_token=${access_token}; path=/; max-age=${7 * 24 * 3600}`
       document.cookie = `tl_role=${user.role}; path=/; max-age=${7 * 24 * 3600}`
       toast.success(`Chào mừng ${user.username}!`)
-      if (user.role === 'MANAGER') router.push('/dashboard/manager')
-      else if (user.role === 'ADMIN') router.push('/dashboard/admin')
+      if (user.role === 'MANAGER' || user.role === 'ADMIN') router.push('/dashboard/admin')
       else router.push(from)
     } catch (err: any) {
       if (err?.message?.includes('timeout') || err?.message?.includes('cancelled')) {

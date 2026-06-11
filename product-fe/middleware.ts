@@ -23,14 +23,14 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // Role guard - dashboard/admin
+  // Role guard - dashboard/admin (both ADMIN and MANAGER can access)
   if (ADMIN_ONLY.some((p) => pathname.startsWith(p))) {
     if (!token || !['ADMIN', 'MANAGER'].includes(role || '')) {
       return NextResponse.redirect(new URL('/', request.url))
     }
   }
 
-  // Role guard - dashboard/manager
+  // Role guard - dashboard/manager (MANAGER only)
   if (MANAGER_ONLY.some((p) => pathname.startsWith(p))) {
     if (!token || role !== 'MANAGER') {
       return NextResponse.redirect(new URL('/', request.url))
