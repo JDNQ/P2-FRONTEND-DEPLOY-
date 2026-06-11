@@ -25,6 +25,7 @@ function ProductsContent() {
   const [maxPrice, setMaxPrice] = useState(Infinity)
   const [currentPage, setCurrentPage] = useState(1)
   const [rangeValue, setRangeValue] = useState(50)
+  const [selectedBrands, setSelectedBrands] = useState<string[]>([])
 
   useEffect(() => {
     const q = searchParams.get('search') || searchParams.get('searchTerm') || ''
@@ -54,8 +55,14 @@ function ProductsContent() {
       case 'price-desc': result.sort((a, b) => getMinPrice(b) - getMinPrice(a)); break
       case 'newest': result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()); break
     }
+    const brandsFilter = selectedBrands.filter(Boolean)
+    if (brandsFilter.length > 0) {
+      result = result.filter((p) =>
+        brandsFilter.some((b) => p.productName.toLowerCase().includes(b.toLowerCase()))
+      )
+    }
     return result
-  }, [products, searchTerm, sortBy, minPrice, maxPrice])
+  }, [products, searchTerm, sortBy, minPrice, maxPrice, selectedBrands])
 
   const pageSize = 9
   const totalPages = Math.max(1, Math.ceil(filteredProducts.length / pageSize))
@@ -73,10 +80,12 @@ function ProductsContent() {
             minPrice={minPrice}
             maxPrice={maxPrice}
             rangeValue={rangeValue}
+            selectedBrands={selectedBrands}
             onMinPriceChange={setMinPrice}
             onMaxPriceChange={setMaxPrice}
             onRangeValueChange={setRangeValue}
-            onClearAll={() => { setMinPrice(0); setMaxPrice(Infinity); setSearchTerm(''); setRangeValue(50) }}
+            onSelectedBrandsChange={setSelectedBrands}
+            onClearAll={() => { setMinPrice(0); setMaxPrice(Infinity); setSearchTerm(''); setRangeValue(50); setSelectedBrands([]) }}
           />
 
           {/* Product Listing */}

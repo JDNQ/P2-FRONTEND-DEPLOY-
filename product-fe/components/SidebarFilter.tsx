@@ -1,13 +1,14 @@
 'use client'
-import { useState } from 'react'
 
 interface SidebarFilterProps {
   minPrice: number
   maxPrice: number
   rangeValue: number
+  selectedBrands: string[]
   onMinPriceChange: (v: number) => void
   onMaxPriceChange: (v: number) => void
   onRangeValueChange: (v: number) => void
+  onSelectedBrandsChange: (v: string[]) => void
   onClearAll: () => void
 }
 
@@ -17,17 +18,36 @@ export default function SidebarFilter({
   minPrice,
   maxPrice,
   rangeValue,
+  selectedBrands,
   onMinPriceChange,
   onMaxPriceChange,
   onRangeValueChange,
+  onSelectedBrandsChange,
   onClearAll,
 }: SidebarFilterProps) {
-  const [selectedBrands, setSelectedBrands] = useState<string[]>([])
-
   const toggleBrand = (brand: string) => {
-    setSelectedBrands((prev) =>
-      prev.includes(brand) ? prev.filter((b) => b !== brand) : [...prev, brand]
+    onSelectedBrandsChange(
+      selectedBrands.includes(brand)
+        ? selectedBrands.filter((b) => b !== brand)
+        : [...selectedBrands, brand],
     )
+  }
+
+  const handleMaxPriceInput = (value: string) => {
+    const num = Number(value.replace(/\D/g, '')) || 0
+    onMaxPriceChange(num > 0 ? num : Infinity)
+    if (num > 0) {
+      const newRange = Math.min(Math.round(num / 1000000), 50)
+      onRangeValueChange(newRange)
+    } else {
+      onRangeValueChange(50)
+    }
+  }
+
+  const handleRangeSlider = (value: number) => {
+    onRangeValueChange(value)
+    const price = value * 1000000
+    onMaxPriceChange(price > 0 ? price : Infinity)
   }
 
   return (
@@ -40,10 +60,7 @@ export default function SidebarFilter({
             <h2 className="font-headline-sm text-headline-sm text-on-surface">Bộ lọc</h2>
           </div>
           <button
-            onClick={() => {
-              onClearAll()
-              setSelectedBrands([])
-            }}
+            onClick={onClearAll}
             className="text-primary font-label-md text-label-md hover:underline font-semibold"
           >
             Xóa tất cả
@@ -61,11 +78,8 @@ export default function SidebarFilter({
               type="range"
               min="0"
               max="50"
-              value={rangeValue}
-              onChange={(e) => {
-                onRangeValueChange(Number(e.target.value))
-                onMaxPriceChange(Number(e.target.value) * 1000000)
-              }}
+              value={maxPrice < Infinity ? Math.min(Math.round(maxPrice / 1000000), 50) : rangeValue}
+              onChange={(e) => handleRangeSlider(Number(e.target.value))}
               className="w-full accent-primary cursor-pointer"
             />
             <div className="flex items-center gap-2">
@@ -86,19 +100,10 @@ export default function SidebarFilter({
                   placeholder="Mọi giá"
                   type="text"
                   value={maxPrice < Infinity ? maxPrice.toLocaleString() : ''}
-                  onChange={(e) => onMaxPriceChange(Number(e.target.value.replace(/\D/g, '')) || Infinity)}
+                  onChange={(e) => handleMaxPriceInput(e.target.value)}
                 />
               </div>
             </div>
-            <button
-              onClick={() => {
-                onMinPriceChange(minPrice)
-                onMaxPriceChange(maxPrice)
-              }}
-              className="w-full orange-gradient text-white font-label-md py-2.5 rounded-xl hover:brightness-110 active:scale-98 transition-all font-semibold shadow-sm"
-            >
-              Áp dụng lọc
-            </button>
           </div>
         </div>
 
