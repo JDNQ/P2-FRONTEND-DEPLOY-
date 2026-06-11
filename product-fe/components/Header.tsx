@@ -32,7 +32,7 @@ export default function Header() {
     clearAuth()
     document.cookie = 'tl_token=; path=/; max-age=0'
     document.cookie = 'tl_role=; path=/; max-age=0'
-    router.push('/login')
+    router.push('/')
   }
 
   // Pre-fill search input if on search page
