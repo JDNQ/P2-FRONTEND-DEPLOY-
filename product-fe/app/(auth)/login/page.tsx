@@ -84,8 +84,10 @@ function LoginForm() {
   return (
     <div className="flex-1 flex items-center justify-center bg-white px-6 py-8 overflow-y-auto">
       <div className="w-full max-w-sm space-y-6">
-        <div className="lg:hidden flex justify-center mb-4">
-          <img src="/logo-removebg-preview.png" alt="TL Market" className="h-8 w-auto" />
+        <div className="lg:hidden flex justify-center mb-6">
+          <div className="w-16 h-16 rounded-2xl bg-white shadow-lg shadow-primary/20 flex items-center justify-center p-2 border border-outline-variant/30">
+            <img src="/logo-removebg-preview.png" alt="TL Market" className="w-full h-full object-contain" />
+          </div>
         </div>
         <div className="space-y-1">
           <h2 className="font-heading font-bold text-2xl text-on-surface tracking-tight">Chào mừng trở lại!</h2>
