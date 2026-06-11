@@ -4,12 +4,12 @@ import type { UserProfile } from '@/lib/types/user'
 
 export const userApi = {
   getAll: () => api.get<ApiResponse<UserProfile[]>>('/users'),
-  create: (data: { username: string; email: string; password: string; fullName?: string; role?: string }) =>
+  create: (data: { username: string; email?: string; password: string; confirmPassword: string }) =>
     api.post<ApiResponse<UserProfile>>('/auth/create-manager', data),
   updateRole: (id: number, role: string) =>
     api.patch<ApiResponse<UserProfile>>(`/users/${id}/role`, { role }),
-  toggleStatus: (id: number) =>
-    api.patch<ApiResponse<UserProfile>>(`/users/${id}/toggle-status`),
+  toggleStatus: (id: number, status: string) =>
+    api.patch<ApiResponse<UserProfile>>(`/users/${id}/toggle-status`, { status }),
   delete: (id: number) => api.delete<ApiResponse<void>>(`/users/${id}`),
   updateProfile: (id: number, data: { username?: string; email?: string; avatarUrl?: string }) =>
     api.patch<ApiResponse<{ id: number; username: string; email?: string; avatarUrl?: string }>>(`/users/${id}`, data),

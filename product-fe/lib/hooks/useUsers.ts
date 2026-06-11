@@ -51,7 +51,7 @@ export function useUpdateUserRole() {
 export function useToggleUserStatus() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: number) => userApi.toggleStatus(id),
+    mutationFn: ({ id, status }: { id: number; status: string }) => userApi.toggleStatus(id, status),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['users'] })
       toast.success('Cập nhật trạng thái thành công')

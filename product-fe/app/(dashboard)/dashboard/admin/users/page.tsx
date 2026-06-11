@@ -1,5 +1,6 @@
 'use client'
 import { useUsers, useUserStats, useToggleUserStatus, useDeleteUser } from '@/lib/hooks/useUsers'
+import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
 export default function AdminUsersPage() {
@@ -7,6 +8,7 @@ export default function AdminUsersPage() {
   const { data: stats } = useUserStats()
   const { mutate: toggleStatus } = useToggleUserStatus()
   const { mutate: deleteUser } = useDeleteUser()
+  const router = useRouter()
 
   return (
     <div className="space-y-6">
@@ -38,7 +40,7 @@ export default function AdminUsersPage() {
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#c4c5d9]/20">
           <h3 className="text-[16px] font-semibold text-[#08006c]">All Users</h3>
           <button
-            onClick={() => toast.info('Chức năng tạo Manager đang được phát triển!')}
+            onClick={() => router.push('/dashboard/manager/users/new')}
             className="px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 transition-all active:scale-95 text-white"
             style={{
               background: 'linear-gradient(135deg, #0035d1 0%, #3432c8 100%)',
@@ -93,7 +95,7 @@ export default function AdminUsersPage() {
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button onClick={() => toggleStatus(u.id)} className="p-2 hover:bg-[#1e4cfd] hover:text-[#dbdeff] rounded-lg transition-all" title="Toggle Status">
+                          <button onClick={() => toggleStatus({ id: u.id, status: u.status === 'Active' ? 'Banned' : 'Active' })} className="p-2 hover:bg-[#1e4cfd] hover:text-[#dbdeff] rounded-lg transition-all" title="Toggle Status">
                             <span className="material-symbols-outlined text-sm">toggle_off</span>
                           </button>
                           <button onClick={() => { if (confirm('Bạn chắc chắn muốn xoá người dùng này?')) deleteUser(u.id) }} className="p-2 hover:bg-[#ffdad6] hover:text-[#ba1a1a] rounded-lg transition-all" title="Delete">

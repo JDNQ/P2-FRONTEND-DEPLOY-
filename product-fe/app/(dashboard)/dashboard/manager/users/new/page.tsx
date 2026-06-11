@@ -28,10 +28,9 @@ export default function ManagerCreateUserPage() {
     try {
       await userApi.create({
         username: form.username,
-        email: form.email,
+        email: form.email || undefined,
         password: form.password,
-        fullName: form.fullName,
-        role: selectedRole,
+        confirmPassword: form.confirmPassword,
       })
       toast.success('User created successfully')
       router.push('/dashboard/manager/users')
