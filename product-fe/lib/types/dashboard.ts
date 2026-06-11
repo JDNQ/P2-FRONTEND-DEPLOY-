@@ -1,46 +1,53 @@
-export interface KpiCard {
-  label: string
-  value: string
-  trend: number
-  trendLabel: string
-  icon: string
+export interface AdminKpis {
+  totalOrders: number
+  totalProducts: number
+  totalUsers: number
+  totalRevenue: number
+  pendingOrders: number
+}
+
+export interface ManagerKpis {
+  totalOrders: number
+  totalProducts: number
+  totalRevenue: number
+  pendingOrders: number
 }
 
 export interface RevenuePoint {
-  label: string
-  value: number
+  date: string
+  total: number
 }
 
 export interface TopProduct {
-  id: number
-  name: string
-  category: string
-  price: number
-  sales: number
-  stock: number
-  tag: string
+  productId: number
+  productName: string
+  totalSold: number | null
+  totalRevenue: number | null
 }
 
 export interface RecentActivity {
   id: number
-  initials: string
-  initialsBg: string
-  name: string
   action: string
-  target: string
-  timestamp: string
+  user: { id: number; username: string } | null
+  createdAt: string
 }
 
 export interface CategoryStat {
-  name: string
-  percentage: number
-  color: string
+  shopId: number
+  count: number
 }
 
 export interface AdminDashboardData {
-  kpis: KpiCard[]
+  kpis: AdminKpis
   revenue: RevenuePoint[]
   topProducts: TopProduct[]
   recentActivities: RecentActivity[]
   categoryStats: CategoryStat[]
+}
+
+export interface ManagerDashboardData {
+  kpis: ManagerKpis
+  revenue: RevenuePoint[]
+  topProducts: TopProduct[]
+  recentActivities: RecentActivity[]
 }

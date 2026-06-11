@@ -3,14 +3,18 @@ export interface Variant {
   variantName: string
   extraPrice: number
   stock: number
-  image?: string
-  color?: string
-  size?: string
+  image?: string | null
+  color?: string | null
+  size?: string | null
+  productId: number
 }
 
 export interface ProductImage {
+  id: number
   url: string
   isPrimary: boolean
+  productId: number
+  createdAt: string
 }
 
 export interface Product {
@@ -18,7 +22,8 @@ export interface Product {
   productName: string
   description?: string | null
   basePrice: number
-  shopId: number
+  shopId: number | null
+  visible: boolean
   variants: Variant[]
   images: ProductImage[]
   createdAt: string

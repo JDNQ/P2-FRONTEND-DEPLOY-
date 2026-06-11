@@ -6,7 +6,10 @@ import { useNotifications, useMarkNotificationRead, useMarkAllNotificationsRead,
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 
-const FILTERS = ['All', 'Orders', 'Promotions', 'System']
+const FILTERS = ['All', 'order', 'promo', 'system']
+const TYPE_LABEL: Record<string, string> = { order: 'Orders', promo: 'Promotions', system: 'System' }
+const TYPE_ICON: Record<string, string> = { order: 'package_2', promo: 'sell', system: 'security' }
+const TYPE_COLOR: Record<string, string> = { order: 'text-primary', promo: 'text-tertiary', system: 'text-secondary' }
 const ITEMS_PER_PAGE = 5
 
 export default function NotificationsPage() {
@@ -83,9 +86,9 @@ export default function NotificationsPage() {
         ) : (
           <div className="space-y-stack-md">
             {visibleNotifications.map((n) => {
-              const categoryColor = n.type === 'Orders' ? 'text-primary' : n.type === 'Promotions' ? 'text-tertiary' : 'text-secondary'
-              const icon = n.type === 'Orders' ? 'package_2' : n.type === 'Promotions' ? 'sell' : 'security'
-              const categoryHex = n.type === 'Orders' ? '#3b82f6' : n.type === 'Promotions' ? '#60a5fa' : '#93c5fd'
+              const categoryColor = TYPE_COLOR[n.type] || 'text-secondary'
+              const icon = TYPE_ICON[n.type] || 'notifications'
+              const typeLabel = TYPE_LABEL[n.type] || n.type
               return (
                 <div key={n.id}
                   className={`relative overflow-hidden rounded-xl border transition-all hover:shadow-lg hover:-translate-y-0.5 group cursor-pointer ${!n.isRead ? 'bg-white/80 border-l-4 border-l-primary' : 'bg-white border-l-4 border-l-transparent'} border-outline-variant`}
@@ -96,9 +99,9 @@ export default function NotificationsPage() {
                     </div>
                     <div className="flex-grow min-w-0">
                       <div className="flex justify-between items-start mb-1">
-                        <span className={`font-label-md text-label-md font-bold ${categoryColor}`}>{n.type}</span>
+                        <span className={`font-label-md text-label-md font-bold ${categoryColor}`}>{typeLabel}</span>
                         <span className="font-caption text-caption text-on-surface-variant flex-shrink-0 ml-2">
-                          {new Date(n.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                          {new Date(n.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                         </span>
                       </div>
                       <h3 className="font-heading text-headline-sm text-on-surface mb-1">{n.title}</h3>

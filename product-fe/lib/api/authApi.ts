@@ -20,4 +20,13 @@ export const authApi = {
 
   socialLogin: (provider: string, token: string) =>
     api.post<ApiResponse<LoginResponse>>(`/auth/social/${provider}`, { token }),
+
+  getProfile: () =>
+    api.get<ApiResponse<{ id: number; username: string; email: string; role: string; avatarUrl: string | null; status: string; createdAt: string }>>('/auth/profile'),
+
+  forgotPassword: (email: string) =>
+    api.post<{ message: string; resetToken?: string }>('/auth/forgot-password', { email }),
+
+  resetPassword: (token: string, newPassword: string) =>
+    api.post<{ message: string }>('/auth/reset-password', { token, newPassword }),
 }

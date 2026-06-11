@@ -1,19 +1,28 @@
 export interface ActivityLog {
   id: number
-  timestamp: string
-  user: string
-  role: string
+  userId: number | null
   action: string
-  target: string
-  ip: string
-  device: string
-  status: 'Success' | 'Failed' | 'System'
-  note?: string
+  entity: string | null
+  entityId: number | null
+  details: string | null
+  ip: string | null
+  createdAt: string
+  user: { id: number; username: string } | null
 }
 
 export interface LogStats {
-  total24h: number
-  successRate: number
-  securityWarnings: number
-  unknownIps: number
+  totalLogs: number
+  actionBreakdown: { action: string; count: number }[]
+  recentActivity: {
+    id: number
+    action: string
+    createdAt: string
+    user: { id: number; username: string } | null
+  }[]
+}
+
+export interface LogQueryParams {
+  page?: number
+  limit?: number
+  action?: string
 }

@@ -8,4 +8,6 @@ export const notificationApi = {
     api.patch<ApiResponse<Notification>>(`/notifications/${id}/read`),
   markAllRead: () => api.patch<ApiResponse<void>>('/notifications/read-all'),
   delete: (id: number) => api.delete<ApiResponse<void>>(`/notifications/${id}`),
+
+  getUnreadCount: () => api.get<ApiResponse<number>>('/notifications/unread-count'),
 }

@@ -5,9 +5,10 @@ export interface UserProfile {
   username: string
   email: string
   role: UserRole
+  avatarUrl: string | null
   status: 'Active' | 'Banned'
   createdAt: string
-  updatedAt?: string
+  updatedAt: string
 }
 
 export interface DashboardStats {

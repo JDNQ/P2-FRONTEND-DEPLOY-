@@ -5,27 +5,33 @@ export type OrderStatus = 'PENDING' | 'CONFIRMED' | 'SHIPPING' | 'DELIVERED' | '
 
 export interface OrderItem {
   id: number
+  orderId: number
   productId: number
   variantId: number
   quantity: number
   price: number
-  product?: Product
-  variant?: Variant
+  productName: string
+  variantName: string
+  product: Product
+  variant: Variant
 }
 
 export interface Order {
   id: number
-  status: OrderStatus
-  items: OrderItem[]
+  userId: number
   totalPrice: number
-  voucherCode?: string
-  note?: string
-  phoneNumber?: string
-  shippingAddress?: string
-  voucherId?: number
-  paymentMethod?: string
+  status: OrderStatus
+  note: string | null
+  voucherCode: string | null
+  voucherId: number | null
+  discountAmount: number
+  phoneNumber: string | null
+  shippingAddress: string | null
+  paymentMethod: string | null
   createdAt: string
   updatedAt: string
+  items: OrderItem[]
+  user?: { id: number; username: string; email: string; role: string; status: string; avatarUrl: string | null; createdAt: string; updatedAt: string }
 }
 
 export interface CreateOrderDto {

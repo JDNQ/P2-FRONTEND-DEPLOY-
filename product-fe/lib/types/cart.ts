@@ -3,9 +3,11 @@ import type { Variant } from './product'
 
 export interface CartItem {
   id: number
-  quantity: number
+  userId: number
   productId: number
   variantId: number
+  quantity: number
+  createdAt: string
   product: Product
   variant: Variant
 }

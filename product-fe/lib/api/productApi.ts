@@ -17,4 +17,7 @@ export const productApi = {
 
   delete: (id: number) =>
     api.delete(`/products/${id}`),
+
+  toggleVisibility: (id: number, visible: boolean) =>
+    api.patch<ApiResponse<Product>>(`/products/${id}/visibility`, { visible }),
 }

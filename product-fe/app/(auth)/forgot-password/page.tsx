@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { toast } from 'sonner'
+import { authApi } from '@/lib/api/authApi'
 
 export default function ForgotPasswordPage() {
   const [identifier, setIdentifier] = useState('')
@@ -11,10 +12,15 @@ export default function ForgotPasswordPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-    await new Promise((r) => setTimeout(r, 1500))
-    setIsLoading(false)
-    setIsSent(true)
-    toast.success('Đã gửi yêu cầu đặt lại mật khẩu!')
+    try {
+      await authApi.forgotPassword(identifier)
+      setIsSent(true)
+      toast.success('Đã gửi yêu cầu đặt lại mật khẩu!')
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || 'Gửi yêu cầu thất bại')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (

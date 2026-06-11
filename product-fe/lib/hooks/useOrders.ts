@@ -58,3 +58,15 @@ export function useUpdateOrderStatus() {
     onError: () => toast.error("Cập nhật thất bại"),
   });
 }
+
+export function useCancelOrder() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) => orderApi.cancelByUser(id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["orders"] });
+      toast.success("Đã hủy đơn hàng");
+    },
+    onError: () => toast.error("Hủy đơn hàng thất bại"),
+  });
+}

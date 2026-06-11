@@ -3,15 +3,16 @@ export type DiscountType = 'PERCENT' | 'FIXED'
 export interface Voucher {
   id: number
   code: string
-  description?: string
+  description: string | null
   discountType: DiscountType
   discountValue: number
-  minOrderValue?: number
-  maxDiscount?: number
-  usageLimit?: number
+  minOrderValue: number
+  maxDiscount: number | null
+  usageLimit: number
   usageCount: number
   isActive: boolean
-  expiresAt?: string
+  expiresAt: string | null
+  createdAt: string
 }
 
 export interface CreateVoucherDto {

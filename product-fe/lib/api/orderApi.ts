@@ -14,4 +14,7 @@ export const orderApi = {
 
   updateStatus: (id: number, data: UpdateOrderStatusDto) =>
     api.patch<ApiResponse<Order>>(`/orders/${id}/status`, data),
+
+  cancelByUser: (id: number) =>
+    api.post<ApiResponse<Order>>(`/orders/${id}/cancel`),
 }

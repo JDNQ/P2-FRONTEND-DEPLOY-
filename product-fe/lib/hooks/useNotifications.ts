@@ -37,3 +37,13 @@ export function useDeleteNotification() {
     onError: () => toast.error('Xóa thông báo thất bại'),
   })
 }
+
+export function useUnreadCount() {
+  return useQuery({
+    queryKey: ['notifications', 'unread-count'],
+    queryFn: async () => {
+      const { data } = await notificationApi.getUnreadCount()
+      return data.data
+    },
+  })
+}

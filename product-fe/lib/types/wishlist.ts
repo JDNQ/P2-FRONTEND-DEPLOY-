@@ -1,12 +1,9 @@
+import type { Product } from './product'
+
 export interface WishlistItem {
   id: number
+  userId: number
   productId: number
-  name: string
-  description: string
-  price: number
-  rating: number
-  reviewCount: number
-  image: string
-  badge?: string
-  colors?: string[]
+  createdAt: string
+  product: Product
 }

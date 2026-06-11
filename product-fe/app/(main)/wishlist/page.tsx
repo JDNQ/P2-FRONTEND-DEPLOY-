@@ -65,12 +65,15 @@ export default function WishlistPage() {
         ) : (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-stack-lg mb-section-gap">
-              {items.map((item) => (
+              {items.map((item) => {
+                const p = item.product
+                const primaryImage = p.images?.find(img => img.isPrimary) || p.images?.[0]
+                return (
                 <div key={item.id}
                   className="group relative rounded-2xl shadow-sm overflow-hidden border border-neutral-50 transition-all hover:-translate-y-1 hover:shadow-lg bg-white">
                   <div className="aspect-square relative overflow-hidden bg-surface-container-high">
                     <Link href={`/products/${item.productId}`}>
-                      <img src={item.image} alt={item.name}
+                      <img src={primaryImage?.url || PLACEHOLDER_400} alt={p.productName}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 cursor-pointer"
                         onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_400 }} />
                     </Link>
@@ -89,27 +92,17 @@ export default function WishlistPage() {
                   <div className="p-stack-md">
                     <div className="flex justify-between items-start mb-1">
                       <Link href={`/products/${item.productId}`}>
-                        <h3 className="font-heading text-headline-sm text-on-surface truncate hover:text-primary cursor-pointer">{item.name}</h3>
+                        <h3 className="font-heading text-headline-sm text-on-surface truncate hover:text-primary cursor-pointer">{p.productName}</h3>
                       </Link>
-                      <div className="flex items-center gap-1 text-primary">
-                        <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-                        <span className="font-label-md text-label-md">{item.rating}</span>
-                      </div>
                     </div>
-                    <p className="font-caption text-caption text-on-surface-variant mb-stack-md truncate">{item.description}</p>
+                    <p className="font-caption text-caption text-on-surface-variant mb-stack-md truncate">{p.description}</p>
                     <div className="flex items-center justify-between">
-                      <span className="font-price-display text-price-display text-primary">{formatPrice(item.price)}</span>
-                      {item.colors && item.colors.length > 0 && (
-                        <div className="flex gap-1">
-                          {item.colors.map((c, i) => (
-                            <div key={i} className="w-4 h-4 rounded-full ring-2 ring-offset-2 ring-outline-variant" style={{ backgroundColor: c }} />
-                          ))}
-                        </div>
-                      )}
+                      <span className="font-price-display text-price-display text-primary">{formatPrice(p.basePrice)}</span>
                     </div>
                   </div>
                 </div>
-              ))}
+                )
+              })}
             </div>
 
             {/* Featured Section */}

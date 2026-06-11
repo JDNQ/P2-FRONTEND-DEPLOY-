@@ -1,9 +1,10 @@
 export interface Notification {
   id: number
-  type: 'Orders' | 'Promotions' | 'System'
+  userId: number
   title: string
-  message: string
-  timestamp: string
+  message: string | null
+  type: string
   isRead: boolean
-  actionLabel?: string
+  link: string | null
+  createdAt: string
 }

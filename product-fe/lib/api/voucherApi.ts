@@ -16,4 +16,7 @@ export const voucherApi = {
 
   deactivate: (id: number) =>
     api.patch(`/vouchers/${id}/deactivate`),
+
+  update: (id: number, data: Partial<CreateVoucherDto>) =>
+    api.patch<ApiResponse<Voucher>>(`/vouchers/${id}`, data),
 }
