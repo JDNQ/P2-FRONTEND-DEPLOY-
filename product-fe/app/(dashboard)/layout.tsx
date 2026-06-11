@@ -76,13 +76,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </nav>
 
         <div className="mt-auto space-y-1 pt-4 border-t border-border-subtle">
-          <Link
-            href="/dashboard/admin/products/new"
-            className="w-full flex items-center justify-center gap-2 mb-4 py-2.5 rounded-xl font-bold orange-gradient orange-glow text-white transition-transform active:scale-[0.98]"
-          >
-            <span className="material-symbols-outlined">add</span>
-            Thêm sản phẩm
-          </Link>
+          {role === 'MANAGER' && (
+            <Link
+              href="/dashboard/admin/products/new"
+              className="w-full flex items-center justify-center gap-2 mb-4 py-2.5 rounded-xl font-bold orange-gradient orange-glow text-white transition-transform active:scale-[0.98]"
+            >
+              <span className="material-symbols-outlined">add</span>
+              Thêm sản phẩm
+            </Link>
+          )}
           <Link href="/dashboard/admin/settings" className="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-primary-50 rounded-xl transition-all text-sm">
             <span className="material-symbols-outlined">settings</span>
             <span>Cài đặt</span>

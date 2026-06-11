@@ -2,11 +2,15 @@
 import { useProducts, useDeleteProduct } from '@/lib/hooks/useProducts'
 import { formatPrice } from '@/lib/utils/formatPrice'
 import { PLACEHOLDER_48 } from '@/lib/utils/placeholder'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { toast } from 'sonner'
 
 const PAGE_SIZE = 10
+
+type SortField = 'name' | 'price' | 'stock' | 'newest'
+type SortDir = 'asc' | 'desc'
+type StockFilter = 'all' | 'instock' | 'low' | 'outofstock'
 
 function getRowStatus(stock: number): { label: string; bg: string; text: string; dot: string; pulse?: boolean } {
   if (stock === 0) return { label: 'Out of Stock', bg: 'bg-[#ffdad6]', text: 'text-[#ba1a1a]', dot: '' }
@@ -19,7 +23,54 @@ export default function AdminProductsPage() {
   const deleteProduct = useDeleteProduct()
   const [currentPage, setCurrentPage] = useState(1)
 
-  const list = products || []
+  const [search, setSearch] = useState('')
+  const [sortField, setSortField] = useState<SortField>('newest')
+  const [sortDir, setSortDir] = useState<SortDir>('desc')
+  const [stockFilter, setStockFilter] = useState<StockFilter>('all')
+
+  const list = useMemo(() => {
+    let result = products || []
+
+    // Search
+    if (search.trim()) {
+      const q = search.trim().toLowerCase()
+      result = result.filter(
+        (p) =>
+          p.productName.toLowerCase().includes(q) ||
+          p.description?.toLowerCase().includes(q) ||
+          `TL-${p.id.toString().padStart(6, '0')}`.toLowerCase().includes(q),
+      )
+    }
+
+    // Stock filter
+    if (stockFilter === 'instock') {
+      result = result.filter((p) => p.variants.reduce((s, v) => s + v.stock, 0) > 10)
+    } else if (stockFilter === 'low') {
+      result = result.filter((p) => {
+        const t = p.variants.reduce((s, v) => s + v.stock, 0)
+        return t > 0 && t <= 10
+      })
+    } else if (stockFilter === 'outofstock') {
+      result = result.filter((p) => p.variants.reduce((s, v) => s + v.stock, 0) === 0)
+    }
+
+    // Sort
+    result = [...result].sort((a, b) => {
+      let cmp = 0
+      if (sortField === 'name') cmp = a.productName.localeCompare(b.productName)
+      else if (sortField === 'price') cmp = a.basePrice - b.basePrice
+      else if (sortField === 'stock') {
+        const sa = a.variants.reduce((s, v) => s + v.stock, 0)
+        const sb = b.variants.reduce((s, v) => s + v.stock, 0)
+        cmp = sa - sb
+      }
+      else cmp = new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      return sortDir === 'asc' ? cmp : -cmp
+    })
+
+    return result
+  }, [products, search, sortField, sortDir, stockFilter])
+
   const totalUnits = list.reduce((s, p) => s + p.variants.reduce((ss, v) => ss + v.stock, 0), 0)
   const inStockCount = list.filter((p) => p.variants.reduce((ss, v) => ss + v.stock, 0) > 10).length
   const lowStockCount = list.filter((p) => {
@@ -47,48 +98,61 @@ export default function AdminProductsPage() {
     return pages
   }
 
+  const toggleSort = (field: SortField) => {
+    if (sortField === field) setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))
+    else { setSortField(field); setSortDir('asc') }
+    setCurrentPage(1)
+  }
+
+  const SortIcon = ({ field }: { field: SortField }) => {
+    if (sortField !== field) return <span className="material-symbols-outlined text-[16px]">swap_vert</span>
+    return (
+      <span className="material-symbols-outlined text-[16px]">
+        {sortDir === 'asc' ? 'arrow_upward' : 'arrow_downward'}
+      </span>
+    )
+  }
+
   return (
     <div className="space-y-6">
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="p-6 rounded-xl shadow-sm border border-[#c4c5d9]/30 flex flex-col gap-2" style={{ backgroundColor: '#ffffff' }}>
+        <div className="p-6 rounded-xl shadow-sm border border-[#c4c5d9]/30 flex flex-col gap-2 bg-white">
           <p className="text-[12px] leading-[16px] text-[#747688] uppercase font-bold">Total Items</p>
           <p className="text-[28px] font-extrabold leading-[1.2]">{list.length}</p>
           <div className="flex items-center gap-1 text-green-600 text-[12px] leading-[16px] font-bold">
             <span className="material-symbols-outlined text-[16px]">trending_up</span>
-            +12% vs last month
+            +{(products?.length || 0) > 0 ? ((list.length / (products?.length || 1)) * 100).toFixed(0) : 0}% filtered
           </div>
         </div>
-        <div className="p-6 rounded-xl shadow-sm border border-[#c4c5d9]/30 flex flex-col gap-2" style={{ backgroundColor: '#ffffff' }}>
+        <div className="p-6 rounded-xl shadow-sm border border-[#c4c5d9]/30 flex flex-col gap-2 bg-white">
           <p className="text-[12px] leading-[16px] text-[#747688] uppercase font-bold">In Stock</p>
           <p className="text-[28px] font-extrabold leading-[1.2]" style={{ color: '#0035d1' }}>{inStockCount}</p>
           <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: '#eeecff' }}>
             <div className="h-full rounded-full" style={{ width: `${list.length ? (inStockCount / list.length) * 100 : 0}%`, backgroundColor: '#0035d1' }} />
           </div>
         </div>
-        <div className="p-6 rounded-xl shadow-sm border border-[#c4c5d9]/30 flex flex-col gap-2" style={{ backgroundColor: '#ffffff' }}>
+        <div className="p-6 rounded-xl shadow-sm border border-[#c4c5d9]/30 flex flex-col gap-2 bg-white">
           <p className="text-[12px] leading-[16px] text-[#747688] uppercase font-bold">Low Stock</p>
           <p className="text-[28px] font-extrabold leading-[1.2]" style={{ color: '#3432c8' }}>{lowStockCount}</p>
           <div className="flex items-center gap-1 text-[12px] leading-[16px] font-bold" style={{ color: '#3432c8' }}>
-            <span className="material-symbols-outlined text-[16px]">warning</span>
-            Requires attention
+            <span className="material-symbols-outlined text-[16px]">warning</span> Requires attention
           </div>
         </div>
-        <div className="p-6 rounded-xl shadow-sm border border-[#c4c5d9]/30 flex flex-col gap-2" style={{ backgroundColor: '#ffffff' }}>
+        <div className="p-6 rounded-xl shadow-sm border border-[#c4c5d9]/30 flex flex-col gap-2 bg-white">
           <p className="text-[12px] leading-[16px] text-[#747688] uppercase font-bold">Out of Stock</p>
           <p className="text-[28px] font-extrabold leading-[1.2]" style={{ color: '#ba1a1a' }}>{outOfStockCount}</p>
           <div className="flex items-center gap-1 text-[12px] leading-[16px] font-bold" style={{ color: '#ba1a1a' }}>
-            <span className="material-symbols-outlined text-[16px]">error</span>
-            Inactive listings
+            <span className="material-symbols-outlined text-[16px]">error</span> Inactive listings
           </div>
         </div>
       </div>
 
       {/* Table */}
-      <div className="rounded-xl shadow-sm border border-[#c4c5d9]/50 overflow-hidden" style={{ backgroundColor: '#ffffff' }}>
+      <div className="rounded-xl shadow-sm border border-[#c4c5d9]/50 overflow-hidden bg-white">
         {/* Header Actions */}
-        <div className="px-6 py-4 border-b border-[#c4c5d9]/30 flex justify-between items-center" style={{ backgroundColor: '#f5f2ff' }}>
-          <div className="flex gap-2">
+        <div className="px-6 py-4 border-b border-[#c4c5d9]/30 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between" style={{ backgroundColor: '#f5f2ff' }}>
+          <div className="flex gap-2 flex-wrap">
             <Link
               href="/dashboard/admin/products/new"
               className="px-4 py-2 rounded-lg flex items-center gap-2 text-[14px] leading-[20px] font-bold text-white transition-all active:scale-95"
@@ -100,26 +164,31 @@ export default function AdminProductsPage() {
               <span className="material-symbols-outlined text-[18px]">add</span>
               Add Product
             </Link>
-            <button 
-              onClick={() => toast.info('Chức năng lọc sản phẩm đang được phát triển!')}
-              className="px-4 py-2 rounded-lg border border-[#c4c5d9] hover:bg-[#e1dfff] transition-colors flex items-center gap-2 text-[14px] leading-[20px] font-medium text-[#444656]" 
-              style={{ backgroundColor: '#fcf8ff' }}
-            >
-              <span className="material-symbols-outlined text-[18px]">filter_alt</span>
-              Filters
-            </button>
-            <button 
-              onClick={() => toast.success('Đã xuất danh sách sản phẩm thành công!')}
-              className="px-4 py-2 rounded-lg border border-[#c4c5d9] hover:bg-[#e1dfff] transition-colors flex items-center gap-2 text-[14px] leading-[20px] font-medium text-[#444656]" 
-              style={{ backgroundColor: '#fcf8ff' }}
-            >
-              <span className="material-symbols-outlined text-[18px]">download</span>
-              Export
-            </button>
           </div>
-          <p className="text-[12px] leading-[16px] text-[#747688]">
-            Showing {Math.min((currentPage - 1) * PAGE_SIZE + 1, list.length)}-{Math.min(currentPage * PAGE_SIZE, list.length)} of {list.length} products
-          </p>
+          <div className="flex items-center gap-3">
+            {/* Search */}
+            <div className="relative">
+              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#747688] text-[18px]">search</span>
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => { setSearch(e.target.value); setCurrentPage(1) }}
+                placeholder="Tìm sản phẩm..."
+                className="w-48 pl-9 pr-3 py-1.5 rounded-lg border border-[#c4c5d9] text-sm outline-none focus:border-[#0035d1] focus:ring-1 focus:ring-[#0035d1]/20 transition-all bg-white"
+              />
+            </div>
+            {/* Stock Filter */}
+            <select
+              value={stockFilter}
+              onChange={(e) => { setStockFilter(e.target.value as StockFilter); setCurrentPage(1) }}
+              className="px-3 py-1.5 rounded-lg border border-[#c4c5d9] text-sm outline-none focus:border-[#0035d1] bg-white text-[#444656]"
+            >
+              <option value="all">Tất cả</option>
+              <option value="instock">Còn hàng</option>
+              <option value="low">Sắp hết</option>
+              <option value="outofstock">Hết hàng</option>
+            </select>
+          </div>
         </div>
 
         {isLoading ? (
@@ -131,7 +200,12 @@ export default function AdminProductsPage() {
         ) : list.length === 0 ? (
           <div className="text-center py-16">
             <span className="material-symbols-outlined text-6xl text-[#c4c5d9]">inventory_2</span>
-            <p className="text-[#444656] mt-4 text-sm">No products yet</p>
+            <p className="text-[#444656] mt-4 text-sm">Không tìm thấy sản phẩm nào</p>
+            {search && (
+              <button onClick={() => setSearch('')} className="mt-2 text-[#0035d1] text-sm font-bold hover:underline">
+                Xoá bộ lọc
+              </button>
+            )}
           </div>
         ) : (
           <div className="w-full overflow-x-auto">
@@ -139,14 +213,25 @@ export default function AdminProductsPage() {
               <thead>
                 <tr className="text-[12px] leading-[16px] text-[#444656] uppercase font-bold tracking-wider" style={{ backgroundColor: '#f5f2ff' }}>
                   <th className="px-6 py-4 font-medium">
-                    <span className="flex items-center gap-2 cursor-pointer hover:text-[#0035d1]">
-                      Product Name
-                      <span className="material-symbols-outlined text-[16px]">swap_vert</span>
-                    </span>
+                    <button onClick={() => toggleSort('name')} className="flex items-center gap-2 hover:text-[#0035d1] transition-colors">
+                      Product Name <SortIcon field="name" />
+                    </button>
                   </th>
-                  <th className="px-6 py-4 font-medium">SKU</th>
-                  <th className="px-6 py-4 font-medium">Stock Status</th>
-                  <th className="px-6 py-4 font-medium">Price</th>
+                  <th className="px-6 py-4 font-medium">
+                    <button onClick={() => toggleSort('newest')} className="flex items-center gap-2 hover:text-[#0035d1] transition-colors">
+                      SKU <SortIcon field="newest" />
+                    </button>
+                  </th>
+                  <th className="px-6 py-4 font-medium">
+                    <button onClick={() => toggleSort('stock')} className="flex items-center gap-2 hover:text-[#0035d1] transition-colors">
+                      Stock Status <SortIcon field="stock" />
+                    </button>
+                  </th>
+                  <th className="px-6 py-4 font-medium">
+                    <button onClick={() => toggleSort('price')} className="flex items-center gap-2 hover:text-[#0035d1] transition-colors">
+                      Price <SortIcon field="price" />
+                    </button>
+                  </th>
                   <th className="px-6 py-4 font-medium text-right">Actions</th>
                 </tr>
               </thead>
@@ -219,17 +304,9 @@ export default function AdminProductsPage() {
         {/* Pagination Footer */}
         {list.length > 0 && (
           <div className="px-6 py-4 border-t border-[#c4c5d9]/30 flex justify-between items-center" style={{ backgroundColor: '#f5f2ff' }}>
-            <div className="flex items-center gap-4">
-              <p className="text-[12px] leading-[16px] text-[#747688]">Rows per page:</p>
-              <select 
-                onChange={() => toast.info('Chức năng số dòng hiển thị động sẽ sớm được cập nhật!')}
-                className="bg-transparent border-none focus:ring-0 text-[14px] leading-[20px] font-bold cursor-pointer outline-none"
-              >
-                <option>10</option>
-                <option>25</option>
-                <option>50</option>
-              </select>
-            </div>
+            <p className="text-[12px] leading-[16px] text-[#747688]">
+              Showing {Math.min((currentPage - 1) * PAGE_SIZE + 1, list.length)}-{Math.min(currentPage * PAGE_SIZE, list.length)} of {list.length} products
+            </p>
             <div className="flex items-center gap-1">
               <button
                 onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}

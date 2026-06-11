@@ -4,6 +4,13 @@ import Link from 'next/link'
 import { useState, type FormEvent, useEffect } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { useCart } from '@/lib/hooks/useCart'
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu'
 
 export default function Header() {
   const { isAuthenticated, user, clearAuth } = useAuthStore()
@@ -122,41 +129,53 @@ export default function Header() {
             )}
           </Link>
 
-          {/* Account Profile button */}
-          <Link
-            href={isAuthenticated ? '/profile' : '/login'}
-            className={`flex items-center gap-2 p-1 pl-1 pr-3 hover:bg-surface-container rounded-full transition-all border ${pathname === '/profile'
-              ? 'border-primary bg-primary-container/10 text-primary'
-              : 'border-outline-variant/30 text-on-surface hover:border-primary/50'
-              }`}
-          >
-            <div className="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center overflow-hidden border border-white">
-              {isAuthenticated && user?.avatarUrl ? (
-                <img src={user.avatarUrl} alt="" className="w-full h-full object-cover" />
-              ) : isAuthenticated && user?.username ? (
-                <span className="font-bold text-sm text-primary uppercase">
-                  {user.username.charAt(0)}
-                </span>
-              ) : (
-                <span className="material-symbols-outlined text-[18px] text-primary">person</span>
-              )}
-            </div>
-            <span className="font-label-md text-label-md font-semibold hidden sm:block truncate max-w-[100px]">
-              {isAuthenticated ? (user?.username || 'Tài khoản') : 'Tài khoản'}
-            </span>
-          </Link>
-
-          {/* Logout button - only when authenticated */}
-          {isAuthenticated && (
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="flex items-center gap-1.5 px-3 py-2 text-error hover:bg-error-container/30 rounded-xl transition-all text-sm font-semibold"
-              title="Đăng xuất"
+          {/* Account / Dropdown */}
+          {isAuthenticated ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center gap-2 p-1 pl-1 pr-3 hover:bg-surface-container rounded-full transition-all border border-outline-variant/30 text-on-surface hover:border-primary/50 cursor-pointer">
+                  <div className="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center overflow-hidden border border-white">
+                    {user?.avatarUrl ? (
+                      <img src={user.avatarUrl} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="font-bold text-sm text-primary uppercase">
+                        {user?.username?.charAt(0) || 'T'}
+                      </span>
+                    )}
+                  </div>
+                  <span className="font-label-md text-label-md font-semibold hidden sm:block truncate max-w-[100px]">
+                    {user?.username || 'Tài khoản'}
+                  </span>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56 bg-white border border-gray-200 shadow-lg rounded-xl p-1">
+                <DropdownMenuItem asChild>
+                  <Link href="/profile" className="cursor-pointer">Trang cá nhân</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/orders" className="cursor-pointer">Đơn hàng của tôi</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/notifications" className="cursor-pointer">Thông báo</Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleLogout} className="text-red-600 cursor-pointer">
+                  Đăng xuất
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Link
+              href="/login"
+              className="flex items-center gap-2 p-1 pl-1 pr-3 hover:bg-surface-container rounded-full transition-all border border-outline-variant/30 text-on-surface hover:border-primary/50"
             >
-              <span className="material-symbols-outlined text-[20px]">logout</span>
-              <span className="hidden sm:inline">Đăng xuất</span>
-            </button>
+              <div className="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center overflow-hidden border border-white">
+                <span className="material-symbols-outlined text-[18px] text-primary">person</span>
+              </div>
+              <span className="font-label-md text-label-md font-semibold hidden sm:block truncate max-w-[100px]">
+                Tài khoản
+              </span>
+            </Link>
           )}
         </div>
       </nav>
