@@ -97,7 +97,7 @@ function LoginForm() {
             <div className="space-y-1.5">
               <label className="text-xs text-on-surface font-semibold" htmlFor="username">Tên đăng nhập</label>
               <div className="relative">
-                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-lg">person</span>
+                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">person</span>
                 <input {...form.register('username')} id="username" placeholder="Nhập tên đăng nhập"
                   className="block w-full pl-9 pr-3 py-2.5 border border-outline-variant bg-surface-container-lowest rounded-xl text-sm text-on-surface placeholder:text-outline-variant focus:border-primary focus:ring-0 transition-all outline-none" />
               </div>
@@ -108,12 +108,12 @@ function LoginForm() {
             <div className="space-y-1.5">
               <label className="text-xs text-on-surface font-semibold" htmlFor="password">Mật khẩu</label>
               <div className="relative">
-                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-lg">lock</span>
+                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">lock</span>
                 <input {...form.register('password')} id="password" type={showPassword ? 'text' : 'password'} placeholder="••••••••"
                   className="block w-full pl-9 pr-9 py-2.5 border border-outline-variant bg-surface-container-lowest rounded-xl text-sm text-on-surface placeholder:text-outline-variant focus:border-primary focus:ring-0 transition-all outline-none" />
                 <button type="button" onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface transition-colors">
-                  <span className="material-symbols-outlined text-lg">{showPassword ? 'visibility_off' : 'visibility'}</span>
+                  <span className="material-symbols-outlined text-[18px]">{showPassword ? 'visibility_off' : 'visibility'}</span>
                 </button>
               </div>
               {form.formState.errors.password && (
