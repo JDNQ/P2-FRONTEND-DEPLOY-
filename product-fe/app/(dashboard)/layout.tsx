@@ -84,7 +84,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               Thêm sản phẩm
             </Link>
           )}
-          <Link href="/profile" className="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-primary-50 rounded-xl transition-all text-sm">
+          <Link href={role === 'MANAGER' ? '/profile' : '/dashboard/admin/settings'} className="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-primary-50 rounded-xl transition-all text-sm">
             <span className="material-symbols-outlined">settings</span>
             <span>Cài đặt</span>
           </Link>
@@ -116,7 +116,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-flash-sale" />
               </button>
               <Link
-                href="/profile"
+                href={role === 'MANAGER' ? '/profile' : '/dashboard/admin/settings'}
                 className="w-10 h-10 rounded-full flex items-center justify-center font-bold border-2 bg-primary-50 text-primary border-white hover:ring-2 hover:ring-primary/20 transition-all"
                 title="Cài đặt tài khoản"
               >

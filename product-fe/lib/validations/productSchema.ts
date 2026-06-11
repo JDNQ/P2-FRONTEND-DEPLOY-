@@ -1,18 +1,19 @@
 import { z } from 'zod'
 
 export const variantSchema = z.object({
-  variantName: z.string().min(1, 'Không được để trống'),
-  extraPrice: z.coerce.number(),
-  stock: z.coerce.number().min(0, 'Phải >= 0'),
-  image: z.string().url().optional().or(z.literal('')),
+  variantName: z.string().min(1, 'Variant name là bắt buộc'),
+  extraPrice: z.coerce.number().default(0),
+  stock: z.coerce.number().min(0, 'Stock phải lớn hơn hoặc bằng 0'),
 })
 
 export const productSchema = z.object({
-  productName: z.string().min(1, 'Tên sản phẩm không được để trống'),
+  productName: z
+    .string()
+    .min(1, 'Product name là bắt buộc')
+    .max(100, 'Product name không được vượt quá 100 ký tự'),
   description: z.string().optional(),
-  basePrice: z.coerce.number().min(1000, 'Giá tối thiểu 1.000đ'),
-  shopId: z.coerce.number().min(1, 'Vui lòng chọn shop'),
-  variants: z.array(variantSchema).min(1, 'Cần ít nhất 1 phân loại'),
+  basePrice: z.coerce.number().min(0, 'Base price phải lớn hơn hoặc bằng 0'),
+  variants: z.array(variantSchema).min(1, 'Cần ít nhất 1 variant'),
 })
 
 export type ProductValues = z.infer<typeof productSchema>

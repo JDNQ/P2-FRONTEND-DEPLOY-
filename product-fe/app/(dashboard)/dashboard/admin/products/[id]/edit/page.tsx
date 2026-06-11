@@ -4,25 +4,11 @@ import { useParams, useRouter } from 'next/navigation'
 import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useProduct, useUpdateProduct } from '@/lib/hooks/useProducts'
-import { PLACEHOLDER_150 } from '@/lib/utils/placeholder'
-import { useState, useRef, useEffect } from 'react'
-import Link from 'next/link'
-import { toast } from 'sonner'
 import { productSchema } from '@/lib/validations/productSchema'
-import type { ProductImageDto } from '@/lib/types/product'
+import Link from 'next/link'
 import type { z } from 'zod'
 
 type EditProductValues = z.infer<typeof productSchema>
-
-const fileToBase64 = (file: File): Promise<string> =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => resolve(reader.result as string)
-    reader.onerror = reject
-    reader.readAsDataURL(file)
-  })
-
-const PLACEHOLDER = PLACEHOLDER_150
 
 export default function EditProductPage() {
   const params = useParams()
@@ -30,14 +16,6 @@ export default function EditProductPage() {
   const id = Number(params.id)
   const { data: product, isLoading, isError } = useProduct(id)
   const updateMutation = useUpdateProduct()
-
-  const [existingImageErrors, setExistingImageErrors] = useState<Record<number, boolean>>({})
-  const [newMainImages, setNewMainImages] = useState<File[]>([])
-  const [newMainPreviews, setNewMainPreviews] = useState<string[]>([])
-  const [variantImages, setVariantImages] = useState<(File | null)[]>([])
-  const [variantPreviews, setVariantPreviews] = useState<(string | null)[]>([])
-  const mainFileInputRef = useRef<HTMLInputElement>(null)
-  const variantFileRefs = useRef<(HTMLInputElement | null)[]>([])
 
   const {
     register,
@@ -52,7 +30,6 @@ export default function EditProductPage() {
           productName: product.productName,
           description: product.description || '',
           basePrice: product.basePrice,
-          shopId: product.shopId,
           variants: product.variants.map((v) => ({
             variantName: v.variantName,
             extraPrice: v.extraPrice,
@@ -68,80 +45,6 @@ export default function EditProductPage() {
   const totalStock =
     variants?.reduce((sum, v) => sum + (Number(v.stock) || 0), 0) || 0
 
-  useEffect(() => {
-    if (!product) return
-    setVariantImages(new Array(product.variants.length).fill(null))
-  }, [product])
-
-  useEffect(() => {
-    const urls = newMainImages.map((f) => URL.createObjectURL(f))
-    setNewMainPreviews(urls)
-    return () => urls.forEach((u) => URL.revokeObjectURL(u))
-  }, [newMainImages])
-
-  useEffect(() => {
-    const urls = variantImages.map((f) => (f ? URL.createObjectURL(f) : null))
-    setVariantPreviews(urls)
-    return () => urls.forEach((u) => u && URL.revokeObjectURL(u))
-  }, [variantImages])
-
-  const handleNewMainFiles = (files: FileList | null) => {
-    if (!files) return
-    setNewMainImages((prev) => [...prev, ...Array.from(files)])
-  }
-
-  const removeNewMainImage = (index: number) => {
-    setNewMainImages((prev) => prev.filter((_, i) => i !== index))
-  }
-
-  const removeExistingImage = (index: number) => {
-    if (!product) return
-    const updated = [...product.images]
-    updated.splice(index, 1)
-    product.images = updated
-    setExistingImageErrors((prev) => {
-      const copy = { ...prev }
-      delete copy[index]
-      return copy
-    })
-    router.refresh()
-  }
-
-  const handleVariantFile = (index: number, file: File | null) => {
-    setVariantImages((prev) => {
-      const next = [...prev]
-      next[index] = file
-      return next
-    })
-  }
-
-  const clearVariantImage = (index: number) => {
-    setVariantImages((prev) => {
-      const next = [...prev]
-      next[index] = null
-      return next
-    })
-    if (variantFileRefs.current[index]) {
-      variantFileRefs.current[index]!.value = ''
-    }
-  }
-
-  const clearExistingVariantImage = (index: number) => {
-    if (!product) return
-    product.variants[index].image = undefined
-    clearVariantImage(index)
-  }
-
-  const handleAddVariant = () => {
-    append({ variantName: '', extraPrice: 0, stock: 0 })
-    setVariantImages((prev) => [...prev, null])
-  }
-
-  const handleRemoveVariant = (index: number) => {
-    remove(index)
-    setVariantImages((prev) => prev.filter((_, i) => i !== index))
-  }
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -153,85 +56,59 @@ export default function EditProductPage() {
   if (isError || !product) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
-        <span className="material-symbols-outlined text-5xl text-[#ba1a1a]">error_outline</span>
+        <span className="material-symbols-outlined text-5xl text-[#ba1a1a]">
+          error_outline
+        </span>
         <p className="text-[#444656] font-medium">Không thể tải sản phẩm</p>
-        <button
-          onClick={() => router.back()}
+        <Link
+          href="/dashboard/admin/products"
           className="px-4 py-2 bg-[#1e4cfd] text-white rounded-lg text-sm font-bold"
         >
           Quay lại
-        </button>
+        </Link>
       </div>
     )
   }
 
-  const handleUpdate = handleSubmit(async (data: EditProductValues) => {
-    try {
-      const imageDtos: ProductImageDto[] = [
-        ...(product?.images.map((img) => ({ url: img.url, isPrimary: img.isPrimary })) || []),
-        ...(await Promise.all(
-          newMainImages.map(async (file, i) => ({
-            url: await fileToBase64(file),
-            isPrimary: !product?.images?.length && i === 0,
-          }))
-        )),
-      ]
-      const variantDtos = await Promise.all(
-        data.variants.map(async (v, i) => ({
-          ...v,
-          image:
-            variantImages[i]
-              ? await fileToBase64(variantImages[i]!)
-              : product?.variants[i]?.image || undefined,
-        }))
-      )
-      updateMutation.mutate(
-        { id, data: { ...data, images: imageDtos, variants: variantDtos } },
-        { onSuccess: () => router.push('/dashboard/admin/products') }
-      )
-    } catch {
-      toast.error('Có lỗi xảy ra khi xử lý ảnh')
-    }
-  })
+  const onSubmit = (data: EditProductValues) => {
+    console.log(data)
+    updateMutation.mutate(
+      { id, data },
+      { onSuccess: () => router.push('/dashboard/admin/products') },
+    )
+  }
 
   return (
-    <form onSubmit={handleUpdate} className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       {/* Top Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <button
-            type="button"
-            onClick={() => router.back()}
+          <Link
+            href="/dashboard/admin/products"
             className="text-[#747688] hover:text-[#0035d1] transition-colors flex items-center gap-2 text-sm font-medium"
           >
             <span className="material-symbols-outlined text-sm">arrow_back</span>
             Quay lại
-          </button>
+          </Link>
           <div className="h-4 w-px bg-[#c4c5d9]" />
-          <h1 className="text-[18px] font-bold text-[#08006c]">Chỉnh sửa sản phẩm</h1>
+          <h1 className="text-[18px] font-bold text-[#08006c]">
+            Chỉnh sửa sản phẩm
+          </h1>
         </div>
-        <div className="flex gap-3">
-          <button
-            type="button"
-            className="px-4 py-2 border border-[#c4c5d9] rounded-lg text-sm font-medium text-[#444656] hover:bg-[#f5f2ff] transition-colors"
-          >
-            Xem trước
-          </button>
-          <button
-            type="submit"
-            disabled={updateMutation.isPending}
-            className="px-4 py-2 text-white rounded-lg text-sm font-bold transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-            style={{
-              background: 'linear-gradient(135deg, #0035d1 0%, #3432c8 100%)',
-              boxShadow: '0 4px 14px 0 rgba(30, 76, 253, 0.25)',
-            }}
-          >
-            {updateMutation.isPending && (
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-            )}
-            Cập nhật sản phẩm
-          </button>
-        </div>
+        <button
+          type="submit"
+          disabled={updateMutation.isPending}
+          className="px-4 py-2 text-white rounded-lg text-sm font-bold transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          style={{
+            background: 'linear-gradient(135deg, #0035d1 0%, #3432c8 100%)',
+            boxShadow: '0 4px 14px 0 rgba(30, 76, 253, 0.25)',
+          }}
+        >
+          {updateMutation.isPending && (
+            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+          )}
+          Cập nhật sản phẩm
+        </button>
       </div>
 
       {/* Basic Info */}
@@ -240,8 +117,8 @@ export default function EditProductPage() {
           <span className="material-symbols-outlined text-[#0035d1]">info</span>
           Thông tin cơ bản
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="md:col-span-2">
+        <div className="space-y-6">
+          <div>
             <label className="block text-sm font-medium text-[#444656] mb-1">
               Tên sản phẩm <span className="text-[#ba1a1a]">*</span>
             </label>
@@ -251,14 +128,16 @@ export default function EditProductPage() {
               placeholder="Nhập tên sản phẩm"
             />
             {errors.productName && (
-              <p className="text-[#ba1a1a] text-xs mt-1">{errors.productName.message}</p>
+              <p className="text-[#ba1a1a] text-xs mt-1">
+                {errors.productName.message}
+              </p>
             )}
             <p className="mt-1 text-[11px] text-[#747688] text-right">
               {productName?.length || 0}/100
             </p>
           </div>
 
-          <div className="md:col-span-2">
+          <div>
             <label className="block text-sm font-medium text-[#444656] mb-1">
               Mô tả sản phẩm
             </label>
@@ -280,244 +159,127 @@ export default function EditProductPage() {
               className="w-full border border-[#c4c5d9] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#0035d1]/20 focus:border-[#0035d1] outline-none transition-all"
             />
             {errors.basePrice && (
-              <p className="text-[#ba1a1a] text-xs mt-1">{errors.basePrice.message}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-[#444656] mb-1">
-              Danh mục
-            </label>
-            <select className="w-full border border-[#c4c5d9] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#0035d1]/20 focus:border-[#0035d1] outline-none transition-all">
-              <option>Điện thoại</option>
-              <option>Máy tính bảng</option>
-              <option>Phụ kiện</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-[#444656] mb-1">
-              Shop
-            </label>
-            <select
-              {...register('shopId', { valueAsNumber: true })}
-              className="w-full border border-[#c4c5d9] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#0035d1]/20 focus:border-[#0035d1] outline-none transition-all"
-            >
-              <option value={1}>Shop chính</option>
-            </select>
-            {errors.shopId && (
-              <p className="text-[#ba1a1a] text-xs mt-1">{errors.shopId.message}</p>
+              <p className="text-[#ba1a1a] text-xs mt-1">
+                {errors.basePrice.message}
+              </p>
             )}
           </div>
         </div>
       </section>
 
-      {/* Images: Multi-image upload */}
-      <section className="bg-[#fcf8ff] rounded-xl shadow-sm border border-[#c4c5d9]/50 p-6">
-        <h2 className="text-base font-bold text-[#08006c] mb-6 flex items-center gap-2">
-          <span className="material-symbols-outlined text-[#0035d1]">image</span>
-          Hình ảnh sản phẩm
-        </h2>
-
-        <input
-          ref={mainFileInputRef}
-          type="file"
-          multiple
-          accept="image/*"
-          className="hidden"
-          onChange={(e) => handleNewMainFiles(e.target.files)}
-        />
-
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          {/* Existing product images */}
-          {product.images.map((img, i) => (
-            <div
-              key={`existing-${i}`}
-              className="relative group aspect-square rounded-lg border border-[#c4c5d9] overflow-hidden bg-[#f5f2ff]"
-            >
-              <img
-                src={existingImageErrors[i] ? PLACEHOLDER : img.url}
-                alt=""
-                className="w-full h-full object-cover"
-                onError={() => setExistingImageErrors((prev) => ({ ...prev, [i]: true }))}
-              />
-              <button
-                type="button"
-                onClick={() => removeExistingImage(i)}
-                className="absolute top-1 right-1 bg-[#ba1a1a] text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-              >
-                <span className="material-symbols-outlined text-sm">close</span>
-              </button>
-              {img.isPrimary && (
-                <span className="absolute bottom-1 left-1 bg-[#0035d1] text-white text-[10px] px-2 py-0.5 rounded font-bold">
-                  Primary
-                </span>
-              )}
-            </div>
-          ))}
-          {/* New uploaded images */}
-          {newMainPreviews.map((src, i) => (
-            <div
-              key={`new-${i}`}
-              className="relative group aspect-square rounded-lg border border-[#c4c5d9] overflow-hidden bg-[#f5f2ff]"
-            >
-              <img src={src} alt="" className="w-full h-full object-cover" />
-              <button
-                type="button"
-                onClick={() => removeNewMainImage(i)}
-                className="absolute top-1 right-1 bg-[#ba1a1a] text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-              >
-                <span className="material-symbols-outlined text-sm">close</span>
-              </button>
-            </div>
-          ))}
-          <button
-            type="button"
-            onClick={() => mainFileInputRef.current?.click()}
-            className="aspect-square rounded-lg border-2 border-dashed border-[#c4c5d9] flex flex-col items-center justify-center hover:border-[#0035d1] hover:bg-[#0035d1]/5 transition-all text-[#747688] hover:text-[#0035d1]"
-          >
-            <span className="material-symbols-outlined text-3xl">add_photo_alternate</span>
-            <span className="text-xs font-medium mt-1">Thêm ảnh</span>
-          </button>
-        </div>
-      </section>
-
-      {/* Variants with per-variant image */}
+      {/* Variants */}
       <section className="bg-[#fcf8ff] rounded-xl shadow-sm border border-[#c4c5d9]/50 p-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
           <h2 className="text-base font-bold text-[#08006c] flex items-center gap-2">
-            <span className="material-symbols-outlined text-[#0035d1]">inventory_2</span>
+            <span className="material-symbols-outlined text-[#0035d1]">
+              inventory_2
+            </span>
             Biến thể sản phẩm
           </h2>
           <div className="flex items-center gap-4 text-xs font-medium text-[#747688]">
             <span>
-              Tổng biến thể: <strong className="text-[#08006c]">{fields.length}</strong>
+              Tổng biến thể:{' '}
+              <strong className="text-[#08006c]">{fields.length}</strong>
             </span>
             <div className="w-px h-3 bg-[#c4c5d9]" />
             <span>
-              Tổng tồn kho: <strong className="text-[#08006c]">{totalStock}</strong>
+              Tổng tồn kho:{' '}
+              <strong className="text-[#08006c]">{totalStock}</strong>
             </span>
           </div>
         </div>
 
         {errors.variants && !Array.isArray(errors.variants) && (
-          <p className="text-[#ba1a1a] text-xs mb-3">{errors.variants.message}</p>
+          <p className="text-[#ba1a1a] text-xs mb-3">
+            {errors.variants.message}
+          </p>
         )}
 
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead className="bg-[#f5f2ff] text-[#444656] text-[11px] uppercase tracking-wider font-semibold">
               <tr>
-                <th className="px-4 py-3 border-b border-[#c4c5d9] w-12 text-center">#</th>
-                <th className="px-4 py-3 border-b border-[#c4c5d9]">Image</th>
+                <th className="px-4 py-3 border-b border-[#c4c5d9] w-12">#</th>
                 <th className="px-4 py-3 border-b border-[#c4c5d9]">
                   Tên biến thể <span className="text-[#ba1a1a]">*</span>
                 </th>
-                <th className="px-4 py-3 border-b border-[#c4c5d9]">Giá cộng thêm (đ)</th>
+                <th className="px-4 py-3 border-b border-[#c4c5d9]">
+                  Giá cộng thêm (đ)
+                </th>
                 <th className="px-4 py-3 border-b border-[#c4c5d9] w-32">
                   Tồn kho <span className="text-[#ba1a1a]">*</span>
                 </th>
-                <th className="px-4 py-3 border-b border-[#c4c5d9] w-20 text-center">Thao tác</th>
+                <th className="px-4 py-3 border-b border-[#c4c5d9] w-20 text-center">
+                  Thao tác
+                </th>
               </tr>
             </thead>
             <tbody className="text-sm divide-y divide-[#c4c5d9]/20">
-              {fields.map((field, index) => {
-                const existingVariantImg = product?.variants[index]?.image
-                return (
-                  <tr key={field.id} className="hover:bg-[#f5f2ff]/50">
-                    <td className="px-4 py-4 text-[#747688] text-center">{index + 1}</td>
-                    <td className="px-4 py-4">
-                      <input
-                        ref={(el) => { variantFileRefs.current[index] = el }}
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0] || null
-                          handleVariantFile(index, file)
-                        }}
-                      />
-                      <div
-                        onClick={() => variantFileRefs.current[index]?.click()}
-                        className="w-14 h-14 rounded-lg border border-dashed border-[#c4c5d9] flex items-center justify-center cursor-pointer hover:border-[#0035d1] hover:bg-[#0035d1]/5 transition-all overflow-hidden"
-                      >
-                        {variantPreviews[index] ? (
-                          <div className="relative w-full h-full group">
-                            <img src={variantPreviews[index]!} alt="" className="w-full h-full object-cover" />
-                            <button
-                              type="button"
-                              onClick={(e) => { e.stopPropagation(); clearVariantImage(index) }}
-                              className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
-                            >
-                              <span className="material-symbols-outlined text-white text-sm">close</span>
-                            </button>
-                          </div>
-                        ) : existingVariantImg ? (
-                          <div className="relative w-full h-full group">
-                            <img src={existingVariantImg} alt="" className="w-full h-full object-cover" />
-                            <button
-                              type="button"
-                              onClick={(e) => { e.stopPropagation(); clearExistingVariantImage(index) }}
-                              className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
-                            >
-                              <span className="material-symbols-outlined text-white text-sm">close</span>
-                            </button>
-                          </div>
-                        ) : (
-                          <span className="material-symbols-outlined text-[#747688] text-lg">add_a_photo</span>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-4 py-4">
-                      <input
-                        {...register(`variants.${index}.variantName`)}
-                        className="w-full border border-[#c4c5d9] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#0035d1]/20 focus:border-[#0035d1] outline-none transition-all h-9"
-                      />
-                      {errors.variants?.[index]?.variantName && (
-                        <p className="text-[#ba1a1a] text-xs mt-1">
-                          {errors.variants[index]?.variantName?.message}
-                        </p>
-                      )}
-                    </td>
-                    <td className="px-4 py-4">
-                      <input
-                        {...register(`variants.${index}.extraPrice`, { valueAsNumber: true })}
-                        type="number"
-                        className="w-full border border-[#c4c5d9] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#0035d1]/20 focus:border-[#0035d1] outline-none transition-all h-9"
-                      />
-                      {errors.variants?.[index]?.extraPrice && (
-                        <p className="text-[#ba1a1a] text-xs mt-1">{errors.variants[index]?.extraPrice?.message}</p>
-                      )}
-                    </td>
-                    <td className="px-4 py-4">
-                      <input
-                        {...register(`variants.${index}.stock`, { valueAsNumber: true })}
-                        type="number"
-                        className="w-full border border-[#c4c5d9] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#0035d1]/20 focus:border-[#0035d1] outline-none transition-all h-9"
-                      />
-                      {errors.variants?.[index]?.stock && (
-                        <p className="text-[#ba1a1a] text-xs mt-1">{errors.variants[index]?.stock?.message}</p>
-                      )}
-                    </td>
-                    <td className="px-4 py-4 text-center">
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveVariant(index)}
-                        disabled={fields.length <= 1}
-                        className="p-2 text-[#747688] hover:text-[#ba1a1a] transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                      >
-                        <span className="material-symbols-outlined text-sm">delete</span>
-                      </button>
-                    </td>
-                  </tr>
-                )
-              })}
+              {fields.map((field, index) => (
+                <tr key={field.id} className="hover:bg-[#f5f2ff]/50">
+                  <td className="px-4 py-4 text-[#747688]">{index + 1}</td>
+                  <td className="px-4 py-4">
+                    <input
+                      {...register(`variants.${index}.variantName`)}
+                      className="w-full border border-[#c4c5d9] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#0035d1]/20 focus:border-[#0035d1] outline-none transition-all h-9"
+                    />
+                    {errors.variants?.[index]?.variantName && (
+                      <p className="text-[#ba1a1a] text-xs mt-1">
+                        {errors.variants[index]?.variantName?.message}
+                      </p>
+                    )}
+                  </td>
+                  <td className="px-4 py-4">
+                    <input
+                      {...register(`variants.${index}.extraPrice`, {
+                        valueAsNumber: true,
+                      })}
+                      type="number"
+                      className="w-full border border-[#c4c5d9] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#0035d1]/20 focus:border-[#0035d1] outline-none transition-all h-9"
+                    />
+                    {errors.variants?.[index]?.extraPrice && (
+                      <p className="text-[#ba1a1a] text-xs mt-1">
+                        {errors.variants[index]?.extraPrice?.message}
+                      </p>
+                    )}
+                  </td>
+                  <td className="px-4 py-4">
+                    <input
+                      {...register(`variants.${index}.stock`, {
+                        valueAsNumber: true,
+                      })}
+                      type="number"
+                      className="w-full border border-[#c4c5d9] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#0035d1]/20 focus:border-[#0035d1] outline-none transition-all h-9"
+                    />
+                    {errors.variants?.[index]?.stock && (
+                      <p className="text-[#ba1a1a] text-xs mt-1">
+                        {errors.variants[index]?.stock?.message}
+                      </p>
+                    )}
+                  </td>
+                  <td className="px-4 py-4 text-center">
+                    <button
+                      type="button"
+                      onClick={() => remove(index)}
+                      disabled={fields.length <= 1}
+                      className="p-2 text-[#747688] hover:text-[#ba1a1a] transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                      <span className="material-symbols-outlined text-sm">
+                        delete
+                      </span>
+                    </button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
 
         <button
           type="button"
-          onClick={handleAddVariant}
+          onClick={() =>
+            append({ variantName: '', extraPrice: 0, stock: 0 })
+          }
           className="mt-4 flex items-center gap-2 text-[#0035d1] hover:text-[#1e4cfd] text-sm font-medium transition-colors"
         >
           <span className="material-symbols-outlined text-sm">add</span>
