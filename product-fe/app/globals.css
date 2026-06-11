@@ -5,11 +5,11 @@
 
 /* TL Market — Vibrant Marketplace Design System */
 .orange-gradient {
-  background: linear-gradient(to right, #f97316, #ea580c);
+  background: linear-gradient(135deg, #1e4cfd 0%, #0035d1 100%);
 }
 
 .orange-glow {
-  box-shadow: 0 10px 15px -3px rgba(249, 115, 22, 0.3);
+  box-shadow: 0 10px 15px -3px rgba(30, 76, 253, 0.3);
 }
 
 .flash-sale-gradient {

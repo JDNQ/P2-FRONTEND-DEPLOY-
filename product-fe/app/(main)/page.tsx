@@ -206,7 +206,7 @@ export default function HomePage() {
           <div className="max-w-container-max mx-auto px-gutter">
             <div className="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
               <div className="flex items-center gap-4">
-                <div className="bg-brand-orange text-white p-2 rounded-lg animate-bounce">
+                <div className="bg-primary text-white p-2 rounded-lg animate-bounce">
                   <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>bolt</span>
                 </div>
                 <h2 className="font-heading text-headline-lg text-on-surface">Flash Sale</h2>

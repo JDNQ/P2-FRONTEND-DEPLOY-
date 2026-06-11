@@ -66,7 +66,7 @@ export default function ManagerCreateUserPage() {
                 <span className="material-symbols-outlined text-m3-outline text-4xl mb-1">add_a_photo</span>
                 <p className="text-[10px] text-m3-outline font-bold">UPLOAD</p>
               </div>
-              <div className="absolute -bottom-2 -right-2 bg-brand-orange text-white p-1 rounded-lg shadow-lg">
+              <div className="absolute -bottom-2 -right-2 bg-primary text-white p-1 rounded-lg shadow-lg">
                 <span className="material-symbols-outlined text-sm">edit</span>
               </div>
             </div>
@@ -151,7 +151,7 @@ export default function ManagerCreateUserPage() {
                 { value: 'user', label: 'Standard User', icon: 'person', description: 'Customer-level access with order tracking only.' },
               ].map((role) => {
                 const isChecked = selectedRole === role.value
-                const checkedBg = role.value === 'admin' ? 'bg-m3-primary-container/5' : role.value === 'manager' ? 'bg-brand-orange-container/20' : 'bg-m3-secondary-container/10'
+                const checkedBg = role.value === 'admin' ? 'bg-m3-primary-container/5' : role.value === 'manager' ? 'bg-primary/10' : 'bg-m3-secondary-container/10'
 
                 return (
                   <label
@@ -198,8 +198,7 @@ export default function ManagerCreateUserPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full md:w-48 py-4 bg-gradient-to-r from-brand-orange to-red-500 text-white font-bold rounded-2xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50"
-              style={{ boxShadow: '0 10px 15px -3px rgba(255, 109, 0, 0.25)' }}
+              className="w-full md:w-48 py-4 orange-gradient orange-glow text-white font-bold rounded-2xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50"
             >
               <span>{isSubmitting ? 'Creating...' : 'Create User'}</span>
               <span className="material-symbols-outlined">person_add</span>

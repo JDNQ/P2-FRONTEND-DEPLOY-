@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 import type { OrderStatus } from '@/lib/types/order'
 
 const STATUS_CONFIG: Record<OrderStatus, { label: string; className: string }> = {
-  PENDING:   { label: 'Chờ xác nhận', className: 'bg-amber-100 text-[#ea580c] border border-amber-200' },
+  PENDING:   { label: 'Chờ xác nhận', className: 'bg-amber-100 text-amber-700 border border-amber-200' },
   CONFIRMED: { label: 'Đã xác nhận',  className: 'bg-blue-100 text-blue-700 border border-blue-200' },
   SHIPPING:  { label: 'Đang giao',    className: 'bg-purple-100 text-purple-700 border border-purple-200' },
   DELIVERED: { label: 'Đã giao',      className: 'bg-green-100 text-green-700 border border-green-200' },
@@ -68,11 +68,7 @@ export default function AdminOrdersPage() {
           </button>
           <button 
             onClick={() => toast.success('Đã gửi yêu cầu in ấn hàng loạt!')}
-            className="flex items-center gap-2 px-4 py-2 text-white rounded-xl font-bold text-sm transition-all"
-            style={{
-              background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
-              boxShadow: '0 4px 14px 0 rgba(249, 115, 22, 0.3)'
-            }}
+            className="flex items-center gap-2 px-4 py-2 text-white rounded-xl font-bold text-sm transition-all orange-gradient orange-glow"
           >
             <span className="material-symbols-outlined">print</span> Print Batch
           </button>

@@ -105,7 +105,7 @@ export default function RegisterPage() {
             </div>
           </div>
           <h1 className="font-sora font-extrabold text-3xl text-white mb-4 leading-tight">
-            Mua Sắm Thông Minh Tại <span className="text-orange-200">TL Market</span>
+            Mua Sắm Thông Minh Tại <span className="text-white/80">TL Market</span>
           </h1>
           <p className="text-white/80 text-sm mb-6">Khám phá hàng ngàn sản phẩm chất lượng với dịch vụ tận tâm.</p>
           <div className="grid grid-cols-1 gap-3 w-full">
