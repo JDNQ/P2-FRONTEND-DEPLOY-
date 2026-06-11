@@ -14,22 +14,34 @@ function getHashValue(key: string): string | null {
 
 function CallbackHandler() {
   useEffect(() => {
-    // Google implicit flow trả token trong URL fragment (#id_token=xxx), không phải query string
-    const idToken =
-      getHashValue('id_token')
+    // Đọc state từ URL để biết provider (cho fallback code flow sau này)
+    const stateParam = new URLSearchParams(window.location.search).get('state') ||
+      new URLSearchParams(window.location.hash.replace('#', '?')).get('state')
+    let provider = 'google'
+    let state = ''
+    try {
+      const parsed = JSON.parse(stateParam || '{}')
+      provider = parsed.provider || 'google'
+      state = parsed.nonce || ''
+    } catch {
+      state = stateParam || ''
+    }
+
+    // Google implicit flow trả token trong URL fragment (#id_token=xxx)
+    const idToken = getHashValue('id_token')
 
     const error =
       new URLSearchParams(window.location.search).get('error') ||
       getHashValue('error')
 
     if (error) {
-      window.opener?.postMessage({ provider: 'google', token: '' }, window.location.origin)
+      window.opener?.postMessage({ provider, error, state }, window.location.origin)
       window.close()
       return
     }
 
     if (idToken) {
-      window.opener?.postMessage({ provider: 'google', token: idToken }, window.location.origin)
+      window.opener?.postMessage({ provider, token: idToken, state }, window.location.origin)
       window.close()
       return
     }
@@ -37,7 +49,7 @@ function CallbackHandler() {
     // Fallback: đọc từ query string (cho provider khác dùng code flow)
     const code = new URLSearchParams(window.location.search).get('code')
     if (code) {
-      window.opener?.postMessage({ provider: 'google', token: code }, window.location.origin)
+      window.opener?.postMessage({ provider, token: code, state }, window.location.origin)
       window.close()
       return
     }

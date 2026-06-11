@@ -12,7 +12,7 @@ function openPopup(url: string, name: string): Window | null {
   return window.open(url, name, `width=${popupW},height=${popupH},left=${left},top=${top}`)
 }
 
-export function googleLogin(onToken: SocialCallback) {
+export function googleLogin(onToken: SocialCallback, onError?: (err: string) => void) {
   const clientId = config.oauth.googleClientId
   if (!clientId) { throw new Error('Missing NEXT_PUBLIC_GOOGLE_CLIENT_ID') }
 
@@ -32,8 +32,13 @@ export function googleLogin(onToken: SocialCallback) {
   window.addEventListener('message', function handler(e) {
     if (e.origin !== window.location.origin) return
     if (e.data?.provider !== 'google') return
+    if (e.data?.state !== state) return
     window.removeEventListener('message', handler)
-    if (e.data?.token) onToken(e.data.token)
+    if (e.data?.error) {
+      onError?.(e.data.error)
+    } else if (e.data?.token) {
+      onToken(e.data.token)
+    }
   })
 
   const popup = openPopup(url, 'google-login')
