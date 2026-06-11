@@ -56,7 +56,7 @@ export default function AdminOrdersPage() {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-[#08006c]">Order Management</h2>
+          <h2 className="text-2xl font-bold text-[#1e40af]">Order Management</h2>
           <p className="text-sm text-[#444656]">Track and manage all customer purchases in real-time.</p>
         </div>
         <div className="flex gap-2">
@@ -84,14 +84,14 @@ export default function AdminOrdersPage() {
               onClick={() => { setActiveTab(tab.value); setCurrentPage(1) }}
               className={`pb-3 px-1 text-sm font-bold flex items-center gap-2 transition-all border-b-2 ${
                 activeTab === tab.value
-                  ? 'border-[#0035d1] text-[#0035d1]'
-                  : 'border-transparent text-[#444656] hover:text-[#0035d1]'
+                  ? 'border-[#3b82f6] text-[#3b82f6]'
+                  : 'border-transparent text-[#444656] hover:text-[#3b82f6]'
               }`}
             >
               {tab.label}
               <span className={`px-2 rounded-full text-[10px] ${
                 activeTab === tab.value
-                  ? 'bg-[#dee1ff] text-[#0035d1]'
+                  ? 'bg-[#dee1ff] text-[#3b82f6]'
                   : 'bg-[#eeecff] text-[#444656]'
               }`}>
                 {tab.count}
@@ -138,13 +138,13 @@ export default function AdminOrdersPage() {
                     className="grid grid-cols-1 lg:grid-cols-12 items-center gap-4 px-6 py-5 transition-all duration-300 hover:bg-[#fcf8ff]"
                   >
                     <div className="col-span-2 flex flex-col">
-                      <span className="font-bold text-[#0035d1]">#TLM-{order.id}</span>
+                      <span className="font-bold text-[#3b82f6]">#TLM-{order.id}</span>
                       <span className="text-xs text-[#444656]">
                         {itemCount} sản phẩm
                       </span>
                     </div>
                     <div className="col-span-3 flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-[#f5f2ff] flex items-center justify-center text-[#0035d1] font-bold text-sm">
+                      <div className="w-10 h-10 rounded-full bg-[#f5f2ff] flex items-center justify-center text-[#3b82f6] font-bold text-sm">
                         {getInitials(randomName)}
                       </div>
                       <div className="flex flex-col">
@@ -157,7 +157,7 @@ export default function AdminOrdersPage() {
                     <div className="col-span-2 text-sm text-[#444656]">
                       {formatDate(order.createdAt)}
                     </div>
-                    <div className="col-span-2 text-lg font-bold text-[#0035d1]">
+                    <div className="col-span-2 text-lg font-bold text-[#3b82f6]">
                       {formatPrice(order.totalPrice)}
                     </div>
                     <div className="col-span-2">
@@ -178,7 +178,7 @@ export default function AdminOrdersPage() {
                     <div className="col-span-1 flex justify-end">
                       <button 
                         onClick={() => toggleExpand(order.id)}
-                        className={`p-2 rounded-lg transition-all ${isExpanded ? 'bg-[#dee1ff] text-[#0035d1]' : 'bg-[#f5f2ff] hover:bg-[#e1dfff] text-[#444656]'}`}
+                        className={`p-2 rounded-lg transition-all ${isExpanded ? 'bg-[#dee1ff] text-[#3b82f6]' : 'bg-[#f5f2ff] hover:bg-[#e1dfff] text-[#444656]'}`}
                       >
                         <span className="material-symbols-outlined text-[20px]">{isExpanded ? 'visibility_off' : 'visibility'}</span>
                       </button>
@@ -190,18 +190,18 @@ export default function AdminOrdersPage() {
                     <div className="px-6 pb-6 pt-2 bg-[#fcf8ff] border-t border-[#c4c5d9]/20 space-y-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                         <div>
-                          <h5 className="font-bold text-[#08006c] mb-1">Thông tin giao hàng</h5>
+                          <h5 className="font-bold text-[#1e40af] mb-1">Thông tin giao hàng</h5>
                           <p><span className="text-[#444656]">Số điện thoại:</span> {order.phoneNumber || 'N/A'}</p>
                           <p><span className="text-[#444656]">Địa chỉ:</span> {order.shippingAddress || 'N/A'}</p>
                         </div>
                         <div>
-                          <h5 className="font-bold text-[#08006c] mb-1">Mã giảm giá áp dụng</h5>
+                          <h5 className="font-bold text-[#1e40af] mb-1">Mã giảm giá áp dụng</h5>
                           <p>{order.voucherId ? `Mã ID: #${order.voucherId}` : 'Không sử dụng'}</p>
                         </div>
                       </div>
 
                       <div>
-                        <h5 className="font-bold text-[#08006c] mb-2">Chi tiết sản phẩm ({itemCount})</h5>
+                        <h5 className="font-bold text-[#1e40af] mb-2">Chi tiết sản phẩm ({itemCount})</h5>
                         <div className="space-y-2">
                           {order.items.map((item) => (
                             <div key={item.id} className="flex justify-between items-center bg-white p-3 rounded-xl border border-[#c4c5d9]/10">
@@ -214,14 +214,14 @@ export default function AdminOrdersPage() {
                                   )}
                                 </div>
                                 <div>
-                                  <p className="font-bold text-sm text-[#08006c]">{item.product?.productName || 'Sản phẩm không tên'}</p>
+                                  <p className="font-bold text-sm text-[#1e40af]">{item.product?.productName || 'Sản phẩm không tên'}</p>
                                   <p className="text-xs text-[#444656]">
                                     Phân loại: {item.variant?.color || 'Mặc định'} {item.variant?.size ? `- Size ${item.variant.size}` : ''}
                                   </p>
                                 </div>
                               </div>
                               <div className="text-right">
-                                <p className="font-bold text-sm text-[#0035d1]">{formatPrice(item.price)}</p>
+                                <p className="font-bold text-sm text-[#3b82f6]">{formatPrice(item.price)}</p>
                                 <p className="text-xs text-[#444656]">Số lượng: x{item.quantity}</p>
                               </div>
                             </div>
@@ -254,7 +254,7 @@ export default function AdminOrdersPage() {
                   onClick={() => setCurrentPage(page)}
                   className={`w-10 h-10 flex items-center justify-center rounded-xl font-bold text-sm transition-all ${
                     currentPage === page
-                      ? 'bg-[#dee1ff] text-[#0035d1]'
+                      ? 'bg-[#dee1ff] text-[#3b82f6]'
                       : 'bg-white border border-[#c4c5d9] text-[#444656] hover:bg-[#eeecff]'
                   }`}
                 >

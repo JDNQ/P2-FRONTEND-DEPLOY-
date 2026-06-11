@@ -40,7 +40,7 @@ export default function ManagerUsersPage() {
               {s.label}
             </span>
             <div className="flex items-end justify-between">
-              <span className="text-[30px] leading-[40px] font-bold text-[#08006c]">{s.value}</span>
+              <span className="text-[30px] leading-[40px] font-bold text-[#1e40af]">{s.value}</span>
               {s.extra && (
                 <span
                   className={`font-bold flex items-center text-[12px] leading-[16px] ${
@@ -65,7 +65,7 @@ export default function ManagerUsersPage() {
       {/* Data Table */}
       <div className="bg-white rounded-xl shadow-sm border border-[#c4c5d9]/30 overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#c4c5d9]/20">
-          <h3 className="text-[16px] leading-[24px] font-semibold text-[#08006c]">All Users</h3>
+          <h3 className="text-[16px] leading-[24px] font-semibold text-[#1e40af]">All Users</h3>
           <div className="flex items-center gap-3">
             <div className="relative">
               <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#747688] text-sm">search</span>
@@ -74,15 +74,15 @@ export default function ManagerUsersPage() {
                 placeholder="Search by name or email..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 pr-3 py-1.5 bg-[#f5f2ff] border border-[#c4c5d9] rounded-lg text-[12px] leading-[16px] outline-none focus:ring-1 focus:ring-[#0035d1] w-56"
+                className="pl-9 pr-3 py-1.5 bg-[#f5f2ff] border border-[#c4c5d9] rounded-lg text-[12px] leading-[16px] outline-none focus:ring-1 focus:ring-[#3b82f6] w-56"
               />
             </div>
             <Link
               href="/dashboard/manager/users/new"
               className="px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 transition-all active:scale-95 text-white"
               style={{
-                background: 'linear-gradient(135deg, #0035d1 0%, #3432c8 100%)',
-                boxShadow: '0 4px 14px 0 rgba(30, 76, 253, 0.25)',
+                background: 'linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%)',
+                boxShadow: '0 4px 14px 0 rgba(59, 130, 246, 0.25)',
               }}
             >
               <span className="material-symbols-outlined text-sm">person_add</span>
@@ -111,8 +111,8 @@ export default function ManagerUsersPage() {
               <tbody className="divide-y divide-[#c4c5d9]/20">
                 {filteredUsers.map((u) => {
                   const roleColors: Record<string, { bg: string; text: string; initialsBg: string; initialsColor: string }> = {
-                    MANAGER: { bg: 'bg-[#3432c8]/10', text: 'text-[#3432c8]', initialsBg: '#4e4fe0', initialsColor: '#ffffff' },
-                    ADMIN: { bg: 'bg-[#1e4cfd]/10', text: 'text-[#0035d1]', initialsBg: '#1e4cfd', initialsColor: '#ffffff' },
+                    MANAGER: { bg: 'bg-[#3b82f6]/10', text: 'text-[#3b82f6]', initialsBg: '#4e4fe0', initialsColor: '#ffffff' },
+                    ADMIN: { bg: 'bg-[#60a5fa]/10', text: 'text-[#3b82f6]', initialsBg: '#60a5fa', initialsColor: '#ffffff' },
                     USER: { bg: 'bg-[#9aa8ff]/30', text: 'text-[#2a3a8a]', initialsBg: '#9aa8ff', initialsColor: '#2a3a8a' },
                   }
                   const rc = roleColors[u.role] || roleColors.USER
@@ -120,13 +120,13 @@ export default function ManagerUsersPage() {
                     <tr key={u.id} className="hover:bg-[#f5f2ff] transition-colors group">
                       <td className="px-6 py-4">
                         <div
-                          className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm border-2 border-[#0035d1]/20"
+                          className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm border-2 border-[#3b82f6]/20"
                           style={{ backgroundColor: rc.initialsBg, color: rc.initialsColor }}
                         >
                           {u.username.slice(0, 2).toUpperCase()}
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-sm font-semibold text-[#08006c]">{u.username}</td>
+                      <td className="px-6 py-4 text-sm font-semibold text-[#1e40af]">{u.username}</td>
                       <td className="px-6 py-4 text-sm text-[#444656]">{u.email}</td>
                       <td className="px-6 py-4">
                         <span className={`px-3 py-1 rounded-full text-[12px] leading-[16px] font-bold ${rc.bg} ${rc.text}`}>
@@ -153,7 +153,7 @@ export default function ManagerUsersPage() {
                         <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button
                             onClick={() => toggleStatus({ id: u.id, status: u.status === 'Active' ? 'Banned' : 'Active' })}
-                            className="p-2 hover:bg-[#1e4cfd] hover:text-[#dbdeff] rounded-lg transition-all"
+                            className="p-2 hover:bg-[#60a5fa] hover:text-[#dbdeff] rounded-lg transition-all"
                             title="Toggle Status"
                           >
                             <span className="material-symbols-outlined text-sm">toggle_off</span>
@@ -181,7 +181,7 @@ export default function ManagerUsersPage() {
             <button className="p-2 rounded-lg hover:bg-[#e1dfff] transition-colors">
               <span className="material-symbols-outlined text-sm">chevron_left</span>
             </button>
-            <button className="w-8 h-8 rounded-lg bg-[#0035d1] text-white font-bold text-[12px] leading-[16px]">1</button>
+            <button className="w-8 h-8 rounded-lg bg-[#3b82f6] text-white font-bold text-[12px] leading-[16px]">1</button>
             <button className="p-2 rounded-lg hover:bg-[#e1dfff] transition-colors">
               <span className="material-symbols-outlined text-sm">chevron_right</span>
             </button>

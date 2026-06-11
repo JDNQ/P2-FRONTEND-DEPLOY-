@@ -10,7 +10,7 @@ function getSupplyStatus(totalStock: number): { label: string; bg: string; text:
   if (totalStock === 0) return { label: 'Hết hàng', bg: 'bg-[#ffdad6]/10', text: 'text-[#ba1a1a]', dot: 'bg-[#ba1a1a]' }
   if (totalStock <= 10) return { label: 'Tồn kho thấp', bg: 'bg-[#ffdad6]/10', text: 'text-[#ba1a1a]', dot: 'bg-[#ba1a1a]' }
   if (totalStock <= 30) return { label: 'Đang nhập hàng', bg: 'bg-[#9aa8ff]/10', text: 'text-[#4958a9]', dot: 'bg-[#4958a9]' }
-  return { label: 'Ổn định', bg: 'bg-[#0035d1]/10', text: 'text-[#0035d1]', dot: 'bg-[#0035d1]' }
+  return { label: 'Ổn định', bg: 'bg-[#3b82f6]/10', text: 'text-[#3b82f6]', dot: 'bg-[#3b82f6]' }
 }
 
 const PLACEHOLDER = PLACEHOLDER_48
@@ -50,7 +50,7 @@ export default function ManagerInventoryPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-[#c4c5d9]/30 flex flex-col relative overflow-hidden group hover:shadow-lg transition-all duration-300">
           <div className="flex justify-between items-start z-10">
-            <div className="p-3 bg-[#dee1ff] rounded-xl text-[#0035d1]">
+            <div className="p-3 bg-[#dee1ff] rounded-xl text-[#3b82f6]">
               <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>payments</span>
             </div>
             <span className="text-green-600 text-sm flex items-center gap-1 bg-green-50 px-2 py-1 rounded-full">
@@ -61,7 +61,7 @@ export default function ManagerInventoryPage() {
             <p className="text-sm text-[#444656] uppercase tracking-wider">Tổng giá trị tồn kho</p>
             <h3 className="text-[24px] font-bold mt-1">{formatPrice(totalValue)}</h3>
           </div>
-          <div className="absolute -right-10 -bottom-10 w-32 h-32 bg-[#0035d1]/5 rounded-full blur-3xl group-hover:bg-[#0035d1]/10 transition-colors pointer-events-none" />
+          <div className="absolute -right-10 -bottom-10 w-32 h-32 bg-[#3b82f6]/5 rounded-full blur-3xl group-hover:bg-[#3b82f6]/10 transition-colors pointer-events-none" />
         </div>
 
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-[#c4c5d9]/30 flex flex-col relative overflow-hidden group hover:shadow-lg transition-all duration-300">
@@ -75,7 +75,7 @@ export default function ManagerInventoryPage() {
                 setPage(1)
                 toast.info('Đang lọc sản phẩm tồn kho thấp')
               }}
-              className="text-[#0035d1] text-sm font-bold hover:underline"
+              className="text-[#3b82f6] text-sm font-bold hover:underline"
             >
               Chi tiết
             </button>
@@ -91,18 +91,18 @@ export default function ManagerInventoryPage() {
 
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-[#c4c5d9]/30 flex flex-col relative overflow-hidden group hover:shadow-lg transition-all duration-300">
           <div className="flex justify-between items-start z-10">
-            <div className="p-3 bg-[#e1dfff] rounded-xl text-[#3432c8]">
+            <div className="p-3 bg-[#e1dfff] rounded-xl text-[#3b82f6]">
               <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
             </div>
-            <span className="text-[#3432c8] text-sm px-2 py-1 bg-[#3432c8]/10 rounded-full">30 ngày qua</span>
+            <span className="text-[#3b82f6] text-sm px-2 py-1 bg-[#3b82f6]/10 rounded-full">30 ngày qua</span>
           </div>
           <div className="mt-4 z-10">
             <p className="text-sm text-[#444656] uppercase tracking-wider">Sản phẩm bán chạy</p>
-            <h3 className="text-[24px] font-bold mt-1 text-[#08006c] truncate">
+            <h3 className="text-[24px] font-bold mt-1 text-[#1e40af] truncate">
               {list[0]?.productName || 'TL Ultra Pro Max'}
             </h3>
           </div>
-          <div className="absolute -right-10 -bottom-10 w-32 h-32 bg-[#3432c8]/5 rounded-full blur-3xl group-hover:bg-[#3432c8]/10 transition-colors pointer-events-none" />
+          <div className="absolute -right-10 -bottom-10 w-32 h-32 bg-[#3b82f6]/5 rounded-full blur-3xl group-hover:bg-[#3b82f6]/10 transition-colors pointer-events-none" />
         </div>
       </div>
 
@@ -114,8 +114,8 @@ export default function ManagerInventoryPage() {
               href="/dashboard/admin/products/new"
               className="px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-bold text-white transition-all active:scale-95"
               style={{
-                background: 'linear-gradient(135deg, #0035d1 0%, #3432c8 100%)',
-                boxShadow: '0 4px 14px 0 rgba(30, 76, 253, 0.25)',
+                background: 'linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%)',
+                boxShadow: '0 4px 14px 0 rgba(59, 130, 246, 0.25)',
               }}
             >
               <span className="material-symbols-outlined text-[18px]">add</span>
@@ -129,7 +129,7 @@ export default function ManagerInventoryPage() {
                   setSelectedShop(e.target.value)
                   toast.info('Tính năng lọc theo cửa hàng đang được tích hợp')
                 }}
-                className="bg-[#f5f2ff] border-none rounded-xl text-sm py-2 px-4 focus:ring-2 focus:ring-[#0035d1] min-w-[160px] outline-none"
+                className="bg-[#f5f2ff] border-none rounded-xl text-sm py-2 px-4 focus:ring-2 focus:ring-[#3b82f6] min-w-[160px] outline-none"
               >
                 <option value="ALL">Tất cả Shop</option>
                 <option value="HN">Hà Nội - Flagship</option>
@@ -145,7 +145,7 @@ export default function ManagerInventoryPage() {
                   setSelectedCategory(e.target.value)
                   toast.info('Tính năng lọc theo danh mục đang được tích hợp')
                 }}
-                className="bg-[#f5f2ff] border-none rounded-xl text-sm py-2 px-4 focus:ring-2 focus:ring-[#0035d1] min-w-[160px] outline-none"
+                className="bg-[#f5f2ff] border-none rounded-xl text-sm py-2 px-4 focus:ring-2 focus:ring-[#3b82f6] min-w-[160px] outline-none"
               >
                 <option value="ALL">Tất cả danh mục</option>
                 <option value="ELE">Điện tử & Công nghệ</option>
@@ -167,7 +167,7 @@ export default function ManagerInventoryPage() {
                       setStatusFilter(t.value as any)
                       setPage(1)
                     }}
-                    className={`px-3 py-1 rounded-lg text-sm font-bold transition-all ${statusFilter === t.value ? 'bg-[#0035d1] text-white shadow-sm' : 'text-[#444656] hover:bg-[#e1dfff]'}`}
+                    className={`px-3 py-1 rounded-lg text-sm font-bold transition-all ${statusFilter === t.value ? 'bg-[#3b82f6] text-white shadow-sm' : 'text-[#444656] hover:bg-[#e1dfff]'}`}
                   >
                     {t.label}
                   </button>
@@ -177,7 +177,7 @@ export default function ManagerInventoryPage() {
           </div>
           <button 
             onClick={() => toast.success('Đang tạo và xuất báo cáo tồn kho...')}
-            className="flex items-center gap-2 text-[#0035d1] border border-[#0035d1]/20 px-4 py-2 rounded-xl text-sm font-bold hover:bg-[#0035d1]/5 transition-all"
+            className="flex items-center gap-2 text-[#3b82f6] border border-[#3b82f6]/20 px-4 py-2 rounded-xl text-sm font-bold hover:bg-[#3b82f6]/5 transition-all"
           >
             <span className="material-symbols-outlined text-[20px]">file_download</span>
             Xuất báo cáo
@@ -229,13 +229,13 @@ export default function ManagerInventoryPage() {
                             )}
                           </div>
                           <div>
-                            <p className="text-sm font-bold text-[#08006c]">{product.productName}</p>
+                            <p className="text-sm font-bold text-[#1e40af]">{product.productName}</p>
                             <p className="text-[12px] text-[#747688]">{product.variants.length} variants</p>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 text-sm text-[#444656]">TL-{product.id.toString().padStart(6, '0')}</td>
-                      <td className={`px-6 py-4 text-center text-[20px] font-bold ${totalStock <= 10 ? 'text-[#ba1a1a]' : 'text-[#08006c]'}`}>
+                      <td className={`px-6 py-4 text-center text-[20px] font-bold ${totalStock <= 10 ? 'text-[#ba1a1a]' : 'text-[#1e40af]'}`}>
                         {totalStock.toLocaleString()}
                       </td>
                       <td className="px-6 py-4 text-sm text-[#444656]">{formatPrice(product.basePrice)}</td>
@@ -280,7 +280,7 @@ export default function ManagerInventoryPage() {
                   key={n}
                   onClick={() => setPage(n)}
                   className={`w-10 h-10 flex items-center justify-center rounded-xl font-bold text-sm ${
-                    page === n ? 'bg-[#0035d1] text-white shadow-sm' : 'border border-[#c4c5d9] text-[#444656] hover:bg-[#f5f2ff]'
+                    page === n ? 'bg-[#3b82f6] text-white shadow-sm' : 'border border-[#c4c5d9] text-[#444656] hover:bg-[#f5f2ff]'
                   }`}
                 >
                   {n}
@@ -290,7 +290,7 @@ export default function ManagerInventoryPage() {
               {totalPages > 3 && (
                 <button 
                   onClick={() => setPage(totalPages)}
-                  className={`w-10 h-10 flex items-center justify-center rounded-xl border border-[#c4c5d9] text-[#444656] hover:bg-[#f5f2ff] text-sm ${page === totalPages ? 'bg-[#0035d1] text-white shadow-sm' : ''}`}
+                  className={`w-10 h-10 flex items-center justify-center rounded-xl border border-[#c4c5d9] text-[#444656] hover:bg-[#f5f2ff] text-sm ${page === totalPages ? 'bg-[#3b82f6] text-white shadow-sm' : ''}`}
                 >
                   {totalPages}
                 </button>

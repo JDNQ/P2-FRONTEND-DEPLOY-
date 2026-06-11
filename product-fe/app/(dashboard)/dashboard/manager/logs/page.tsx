@@ -28,10 +28,10 @@ export default function ManagerLogsPage() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-[24px] font-bold leading-[32px] text-[#08006c]">Nhật Ký Hoạt Động</h2>
+        <h2 className="text-[24px] font-bold leading-[32px] text-[#1e40af]">Nhật Ký Hoạt Động</h2>
         <button 
           onClick={() => toast.success('Đang chuẩn bị file xuất và tải xuống...') }
-          className="flex items-center gap-2 bg-[#1e4cfd] text-white px-4 py-2 rounded-xl font-bold shadow-sm transition-transform active:scale-95"
+          className="flex items-center gap-2 bg-[#60a5fa] text-white px-4 py-2 rounded-xl font-bold shadow-sm transition-transform active:scale-95"
         >
           <span className="material-symbols-outlined">cloud_download</span>
           <span className="text-sm">Xuất File</span>
@@ -52,7 +52,7 @@ export default function ManagerLogsPage() {
                 placeholder="Nhập tên người dùng hoặc đối tượng..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[#c4c5d9] focus:ring-2 focus:ring-[#0035d1]/20 focus:border-[#0035d1] bg-[#fcf8ff]/50 text-sm outline-none transition-all"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[#c4c5d9] focus:ring-2 focus:ring-[#3b82f6]/20 focus:border-[#3b82f6] bg-[#fcf8ff]/50 text-sm outline-none transition-all"
               />
             </div>
           </div>
@@ -88,7 +88,7 @@ export default function ManagerLogsPage() {
             </div>
             <button 
               onClick={() => toast.info('Bộ lọc khoảng thời gian sẽ khả dụng khi kết nối với kho dữ liệu đầy đủ!')}
-              className="w-11 h-11 flex items-center justify-center rounded-xl bg-[#e8e6ff] text-[#08006c] hover:bg-[#e1dfff] transition-colors"
+              className="w-11 h-11 flex items-center justify-center rounded-xl bg-[#e8e6ff] text-[#1e40af] hover:bg-[#e1dfff] transition-colors"
             >
               <span className="material-symbols-outlined">filter_list</span>
             </button>
@@ -110,7 +110,7 @@ export default function ManagerLogsPage() {
             </div>
             <div>
               <p className="text-[12px] text-[#747688]">{s.label}</p>
-              <p className="text-[20px] font-bold text-[#08006c]">{s.value}</p>
+              <p className="text-[20px] font-bold text-[#1e40af]">{s.value}</p>
             </div>
           </div>
         ))}
@@ -140,7 +140,7 @@ export default function ManagerLogsPage() {
                 filteredLogs.map((log) => (
                   <tr key={log.id} className="hover:bg-[#f5f2ff] transition-all cursor-default">
                     <td className="px-6 py-5 align-top">
-                      <p className="text-sm text-[#08006c]">{new Date(log.timestamp).toLocaleTimeString('vi-VN')}</p>
+                      <p className="text-sm text-[#1e40af]">{new Date(log.timestamp).toLocaleTimeString('vi-VN')}</p>
                       <p className="text-[12px] text-[#747688]">{new Date(log.timestamp).toLocaleDateString('vi-VN')}</p>
                     </td>
                     <td className="px-6 py-5">
@@ -157,7 +157,7 @@ export default function ManagerLogsPage() {
                     <td className="px-6 py-5">
                       <div className="flex items-center gap-2">
                         <span className={`w-2 h-2 rounded-full shrink-0 ${
-                          log.action.includes('giá') || log.action.includes('Thay đổi') ? 'bg-[#0035d1]' :
+                          log.action.includes('giá') || log.action.includes('Thay đổi') ? 'bg-[#3b82f6]' :
                           log.action.includes('Xóa') ? 'bg-[#ba1a1a]' :
                           log.action.includes('Khóa') ? 'bg-[#4958a9]' :
                           'bg-[#c4c5d9]'
@@ -168,10 +168,10 @@ export default function ManagerLogsPage() {
                     </td>
                     <td className="px-6 py-5">
                       <div className={`px-3 py-1 rounded-lg inline-flex items-center gap-2 ${log.status === 'Failed' ? 'bg-[#ffdad6]' : 'bg-[#e8e6ff]'}`}>
-                        <span className={`material-symbols-outlined text-sm ${log.status === 'Failed' ? 'text-[#ba1a1a]' : 'text-[#08006c]'}`}>
+                        <span className={`material-symbols-outlined text-sm ${log.status === 'Failed' ? 'text-[#ba1a1a]' : 'text-[#1e40af]'}`}>
                           {log.target.includes('U_ID') ? 'lock' : log.target.includes('iPhone') ? 'inventory' : 'settings'}
                         </span>
-                        <span className={`text-sm ${log.status === 'Failed' ? 'text-[#ba1a1a]' : 'text-[#08006c]'}`}>
+                        <span className={`text-sm ${log.status === 'Failed' ? 'text-[#ba1a1a]' : 'text-[#1e40af]'}`}>
                           {log.target}
                         </span>
                       </div>
@@ -203,7 +203,7 @@ export default function ManagerLogsPage() {
             <button className="w-9 h-9 flex items-center justify-center rounded-lg border border-[#c4c5d9] text-[#747688] hover:bg-white transition-colors">
               <span className="material-symbols-outlined">chevron_left</span>
             </button>
-            <button className="w-9 h-9 flex items-center justify-center rounded-lg bg-[#0035d1] text-white font-bold text-sm">1</button>
+            <button className="w-9 h-9 flex items-center justify-center rounded-lg bg-[#3b82f6] text-white font-bold text-sm">1</button>
             <button className="w-9 h-9 flex items-center justify-center rounded-lg border border-[#c4c5d9] text-[#747688] hover:bg-white transition-colors">
               <span className="material-symbols-outlined">chevron_right</span>
             </button>

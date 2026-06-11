@@ -12,7 +12,7 @@ export default function ManagerHealthPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-[24px] font-bold leading-[32px] text-[#08006c]">System Health</h2>
+          <h2 className="text-[24px] font-bold leading-[32px] text-[#1e40af]">System Health</h2>
           <p className="text-[14px] leading-[20px] text-[#444656]">Real-time infrastructure monitoring</p>
         </div>
         <div className="flex items-center gap-3">
@@ -58,8 +58,8 @@ export default function ManagerHealthPage() {
               Critical: 'bg-red-50',
             }
             const iconColors: Record<string, string> = {
-              Stable: 'text-[#0035d1]',
-              Warning: 'text-[#3432c8]',
+              Stable: 'text-[#3b82f6]',
+              Warning: 'text-[#3b82f6]',
               Active: 'text-[#4958a9]',
               Critical: 'text-[#ba1a1a]',
             }
@@ -70,7 +70,7 @@ export default function ManagerHealthPage() {
                 style={{ backdropFilter: 'blur(12px)' }}
               >
                 <div className="flex justify-between items-start mb-4">
-                  <div className={`p-2 ${iconBgColors[svc.status] || 'bg-blue-50'} ${iconColors[svc.status] || 'text-[#0035d1]'} rounded-lg`}>
+                  <div className={`p-2 ${iconBgColors[svc.status] || 'bg-blue-50'} ${iconColors[svc.status] || 'text-[#3b82f6]'} rounded-lg`}>
                     <span className="material-symbols-outlined">
                       {svc.name.includes('API') ? 'hub' : svc.name.includes('DB') ? 'database' : svc.name.includes('Cloud') ? 'cloud_done' : 'mail'}
                     </span>
@@ -90,7 +90,7 @@ export default function ManagerHealthPage() {
                   </div>
                   <div className="h-10 w-full max-w-[100px]">
                     <svg className="w-full h-full fill-none stroke-[2]" viewBox="0 0 100 40">
-                      <path d={svc.sparkline} stroke={svc.status === 'Critical' ? '#ba1a1a' : svc.status === 'Warning' ? '#eab308' : svc.status === 'Active' ? '#4958a9' : '#0035d1'} />
+                      <path d={svc.sparkline} stroke={svc.status === 'Critical' ? '#ba1a1a' : svc.status === 'Warning' ? '#eab308' : svc.status === 'Active' ? '#4958a9' : '#3b82f6'} />
                     </svg>
                   </div>
                 </div>
@@ -108,7 +108,7 @@ export default function ManagerHealthPage() {
             <h4 className="text-[20px] font-semibold">System Alerts</h4>
             <button 
               onClick={() => toast.info('Chức năng xem lịch sử cảnh báo đang được phát triển!')}
-              className="text-sm text-[#0035d1] hover:underline bg-transparent border-none outline-none font-bold"
+              className="text-sm text-[#3b82f6] hover:underline bg-transparent border-none outline-none font-bold"
             >
               View History
             </button>
@@ -118,9 +118,9 @@ export default function ManagerHealthPage() {
               <p className="text-sm text-[#747688]">No active alerts</p>
             ) : (
               alerts.map((alert) => {
-                const borderColor = alert.type === 'error' ? 'border-[#ba1a1a]' : alert.type === 'warning' ? 'border-yellow-500' : 'border-[#0035d1]'
+                const borderColor = alert.type === 'error' ? 'border-[#ba1a1a]' : alert.type === 'warning' ? 'border-yellow-500' : 'border-[#3b82f6]'
                 const bgColor = alert.type === 'error' ? 'bg-[#ffdad6]/20' : 'bg-[#eeecff]'
-                const iconColor = alert.type === 'error' ? 'text-[#ba1a1a]' : alert.type === 'warning' ? 'text-yellow-600' : 'text-[#0035d1]'
+                const iconColor = alert.type === 'error' ? 'text-[#ba1a1a]' : alert.type === 'warning' ? 'text-yellow-600' : 'text-[#3b82f6]'
                 const icon = alert.type === 'error' ? 'report' : alert.type === 'warning' ? 'warning' : 'info'
                 return (
                   <div
@@ -130,7 +130,7 @@ export default function ManagerHealthPage() {
                     <span className={`material-symbols-outlined ${iconColor}`}>{icon}</span>
                     <div className="flex-1">
                       <div className="flex justify-between">
-                        <p className="text-sm font-bold text-[#08006c]">{alert.title}</p>
+                        <p className="text-sm font-bold text-[#1e40af]">{alert.title}</p>
                         <span className="text-[12px] text-[#747688]">{alert.timestamp}</span>
                       </div>
                       <p className="text-sm text-[#444656] mt-1">{alert.description}</p>
@@ -167,10 +167,10 @@ export default function ManagerHealthPage() {
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span>Disk Usage</span>
-                <span className="text-[#08006c] font-bold">{infra?.diskUsage ?? '—'}%</span>
+                <span className="text-[#1e40af] font-bold">{infra?.diskUsage ?? '—'}%</span>
               </div>
               <div className="h-2 w-full bg-[#e8e6ff] rounded-full overflow-hidden">
-                <div className="h-full bg-[#0035d1] transition-all duration-1000 rounded-full" style={{ width: `${infra?.diskUsage ?? 0}%` }} />
+                <div className="h-full bg-[#3b82f6] transition-all duration-1000 rounded-full" style={{ width: `${infra?.diskUsage ?? 0}%` }} />
               </div>
               <p className="text-[12px] text-[#444656]">Storage utilization</p>
             </div>
@@ -179,7 +179,7 @@ export default function ManagerHealthPage() {
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span>Network Traffic</span>
-                <span className="text-[#08006c] font-bold">Stable</span>
+                <span className="text-[#1e40af] font-bold">Stable</span>
               </div>
               <div className="flex items-center gap-4 py-2 px-3 bg-[#fcf8ff] rounded-lg">
                 <div className="flex flex-col">
@@ -189,7 +189,7 @@ export default function ManagerHealthPage() {
                 <div className="w-px h-8 bg-[#c4c5d9]" />
                 <div className="flex flex-col">
                   <span className="text-[12px] text-[#747688] uppercase tracking-wider">Upload</span>
-                  <span className="text-sm text-[#0035d1]">↓ {infra?.networkOut ?? 0} MB/s</span>
+                  <span className="text-sm text-[#3b82f6]">↓ {infra?.networkOut ?? 0} MB/s</span>
                 </div>
               </div>
             </div>
@@ -214,7 +214,7 @@ export default function ManagerHealthPage() {
 
             <button 
               onClick={() => toast.success('Đang tạo báo cáo chi tiết hạ tầng...') }
-              className="w-full py-3 bg-[#0035d1] text-white rounded-xl text-sm font-bold hover:shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2"
+              className="w-full py-3 bg-[#3b82f6] text-white rounded-xl text-sm font-bold hover:shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2"
             >
               <span className="material-symbols-outlined">analytics</span>
               Detailed Infrastructure Report
@@ -224,7 +224,7 @@ export default function ManagerHealthPage() {
       </div>
 
       {/* Global Map */}
-      <div className="relative w-full h-[300px] bg-[#08006c] rounded-3xl overflow-hidden shadow-2xl group">
+      <div className="relative w-full h-[300px] bg-[#1e40af] rounded-3xl overflow-hidden shadow-2xl group">
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
         <div className="w-full h-full flex items-center justify-center">
           <div className="text-center opacity-30">
@@ -248,7 +248,7 @@ export default function ManagerHealthPage() {
           </div>
           <button 
             onClick={() => toast.info('Bản đồ Edge Nodes đang được chuẩn bị!')}
-            className="bg-white text-[#08006c] px-6 py-3 rounded-full text-sm font-bold hover:bg-[#0035d1] hover:text-white transition-all"
+            className="bg-white text-[#1e40af] px-6 py-3 rounded-full text-sm font-bold hover:bg-[#3b82f6] hover:text-white transition-all"
           >
             View Server Map
           </button>

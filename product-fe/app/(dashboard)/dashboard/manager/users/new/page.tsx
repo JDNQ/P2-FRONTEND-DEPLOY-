@@ -42,7 +42,7 @@ export default function ManagerCreateUserPage() {
   }
 
   const roleColor = (role: string): string => {
-    if (role === 'admin') return '#0035d1'
+    if (role === 'admin') return '#3b82f6'
     if (role === 'manager') return '#FF6B00'
     return '#4958a9'
   }

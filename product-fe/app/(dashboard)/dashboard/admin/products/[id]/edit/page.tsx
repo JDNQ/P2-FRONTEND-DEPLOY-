@@ -49,7 +49,7 @@ export default function EditProductPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="w-8 h-8 border-2 border-[#0035d1] border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-[#3b82f6] border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
@@ -63,7 +63,7 @@ export default function EditProductPage() {
         <p className="text-[#444656] font-medium">Không thể tải sản phẩm</p>
         <Link
           href="/dashboard/admin/products"
-          className="px-4 py-2 bg-[#1e4cfd] text-white rounded-lg text-sm font-bold"
+          className="px-4 py-2 bg-[#60a5fa] text-white rounded-lg text-sm font-bold"
         >
           Quay lại
         </Link>
@@ -90,13 +90,13 @@ export default function EditProductPage() {
         <div className="flex items-center gap-4">
           <Link
             href="/dashboard/admin/products"
-            className="text-[#747688] hover:text-[#0035d1] transition-colors flex items-center gap-2 text-sm font-medium"
+            className="text-[#747688] hover:text-[#3b82f6] transition-colors flex items-center gap-2 text-sm font-medium"
           >
             <span className="material-symbols-outlined text-sm">arrow_back</span>
             Quay lại
           </Link>
           <div className="h-4 w-px bg-[#c4c5d9]" />
-          <h1 className="text-[18px] font-bold text-[#08006c]">
+          <h1 className="text-[18px] font-bold text-[#1e40af]">
             Chỉnh sửa sản phẩm
           </h1>
         </div>
@@ -105,8 +105,8 @@ export default function EditProductPage() {
           disabled={updateMutation.isPending}
           className="px-4 py-2 text-white rounded-lg text-sm font-bold transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           style={{
-            background: 'linear-gradient(135deg, #0035d1 0%, #3432c8 100%)',
-            boxShadow: '0 4px 14px 0 rgba(30, 76, 253, 0.25)',
+            background: 'linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%)',
+            boxShadow: '0 4px 14px 0 rgba(59, 130, 246, 0.25)',
           }}
         >
           {updateMutation.isPending && (
@@ -118,8 +118,8 @@ export default function EditProductPage() {
 
       {/* Basic Info */}
       <section className="bg-[#fcf8ff] rounded-xl shadow-sm border border-[#c4c5d9]/50 p-6">
-        <h2 className="text-base font-bold text-[#08006c] mb-6 flex items-center gap-2">
-          <span className="material-symbols-outlined text-[#0035d1]">info</span>
+        <h2 className="text-base font-bold text-[#1e40af] mb-6 flex items-center gap-2">
+          <span className="material-symbols-outlined text-[#3b82f6]">info</span>
           Thông tin cơ bản
         </h2>
         <div className="space-y-6">
@@ -129,7 +129,7 @@ export default function EditProductPage() {
             </label>
             <input
               {...register('productName')}
-              className="w-full border border-[#c4c5d9] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#0035d1]/20 focus:border-[#0035d1] outline-none transition-all"
+              className="w-full border border-[#c4c5d9] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#3b82f6]/20 focus:border-[#3b82f6] outline-none transition-all"
               placeholder="Nhập tên sản phẩm"
             />
             {errors.productName && (
@@ -149,7 +149,7 @@ export default function EditProductPage() {
             <textarea
               {...register('description')}
               rows={4}
-              className="w-full border border-[#c4c5d9] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#0035d1]/20 focus:border-[#0035d1] outline-none transition-all resize-none"
+              className="w-full border border-[#c4c5d9] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#3b82f6]/20 focus:border-[#3b82f6] outline-none transition-all resize-none"
               placeholder="Mô tả sản phẩm (không bắt buộc)"
             />
           </div>
@@ -161,7 +161,7 @@ export default function EditProductPage() {
             <input
               {...register('basePrice', { valueAsNumber: true })}
               type="number"
-              className="w-full border border-[#c4c5d9] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#0035d1]/20 focus:border-[#0035d1] outline-none transition-all"
+              className="w-full border border-[#c4c5d9] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#3b82f6]/20 focus:border-[#3b82f6] outline-none transition-all"
             />
             {errors.basePrice && (
               <p className="text-[#ba1a1a] text-xs mt-1">
@@ -175,8 +175,8 @@ export default function EditProductPage() {
       {/* Variants */}
       <section className="bg-[#fcf8ff] rounded-xl shadow-sm border border-[#c4c5d9]/50 p-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
-          <h2 className="text-base font-bold text-[#08006c] flex items-center gap-2">
-            <span className="material-symbols-outlined text-[#0035d1]">
+          <h2 className="text-base font-bold text-[#1e40af] flex items-center gap-2">
+            <span className="material-symbols-outlined text-[#3b82f6]">
               inventory_2
             </span>
             Biến thể sản phẩm
@@ -184,12 +184,12 @@ export default function EditProductPage() {
           <div className="flex items-center gap-4 text-xs font-medium text-[#747688]">
             <span>
               Tổng biến thể:{' '}
-              <strong className="text-[#08006c]">{fields.length}</strong>
+              <strong className="text-[#1e40af]">{fields.length}</strong>
             </span>
             <div className="w-px h-3 bg-[#c4c5d9]" />
             <span>
               Tổng tồn kho:{' '}
-              <strong className="text-[#08006c]">{totalStock}</strong>
+              <strong className="text-[#1e40af]">{totalStock}</strong>
             </span>
           </div>
         </div>
@@ -226,7 +226,7 @@ export default function EditProductPage() {
                   <td className="px-4 py-4">
                     <input
                       {...register(`variants.${index}.variantName`)}
-                      className="w-full border border-[#c4c5d9] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#0035d1]/20 focus:border-[#0035d1] outline-none transition-all h-9"
+                      className="w-full border border-[#c4c5d9] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#3b82f6]/20 focus:border-[#3b82f6] outline-none transition-all h-9"
                     />
                     {errors.variants?.[index]?.variantName && (
                       <p className="text-[#ba1a1a] text-xs mt-1">
@@ -240,7 +240,7 @@ export default function EditProductPage() {
                         valueAsNumber: true,
                       })}
                       type="number"
-                      className="w-full border border-[#c4c5d9] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#0035d1]/20 focus:border-[#0035d1] outline-none transition-all h-9"
+                      className="w-full border border-[#c4c5d9] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#3b82f6]/20 focus:border-[#3b82f6] outline-none transition-all h-9"
                     />
                     {errors.variants?.[index]?.extraPrice && (
                       <p className="text-[#ba1a1a] text-xs mt-1">
@@ -254,7 +254,7 @@ export default function EditProductPage() {
                         valueAsNumber: true,
                       })}
                       type="number"
-                      className="w-full border border-[#c4c5d9] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#0035d1]/20 focus:border-[#0035d1] outline-none transition-all h-9"
+                      className="w-full border border-[#c4c5d9] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#3b82f6]/20 focus:border-[#3b82f6] outline-none transition-all h-9"
                     />
                     {errors.variants?.[index]?.stock && (
                       <p className="text-[#ba1a1a] text-xs mt-1">
@@ -285,7 +285,7 @@ export default function EditProductPage() {
           onClick={() =>
             append({ variantName: '', extraPrice: 0, stock: 0 })
           }
-          className="mt-4 flex items-center gap-2 text-[#0035d1] hover:text-[#1e4cfd] text-sm font-medium transition-colors"
+          className="mt-4 flex items-center gap-2 text-[#3b82f6] hover:text-[#60a5fa] text-sm font-medium transition-colors"
         >
           <span className="material-symbols-outlined text-sm">add</span>
           Thêm biến thể
@@ -305,8 +305,8 @@ export default function EditProductPage() {
           disabled={updateMutation.isPending}
           className="px-8 py-2.5 text-white rounded-lg text-sm font-semibold transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           style={{
-            background: 'linear-gradient(135deg, #0035d1 0%, #3432c8 100%)',
-            boxShadow: '0 4px 14px 0 rgba(30, 76, 253, 0.25)',
+            background: 'linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%)',
+            boxShadow: '0 4px 14px 0 rgba(59, 130, 246, 0.25)',
           }}
         >
           {updateMutation.isPending && (

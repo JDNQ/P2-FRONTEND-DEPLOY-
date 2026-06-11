@@ -14,8 +14,8 @@ type StockFilter = 'all' | 'instock' | 'low' | 'outofstock'
 
 function getRowStatus(stock: number): { label: string; bg: string; text: string; dot: string; pulse?: boolean } {
   if (stock === 0) return { label: 'Out of Stock', bg: 'bg-[#ffdad6]', text: 'text-[#ba1a1a]', dot: '' }
-  if (stock <= 10) return { label: `Low Stock (${stock})`, bg: 'bg-[#e1dfff]', text: 'text-[#3432c8]', dot: '' }
-  return { label: `In Stock (${stock})`, bg: 'bg-[#dee1ff]', text: 'text-[#0035d1]', dot: 'bg-[#0035d1]', pulse: true }
+  if (stock <= 10) return { label: `Low Stock (${stock})`, bg: 'bg-[#e1dfff]', text: 'text-[#3b82f6]', dot: '' }
+  return { label: `In Stock (${stock})`, bg: 'bg-[#dee1ff]', text: 'text-[#3b82f6]', dot: 'bg-[#3b82f6]', pulse: true }
 }
 
 export default function AdminProductsPage() {
@@ -127,15 +127,15 @@ export default function AdminProductsPage() {
         </div>
         <div className="p-6 rounded-xl shadow-sm border border-[#c4c5d9]/30 flex flex-col gap-2 bg-white">
           <p className="text-[12px] leading-[16px] text-[#747688] uppercase font-bold">In Stock</p>
-          <p className="text-[28px] font-extrabold leading-[1.2]" style={{ color: '#0035d1' }}>{inStockCount}</p>
+          <p className="text-[28px] font-extrabold leading-[1.2]" style={{ color: '#3b82f6' }}>{inStockCount}</p>
           <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: '#eeecff' }}>
-            <div className="h-full rounded-full" style={{ width: `${list.length ? (inStockCount / list.length) * 100 : 0}%`, backgroundColor: '#0035d1' }} />
+            <div className="h-full rounded-full" style={{ width: `${list.length ? (inStockCount / list.length) * 100 : 0}%`, backgroundColor: '#3b82f6' }} />
           </div>
         </div>
         <div className="p-6 rounded-xl shadow-sm border border-[#c4c5d9]/30 flex flex-col gap-2 bg-white">
           <p className="text-[12px] leading-[16px] text-[#747688] uppercase font-bold">Low Stock</p>
-          <p className="text-[28px] font-extrabold leading-[1.2]" style={{ color: '#3432c8' }}>{lowStockCount}</p>
-          <div className="flex items-center gap-1 text-[12px] leading-[16px] font-bold" style={{ color: '#3432c8' }}>
+          <p className="text-[28px] font-extrabold leading-[1.2]" style={{ color: '#3b82f6' }}>{lowStockCount}</p>
+          <div className="flex items-center gap-1 text-[12px] leading-[16px] font-bold" style={{ color: '#3b82f6' }}>
             <span className="material-symbols-outlined text-[16px]">warning</span> Requires attention
           </div>
         </div>
@@ -157,8 +157,8 @@ export default function AdminProductsPage() {
               href="/dashboard/admin/products/new"
               className="px-4 py-2 rounded-lg flex items-center gap-2 text-[14px] leading-[20px] font-bold text-white transition-all active:scale-95"
               style={{
-                background: 'linear-gradient(135deg, #0035d1 0%, #3432c8 100%)',
-                boxShadow: '0 4px 14px 0 rgba(30, 76, 253, 0.25)',
+                background: 'linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%)',
+                boxShadow: '0 4px 14px 0 rgba(59, 130, 246, 0.25)',
               }}
             >
               <span className="material-symbols-outlined text-[18px]">add</span>
@@ -174,14 +174,14 @@ export default function AdminProductsPage() {
                 value={search}
                 onChange={(e) => { setSearch(e.target.value); setCurrentPage(1) }}
                 placeholder="Tìm sản phẩm..."
-                className="w-48 pl-9 pr-3 py-1.5 rounded-lg border border-[#c4c5d9] text-sm outline-none focus:border-[#0035d1] focus:ring-1 focus:ring-[#0035d1]/20 transition-all bg-white"
+                className="w-48 pl-9 pr-3 py-1.5 rounded-lg border border-[#c4c5d9] text-sm outline-none focus:border-[#3b82f6] focus:ring-1 focus:ring-[#3b82f6]/20 transition-all bg-white"
               />
             </div>
             {/* Stock Filter */}
             <select
               value={stockFilter}
               onChange={(e) => { setStockFilter(e.target.value as StockFilter); setCurrentPage(1) }}
-              className="px-3 py-1.5 rounded-lg border border-[#c4c5d9] text-sm outline-none focus:border-[#0035d1] bg-white text-[#444656]"
+              className="px-3 py-1.5 rounded-lg border border-[#c4c5d9] text-sm outline-none focus:border-[#3b82f6] bg-white text-[#444656]"
             >
               <option value="all">Tất cả</option>
               <option value="instock">Còn hàng</option>
@@ -202,7 +202,7 @@ export default function AdminProductsPage() {
             <span className="material-symbols-outlined text-6xl text-[#c4c5d9]">inventory_2</span>
             <p className="text-[#444656] mt-4 text-sm">Không tìm thấy sản phẩm nào</p>
             {search && (
-              <button onClick={() => setSearch('')} className="mt-2 text-[#0035d1] text-sm font-bold hover:underline">
+              <button onClick={() => setSearch('')} className="mt-2 text-[#3b82f6] text-sm font-bold hover:underline">
                 Xoá bộ lọc
               </button>
             )}
@@ -213,22 +213,22 @@ export default function AdminProductsPage() {
               <thead>
                 <tr className="text-[12px] leading-[16px] text-[#444656] uppercase font-bold tracking-wider" style={{ backgroundColor: '#f5f2ff' }}>
                   <th className="px-6 py-4 font-medium">
-                    <button onClick={() => toggleSort('name')} className="flex items-center gap-2 hover:text-[#0035d1] transition-colors">
+                    <button onClick={() => toggleSort('name')} className="flex items-center gap-2 hover:text-[#3b82f6] transition-colors">
                       Product Name <SortIcon field="name" />
                     </button>
                   </th>
                   <th className="px-6 py-4 font-medium">
-                    <button onClick={() => toggleSort('newest')} className="flex items-center gap-2 hover:text-[#0035d1] transition-colors">
+                    <button onClick={() => toggleSort('newest')} className="flex items-center gap-2 hover:text-[#3b82f6] transition-colors">
                       SKU <SortIcon field="newest" />
                     </button>
                   </th>
                   <th className="px-6 py-4 font-medium">
-                    <button onClick={() => toggleSort('stock')} className="flex items-center gap-2 hover:text-[#0035d1] transition-colors">
+                    <button onClick={() => toggleSort('stock')} className="flex items-center gap-2 hover:text-[#3b82f6] transition-colors">
                       Stock Status <SortIcon field="stock" />
                     </button>
                   </th>
                   <th className="px-6 py-4 font-medium">
-                    <button onClick={() => toggleSort('price')} className="flex items-center gap-2 hover:text-[#0035d1] transition-colors">
+                    <button onClick={() => toggleSort('price')} className="flex items-center gap-2 hover:text-[#3b82f6] transition-colors">
                       Price <SortIcon field="price" />
                     </button>
                   </th>
@@ -281,7 +281,7 @@ export default function AdminProductsPage() {
                         <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                           <Link
                             href={`/dashboard/admin/products/${product.id}/edit`}
-                            className="p-2 hover:bg-[#1e4cfd] hover:text-white rounded-lg transition-all text-[#444656]"
+                            className="p-2 hover:bg-[#60a5fa] hover:text-white rounded-lg transition-all text-[#444656]"
                           >
                             <span className="material-symbols-outlined">edit</span>
                           </Link>
@@ -324,7 +324,7 @@ export default function AdminProductsPage() {
                     onClick={() => setCurrentPage(page)}
                     className={`w-10 h-10 flex items-center justify-center rounded-lg font-bold shadow-sm transition-colors ${
                       currentPage === page
-                        ? 'bg-[#1e4cfd] text-white'
+                        ? 'bg-[#60a5fa] text-white'
                         : 'hover:bg-[#e1dfff] text-[#444656]'
                     }`}
                   >

@@ -45,7 +45,7 @@ export default function AdminSettingsPage() {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div>
-        <h2 className="text-[24px] font-bold text-[#08006c]">Cài đặt quản trị</h2>
+        <h2 className="text-[24px] font-bold text-[#1e40af]">Cài đặt quản trị</h2>
         <p className="text-sm text-[#444656] mt-1">
           Quản lý thông tin tài khoản và cài đặt hệ thống.
         </p>
@@ -53,27 +53,27 @@ export default function AdminSettingsPage() {
 
       <div className="bg-white rounded-xl shadow-sm border border-[#c4c5d9]/50 p-6 space-y-6">
         <div className="flex items-center gap-4 pb-6 border-b border-[#c4c5d9]/30">
-          <div className="w-16 h-16 rounded-full bg-[#0035d1] flex items-center justify-center text-white text-2xl font-bold">
+          <div className="w-16 h-16 rounded-full bg-[#3b82f6] flex items-center justify-center text-white text-2xl font-bold">
             {user?.username?.charAt(0).toUpperCase() || 'A'}
           </div>
           <div>
-            <h3 className="text-lg font-bold text-[#08006c]">{user?.username}</h3>
+            <h3 className="text-lg font-bold text-[#1e40af]">{user?.username}</h3>
             <p className="text-sm text-[#747688]">{user?.email || 'Chưa có email'}</p>
-            <span className="inline-block mt-1 px-3 py-0.5 bg-[#e1dfff] text-[#0035d1] text-xs font-bold rounded-full">
+            <span className="inline-block mt-1 px-3 py-0.5 bg-[#e1dfff] text-[#3b82f6] text-xs font-bold rounded-full">
               {user?.role || 'ADMIN'}
             </span>
           </div>
         </div>
 
         <form onSubmit={handleSaveProfile} className="space-y-6">
-          <h4 className="text-base font-bold text-[#08006c]">Thông tin cá nhân</h4>
+          <h4 className="text-base font-bold text-[#1e40af]">Thông tin cá nhân</h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <label className="text-sm font-semibold text-[#444656]">Username</label>
               <input
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full px-4 py-2.5 border border-[#c4c5d9] rounded-lg focus:ring-2 focus:ring-[#0035d1]/20 focus:border-[#0035d1] transition-all outline-none text-sm"
+                className="w-full px-4 py-2.5 border border-[#c4c5d9] rounded-lg focus:ring-2 focus:ring-[#3b82f6]/20 focus:border-[#3b82f6] transition-all outline-none text-sm"
               />
             </div>
             <div className="space-y-2">
@@ -81,7 +81,7 @@ export default function AdminSettingsPage() {
               <input
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2.5 border border-[#c4c5d9] rounded-lg focus:ring-2 focus:ring-[#0035d1]/20 focus:border-[#0035d1] transition-all outline-none text-sm"
+                className="w-full px-4 py-2.5 border border-[#c4c5d9] rounded-lg focus:ring-2 focus:ring-[#3b82f6]/20 focus:border-[#3b82f6] transition-all outline-none text-sm"
                 placeholder="Nhập email"
               />
             </div>
@@ -92,8 +92,8 @@ export default function AdminSettingsPage() {
               disabled={updateMutation.isPending}
               className="px-8 py-2.5 text-white rounded-lg text-sm font-bold transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               style={{
-                background: 'linear-gradient(135deg, #0035d1 0%, #3432c8 100%)',
-                boxShadow: '0 4px 14px 0 rgba(30, 76, 253, 0.25)',
+                background: 'linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%)',
+                boxShadow: '0 4px 14px 0 rgba(59, 130, 246, 0.25)',
               }}
             >
               {updateMutation.isPending && (
@@ -106,7 +106,7 @@ export default function AdminSettingsPage() {
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-[#c4c5d9]/50 p-6 space-y-6">
-        <h4 className="text-base font-bold text-[#08006c]">Đổi mật khẩu</h4>
+        <h4 className="text-base font-bold text-[#1e40af]">Đổi mật khẩu</h4>
         <form onSubmit={handleChangePassword} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
@@ -115,7 +115,7 @@ export default function AdminSettingsPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2.5 border border-[#c4c5d9] rounded-lg focus:ring-2 focus:ring-[#0035d1]/20 focus:border-[#0035d1] transition-all outline-none text-sm"
+                className="w-full px-4 py-2.5 border border-[#c4c5d9] rounded-lg focus:ring-2 focus:ring-[#3b82f6]/20 focus:border-[#3b82f6] transition-all outline-none text-sm"
               />
             </div>
             <div className="space-y-2">
@@ -124,7 +124,7 @@ export default function AdminSettingsPage() {
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full px-4 py-2.5 border border-[#c4c5d9] rounded-lg focus:ring-2 focus:ring-[#0035d1]/20 focus:border-[#0035d1] transition-all outline-none text-sm"
+                className="w-full px-4 py-2.5 border border-[#c4c5d9] rounded-lg focus:ring-2 focus:ring-[#3b82f6]/20 focus:border-[#3b82f6] transition-all outline-none text-sm"
               />
             </div>
             <div className="space-y-2">
@@ -133,14 +133,14 @@ export default function AdminSettingsPage() {
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full px-4 py-2.5 border border-[#c4c5d9] rounded-lg focus:ring-2 focus:ring-[#0035d1]/20 focus:border-[#0035d1] transition-all outline-none text-sm"
+                className="w-full px-4 py-2.5 border border-[#c4c5d9] rounded-lg focus:ring-2 focus:ring-[#3b82f6]/20 focus:border-[#3b82f6] transition-all outline-none text-sm"
               />
             </div>
           </div>
           <div className="flex justify-end">
             <button
               type="submit"
-              className="px-8 py-2.5 border-2 border-[#0035d1] text-[#0035d1] rounded-lg text-sm font-bold hover:bg-[#0035d1]/5 transition-colors"
+              className="px-8 py-2.5 border-2 border-[#3b82f6] text-[#3b82f6] rounded-lg text-sm font-bold hover:bg-[#3b82f6]/5 transition-colors"
             >
               Đổi mật khẩu
             </button>

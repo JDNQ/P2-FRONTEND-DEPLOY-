@@ -50,7 +50,7 @@ export default function NewProductPage() {
   return (
     <div className="max-w-4xl mx-auto">
       <div className="mb-8">
-        <h2 className="text-[24px] font-bold text-[#08006c]">Thêm sản phẩm mới</h2>
+        <h2 className="text-[24px] font-bold text-[#1e40af]">Thêm sản phẩm mới</h2>
         <p className="text-sm text-[#444656] mt-1">
           Vui lòng điền đầy đủ thông tin để tạo sản phẩm trong kho.
         </p>
@@ -61,7 +61,7 @@ export default function NewProductPage() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
             {/* Basic Info */}
             <div className="space-y-6">
-              <h3 className="text-lg font-bold text-[#08006c] pb-2 border-b border-[#c4c5d9]/30">
+              <h3 className="text-lg font-bold text-[#1e40af] pb-2 border-b border-[#c4c5d9]/30">
                 Thông tin cơ bản
               </h3>
 
@@ -71,7 +71,7 @@ export default function NewProductPage() {
                 </label>
                 <input
                   {...register('productName')}
-                  className="w-full px-4 py-2.5 border border-[#c4c5d9] rounded-lg focus:ring-2 focus:ring-[#0035d1]/20 focus:border-[#0035d1] transition-all outline-none text-sm"
+                  className="w-full px-4 py-2.5 border border-[#c4c5d9] rounded-lg focus:ring-2 focus:ring-[#3b82f6]/20 focus:border-[#3b82f6] transition-all outline-none text-sm"
                   placeholder="Nhập tên sản phẩm"
                 />
                 {errors.productName && (
@@ -93,7 +93,7 @@ export default function NewProductPage() {
                 <textarea
                   {...register('description')}
                   rows={4}
-                  className="w-full px-4 py-2.5 border border-[#c4c5d9] rounded-lg focus:ring-2 focus:ring-[#0035d1]/20 focus:border-[#0035d1] transition-all outline-none resize-none text-sm"
+                  className="w-full px-4 py-2.5 border border-[#c4c5d9] rounded-lg focus:ring-2 focus:ring-[#3b82f6]/20 focus:border-[#3b82f6] transition-all outline-none resize-none text-sm"
                   placeholder="Mô tả sản phẩm..."
                 />
               </div>
@@ -106,7 +106,7 @@ export default function NewProductPage() {
                   <input
                     {...register('basePrice', { valueAsNumber: true })}
                     type="number"
-                    className="w-full px-4 py-2.5 border border-[#c4c5d9] rounded-lg focus:ring-2 focus:ring-[#0035d1]/20 focus:border-[#0035d1] transition-all outline-none text-sm"
+                    className="w-full px-4 py-2.5 border border-[#c4c5d9] rounded-lg focus:ring-2 focus:ring-[#3b82f6]/20 focus:border-[#3b82f6] transition-all outline-none text-sm"
                     placeholder="Nhập giá gốc"
                   />
                   <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[#747688] text-sm">
@@ -124,16 +124,16 @@ export default function NewProductPage() {
             {/* Variants */}
             <div className="space-y-6 pt-2">
               <div className="flex items-center justify-between pb-2 border-b border-[#c4c5d9]/30">
-                <h3 className="text-lg font-bold text-[#08006c]">Variants</h3>
+                <h3 className="text-lg font-bold text-[#1e40af]">Variants</h3>
                 <div className="flex items-center gap-4 text-xs font-medium text-[#747688] bg-[#f5f2ff] px-3 py-1 rounded-full">
                   <span>
                     Tổng variants:{' '}
-                    <span className="text-[#0035d1] font-bold">{fields.length}</span>
+                    <span className="text-[#3b82f6] font-bold">{fields.length}</span>
                   </span>
                   <span className="w-px h-3 bg-[#c4c5d9]" />
                   <span>
                     Tổng stock:{' '}
-                    <span className="text-[#0035d1] font-bold">{totalStock}</span>
+                    <span className="text-[#3b82f6] font-bold">{totalStock}</span>
                   </span>
                 </div>
               </div>
@@ -167,7 +167,7 @@ export default function NewProductPage() {
                         <td className="px-4 py-3">
                           <input
                             {...register(`variants.${index}.variantName`)}
-                            className="w-full px-3 py-1.5 border border-[#c4c5d9] rounded-md text-sm focus:border-[#0035d1] focus:ring-1 focus:ring-[#0035d1] outline-none"
+                            className="w-full px-3 py-1.5 border border-[#c4c5d9] rounded-md text-sm focus:border-[#3b82f6] focus:ring-1 focus:ring-[#3b82f6] outline-none"
                             placeholder="VD: Đen - 64GB"
                           />
                           {errors.variants?.[index]?.variantName && (
@@ -182,7 +182,7 @@ export default function NewProductPage() {
                               valueAsNumber: true,
                             })}
                             type="number"
-                            className="w-full px-3 py-1.5 border border-[#c4c5d9] rounded-md text-sm focus:border-[#0035d1] focus:ring-1 focus:ring-[#0035d1] outline-none"
+                            className="w-full px-3 py-1.5 border border-[#c4c5d9] rounded-md text-sm focus:border-[#3b82f6] focus:ring-1 focus:ring-[#3b82f6] outline-none"
                           />
                           {errors.variants?.[index]?.extraPrice && (
                             <p className="text-[#ba1a1a] text-xs mt-0.5">
@@ -196,7 +196,7 @@ export default function NewProductPage() {
                               valueAsNumber: true,
                             })}
                             type="number"
-                            className="w-full px-3 py-1.5 border border-[#c4c5d9] rounded-md text-sm focus:border-[#0035d1] focus:ring-1 focus:ring-[#0035d1] outline-none"
+                            className="w-full px-3 py-1.5 border border-[#c4c5d9] rounded-md text-sm focus:border-[#3b82f6] focus:ring-1 focus:ring-[#3b82f6] outline-none"
                           />
                           {errors.variants?.[index]?.stock && (
                             <p className="text-[#ba1a1a] text-xs mt-0.5">
@@ -227,7 +227,7 @@ export default function NewProductPage() {
                 onClick={() =>
                   append({ variantName: '', extraPrice: 0, stock: 0 })
                 }
-                className="inline-flex items-center gap-2 px-4 py-2 border-2 border-[#0035d1] text-[#0035d1] font-bold text-sm rounded-lg hover:bg-[#0035d1]/5 transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2 border-2 border-[#3b82f6] text-[#3b82f6] font-bold text-sm rounded-lg hover:bg-[#3b82f6]/5 transition-colors"
               >
                 <span className="material-symbols-outlined text-sm">add_circle</span>
                 Thêm variant
@@ -241,8 +241,8 @@ export default function NewProductPage() {
                 disabled={createProduct.isPending}
                 className="w-full py-4 rounded-xl font-bold text-lg transition-all active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-white"
                 style={{
-                  background: 'linear-gradient(135deg, #0035d1 0%, #3432c8 100%)',
-                  boxShadow: '0 4px 14px 0 rgba(30, 76, 253, 0.25)',
+                  background: 'linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%)',
+                  boxShadow: '0 4px 14px 0 rgba(59, 130, 246, 0.25)',
                 }}
               >
                 {createProduct.isPending && (

@@ -68,7 +68,7 @@ export default function AdminDashboardPage() {
           onMouseLeave={(e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '' }}
         >
           <div className="flex justify-between items-start mb-2">
-            <span className="p-2 bg-[#0035d1]/10 text-[#0035d1] rounded-lg material-symbols-outlined">payments</span>
+            <span className="p-2 bg-[#3b82f6]/10 text-[#3b82f6] rounded-lg material-symbols-outlined">payments</span>
             <span className="flex items-center text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full">
               <span className="material-symbols-outlined text-sm">trending_up</span> {dashboard?.kpis?.[0]?.trend ?? 12.5}%
             </span>
@@ -100,7 +100,7 @@ export default function AdminDashboardPage() {
           onMouseLeave={(e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '' }}
         >
           <div className="flex justify-between items-start mb-2">
-            <span className="p-2 bg-[#3432c8]/10 text-[#3432c8] rounded-lg material-symbols-outlined">inventory</span>
+            <span className="p-2 bg-[#3b82f6]/10 text-[#3b82f6] rounded-lg material-symbols-outlined">inventory</span>
             <span className="flex items-center text-xs font-bold text-[#444656] bg-[#e1dfff] px-2 py-0.5 rounded-full">Stable</span>
           </div>
           <p className="text-[#444656] text-[14px] leading-[20px] font-medium">Sản phẩm</p>
@@ -135,7 +135,7 @@ export default function AdminDashboardPage() {
         >
           <div className="flex justify-between items-center mb-6">
             <h4 className="text-[20px] font-semibold leading-[28px]">Tăng trưởng doanh thu</h4>
-            <select className="bg-[#e8e6ff] border-none rounded-lg text-[14px] leading-[20px] font-medium px-3 py-1.5 focus:ring-1 focus:ring-[#0035d1] outline-none transition-all">
+            <select className="bg-[#e8e6ff] border-none rounded-lg text-[14px] leading-[20px] font-medium px-3 py-1.5 focus:ring-1 focus:ring-[#3b82f6] outline-none transition-all">
               <option>30 ngày qua</option>
               <option>6 tháng qua</option>
               <option>Năm nay</option>
@@ -149,16 +149,16 @@ export default function AdminDashboardPage() {
                 return (
                   <div
                     key={i}
-                    className={`w-full rounded-t-lg relative group transition-all ${isMax ? 'bg-[#0035d1]' : 'bg-[#0035d1]/20'} ${!isMax ? 'hover:bg-[#0035d1]/40' : 'hover:brightness-110'}`}
+                    className={`w-full rounded-t-lg relative group transition-all ${isMax ? 'bg-[#3b82f6]' : 'bg-[#3b82f6]/20'} ${!isMax ? 'hover:bg-[#3b82f6]/40' : 'hover:brightness-110'}`}
                     style={{ height: `${height}%` }}
                   >
                     {isMax && (
-                      <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-[#0035d1] text-white text-[10px] px-2 py-1 rounded font-bold whitespace-nowrap">
+                      <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-[#3b82f6] text-white text-[10px] px-2 py-1 rounded font-bold whitespace-nowrap">
                         {formatPrice(totalRevenue)}
                       </div>
                     )}
                     {!isMax && (
-                      <div className="hidden group-hover:block absolute -top-8 left-1/2 -translate-x-1/2 bg-[#08006c] text-white text-[10px] px-2 py-1 rounded whitespace-nowrap">
+                      <div className="hidden group-hover:block absolute -top-8 left-1/2 -translate-x-1/2 bg-[#1e40af] text-white text-[10px] px-2 py-1 rounded whitespace-nowrap">
                         ~{formatPrice((totalRevenue * w.value) / maxWeekVal / 1000 * 1000)}
                       </div>
                     )}
@@ -201,7 +201,7 @@ export default function AdminDashboardPage() {
                 <span className="material-symbols-outlined">lightbulb</span>
               </div>
               <p className="text-[12px] leading-[16px] text-[#444656]">
-                <strong className="text-[#08006c]">Gợi ý:</strong> &quot;Fashion&quot; tăng 15% tuần này. Cân nhắc chạy flash sale cuối tuần.
+                <strong className="text-[#1e40af]">Gợi ý:</strong> &quot;Fashion&quot; tăng 15% tuần này. Cân nhắc chạy flash sale cuối tuần.
               </p>
             </div>
           </div>
@@ -223,7 +223,7 @@ export default function AdminDashboardPage() {
           <div className="flex items-center gap-2">
             <Link
               href="/dashboard/admin/orders"
-              className="px-4 py-2 text-[14px] leading-[20px] font-bold text-[#0035d1] hover:bg-[#0035d1]/10 rounded-lg transition-all"
+              className="px-4 py-2 text-[14px] leading-[20px] font-bold text-[#3b82f6] hover:bg-[#3b82f6]/10 rounded-lg transition-all"
             >
               Xem tất cả
             </Link>
@@ -253,7 +253,7 @@ export default function AdminDashboardPage() {
                 const s = ORDER_STATUS_MAP[order.status] || ORDER_STATUS_MAP.PENDING
                 return (
                   <tr key={order.id} className="hover:bg-[#eeecff] transition-colors group">
-                    <td className="px-6 py-4 font-bold text-[#0035d1]">#{order.id}</td>
+                    <td className="px-6 py-4 font-bold text-[#3b82f6]">#{order.id}</td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-full bg-[#e1dfff] flex items-center justify-center font-bold text-xs">
@@ -280,7 +280,7 @@ export default function AdminDashboardPage() {
                     <td className="px-6 py-4 text-right">
                       <button
                         onClick={() => router.push(`/dashboard/admin/orders`)}
-                        className="p-1 hover:bg-[#e1dfff] rounded text-[#747688] group-hover:text-[#0035d1] transition-colors"
+                        className="p-1 hover:bg-[#e1dfff] rounded text-[#747688] group-hover:text-[#3b82f6] transition-colors"
                       >
                         <span className="material-symbols-outlined">more_vert</span>
                       </button>

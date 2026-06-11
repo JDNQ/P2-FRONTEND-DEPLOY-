@@ -85,7 +85,7 @@ export default function NotificationsPage() {
             {visibleNotifications.map((n) => {
               const categoryColor = n.type === 'Orders' ? 'text-primary' : n.type === 'Promotions' ? 'text-tertiary' : 'text-secondary'
               const icon = n.type === 'Orders' ? 'package_2' : n.type === 'Promotions' ? 'sell' : 'security'
-              const categoryHex = n.type === 'Orders' ? '#0035d1' : n.type === 'Promotions' ? '#3432c8' : '#4958a9'
+              const categoryHex = n.type === 'Orders' ? '#3b82f6' : n.type === 'Promotions' ? '#60a5fa' : '#93c5fd'
               return (
                 <div key={n.id}
                   className={`relative overflow-hidden rounded-xl border transition-all hover:shadow-lg hover:-translate-y-0.5 group cursor-pointer ${!n.isRead ? 'bg-white/80 border-l-4 border-l-primary' : 'bg-white border-l-4 border-l-transparent'} border-outline-variant`}

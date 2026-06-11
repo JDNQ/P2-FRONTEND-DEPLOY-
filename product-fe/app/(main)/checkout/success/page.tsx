@@ -16,7 +16,7 @@ function SuccessContent() {
       particleCount: 150,
       spread: 80,
       origin: { y: 0.5 },
-      colors: ['#1e4cfd', '#0035d1', '#22c55e', '#ff2d2d'],
+      colors: ['#60a5fa', '#3b82f6', '#22c55e', '#ff2d2d'],
     })
   }, [])
 

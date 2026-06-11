@@ -51,7 +51,7 @@ export default function ManagerDashboardPage() {
               onMouseLeave={(e) => CardHover(e, false)}
             >
               <div className="flex items-center justify-between mb-4">
-                <span className={`p-2 rounded-lg bg-[#0035d1]/10 text-[#0035d1] material-symbols-outlined`}>
+                <span className={`p-2 rounded-lg bg-[#3b82f6]/10 text-[#3b82f6] material-symbols-outlined`}>
                   {kpi.icon}
                 </span>
                 <span className={`font-bold text-xs flex items-center gap-1 ${kpi.trend >= 0 ? 'text-green-600' : 'text-red-500'}`}>
@@ -80,7 +80,7 @@ export default function ManagerDashboardPage() {
               <div className="flex gap-2">
                 <button 
                   onClick={() => toast.info('Chế độ xem hàng tuần đang được hiển thị')}
-                  className="px-3 py-1 rounded-full bg-[#1e4cfd] text-white text-sm font-bold"
+                  className="px-3 py-1 rounded-full bg-[#60a5fa] text-white text-sm font-bold"
                 >
                   Weekly
                 </button>
@@ -98,16 +98,16 @@ export default function ManagerDashboardPage() {
                 {['50k', '40k', '30k', '20k', '10k', '0'].map((l) => (<span key={l}>{l}</span>))}
               </div>
               <div className="absolute inset-x-0 inset-y-0 flex flex-col justify-between opacity-5 pointer-events-none">
-                {[1, 2, 3, 4, 5, 6].map((i) => (<div key={i} className="border-b border-[#08006c]" />))}
+                {[1, 2, 3, 4, 5, 6].map((i) => (<div key={i} className="border-b border-[#1e40af]" />))}
               </div>
               <div className="flex-1 flex items-end justify-around h-full pl-8">
                 {revenue.map((bar, i) => (
                   <div
                     key={i}
-                    className="group relative w-12 bg-[#0035d1]/20 rounded-t-lg hover:bg-[#0035d1] transition-colors bar-animate"
+                    className="group relative w-12 bg-[#3b82f6]/20 rounded-t-lg hover:bg-[#3b82f6] transition-colors bar-animate"
                     style={{ '--final-height': `${bar.value}%`, height: 0 } as React.CSSProperties}
                   >
-                    <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-[#08006c] text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                    <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-[#1e40af] text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                       {bar.label}
                     </div>
                   </div>
@@ -152,7 +152,7 @@ export default function ManagerDashboardPage() {
             </div>
             <button 
               onClick={() => router.push('/dashboard/manager/logs')}
-              className="w-full mt-8 py-2 text-[#0035d1] font-bold text-sm hover:underline"
+              className="w-full mt-8 py-2 text-[#3b82f6] font-bold text-sm hover:underline"
             >
               View All Logs
             </button>
@@ -165,7 +165,7 @@ export default function ManagerDashboardPage() {
             <h4 className="text-[20px] font-semibold leading-[28px]">Top Performing Products</h4>
             <button 
               onClick={() => router.push('/dashboard/manager/inventory')}
-              className="text-[#0035d1] font-bold text-sm flex items-center gap-1"
+              className="text-[#3b82f6] font-bold text-sm flex items-center gap-1"
             >
               Full Report <span className="material-symbols-outlined text-[18px]">arrow_right_alt</span>
             </button>
@@ -184,13 +184,13 @@ export default function ManagerDashboardPage() {
               </thead>
               <tbody className="divide-y divide-[#c4c5d9]/30">
                 {topProducts.map((p) => (
-                  <tr key={p.id} className="hover:bg-[#0035d1]/5 transition-colors group">
+                  <tr key={p.id} className="hover:bg-[#3b82f6]/5 transition-colors group">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-lg bg-[#eeecff] overflow-hidden shrink-0 flex items-center justify-center">
                           <span className="material-symbols-outlined text-[#4958a9]">inventory_2</span>
                         </div>
-                        <span className="text-sm font-bold group-hover:text-[#0035d1]">{p.name}</span>
+                        <span className="text-sm font-bold group-hover:text-[#3b82f6]">{p.name}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4 text-sm">{p.category}</td>
