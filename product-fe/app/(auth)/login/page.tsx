@@ -198,12 +198,9 @@ export default function LoginPage() {
             Hàng triệu sản phẩm chính hãng, giao hàng nhanh chóng và ưu đãi mỗi ngày tại TL Market.
           </p>
         </div>
-        <div className="z-10 flex items-center justify-center">
-          <div className="w-full max-w-xs aspect-square p-3 rounded-[1.5rem] shadow-2xl"
-            style={{ background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.2)' }}>
-            <div className="w-full h-full rounded-[1rem] bg-gradient-to-br from-[#fda86b] to-[#ea580c] flex items-center justify-center shadow-inner">
-              <span className="material-symbols-outlined text-white text-6xl opacity-40">shopping_bag</span>
-            </div>
+        <div className="z-10 flex items-center justify-center animate-float">
+          <div className="w-44 h-44 rounded-2xl bg-white/10 flex items-center justify-center shadow-2xl shadow-primary/30 p-4">
+            <img src="/logo-removebg-preview.png" alt="TL Market" className="w-full h-full object-contain" />
           </div>
         </div>
         <div className="z-10">
