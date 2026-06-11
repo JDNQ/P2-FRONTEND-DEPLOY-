@@ -5,10 +5,11 @@ import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useProduct, useUpdateProduct } from '@/lib/hooks/useProducts'
 import { productSchema } from '@/lib/validations/productSchema'
+import type { CreateProductDto } from '@/lib/types/product'
 import Link from 'next/link'
 import type { z } from 'zod'
 
-type EditProductValues = z.infer<typeof productSchema>
+type EditProductValues = z.input<typeof productSchema>
 
 export default function EditProductPage() {
   const params = useParams()
@@ -71,9 +72,13 @@ export default function EditProductPage() {
   }
 
   const onSubmit = (data: EditProductValues) => {
-    console.log(data)
+    const payload: CreateProductDto = {
+      ...data,
+      shopId: 1,
+    }
+    console.log(payload)
     updateMutation.mutate(
-      { id, data },
+      { id, data: payload },
       { onSuccess: () => router.push('/dashboard/admin/products') },
     )
   }

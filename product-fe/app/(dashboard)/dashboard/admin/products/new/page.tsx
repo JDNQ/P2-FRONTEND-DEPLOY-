@@ -5,9 +5,10 @@ import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useCreateProduct } from '@/lib/hooks/useProducts'
 import { productSchema } from '@/lib/validations/productSchema'
+import type { CreateProductDto } from '@/lib/types/product'
 import type { z } from 'zod'
 
-type NewProductValues = z.infer<typeof productSchema>
+type NewProductValues = z.input<typeof productSchema>
 
 export default function NewProductPage() {
   const router = useRouter()
@@ -36,8 +37,12 @@ export default function NewProductPage() {
     variants?.reduce((sum, v) => sum + (Number(v.stock) || 0), 0) || 0
 
   const onSubmit = (data: NewProductValues) => {
-    console.log(data)
-    createProduct.mutate(data, {
+    const payload: CreateProductDto = {
+      ...data,
+      shopId: 1,
+    }
+    console.log(payload)
+    createProduct.mutate(payload, {
       onSuccess: () => router.push('/dashboard/admin/products'),
     })
   }
