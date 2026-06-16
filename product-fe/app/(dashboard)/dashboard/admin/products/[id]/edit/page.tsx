@@ -26,6 +26,7 @@ export default function EditProductPage() {
     control,
     handleSubmit,
     setValue,
+    getValues,
     watch,
     formState: { errors },
   } = useForm<EditProductValues>({
@@ -58,7 +59,8 @@ export default function EditProductPage() {
     setUploading(true)
     try {
       const urls = await uploadApi.productImages(files)
-      setValue('images', [...images, ...urls])
+      const current = (getValues('images') as string[]) || []
+      setValue('images', [...current, ...urls])
     } catch {
       alert('Upload ảnh thất bại')
     } finally {
@@ -67,7 +69,8 @@ export default function EditProductPage() {
   }
 
   const removeImage = (idx: number) => {
-    setValue('images', images.filter((_, i) => i !== idx))
+    const current = (getValues('images') as string[]) || []
+    setValue('images', current.filter((_, i) => i !== idx))
   }
 
   const handleVariantImageUpload = async (index: number, file: File) => {
@@ -88,16 +91,15 @@ export default function EditProductPage() {
       description: data.description,
       basePrice: data.basePrice,
       shopId: product?.shopId || 1,
-      variants: data.variants.map(v => ({
+      variants: (data.variants || []).map(v => ({
         variantName: v.variantName,
         extraPrice: v.extraPrice,
         stock: v.stock,
-        image: v.image || undefined,
+        image: typeof v.image === 'string' && v.image ? v.image : undefined,
       })),
-      images: data.images?.map((url, i) => ({
-        url,
-        isPrimary: i === 0,
-      })),
+      images: Array.isArray(data.images)
+        ? data.images.filter((u): u is string => typeof u === 'string').map((url, i) => ({ url, isPrimary: i === 0 }))
+        : undefined,
     }
     updateMutation.mutate(
       { id, data: payload },

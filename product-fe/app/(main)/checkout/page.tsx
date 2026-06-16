@@ -205,7 +205,7 @@ export default function CheckoutPage() {
                   return (
                     <div key={item.id} className="flex gap-4">
                       <div className="relative w-20 h-20 bg-surface rounded-xl overflow-hidden flex-shrink-0 border border-outline-variant">
-                        {item.product.images[0] ? (
+                        {item.product.images?.[0]?.url ? (
                           <img src={item.product.images[0].url} alt={item.product.productName}
                             className="w-full h-full object-contain" onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_80 }} />
                         ) : (
